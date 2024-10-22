@@ -1,3 +1,7 @@
+export interface WindowProps {
+	id: number,
+	path: string | null
+}
 export interface WindowNode {
 	id: number
 	path: string | null

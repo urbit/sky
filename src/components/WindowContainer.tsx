@@ -1,10 +1,8 @@
 import { Allotment } from 'allotment'
 import { WindowContainerProps } from '../types/windows.ts'
-import useWindowStore from '../state/useWindowStore.ts'
+import Window from './Window.tsx'
 
 export default function WindowContainer({node, isVertical}: WindowContainerProps): JSX.Element {
-  const { addWindowNode } = useWindowStore()
-
   if (!node) return <></>
 
   const hasChildren = node.left || node.right
@@ -26,9 +24,6 @@ export default function WindowContainer({node, isVertical}: WindowContainerProps
     // made it invisible by shrinking it to size 0
   }
 
-  function handleClick() {
-    addWindowNode(node.id, '~sampel/home')
-  }
 
   return (
     <Allotment
@@ -42,18 +37,7 @@ export default function WindowContainer({node, isVertical}: WindowContainerProps
     >
       {!hasChildren ? (
         // return a window
-        <Allotment.Pane
-          visible
-          key={node.id}
-          preferredSize="100%"
-        >
-          <div
-            style={{ width: '100%', height: '100%' }}
-            onClick={() => handleClick()}
-          >
-            <p>{node.id}</p>
-          </div>
-        </Allotment.Pane>
+        <Window id={node.id} path={node.path} />
       ) : (
         // return a window container
         <Allotment
