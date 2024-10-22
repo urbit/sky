@@ -32,6 +32,7 @@ export default function WindowContainer({node, isVertical}: WindowContainerProps
 
   return (
     <Allotment
+      snap
       proportionalLayout={true}
       separator={true}
       vertical={isVertical}
@@ -42,7 +43,6 @@ export default function WindowContainer({node, isVertical}: WindowContainerProps
       {!hasChildren ? (
         // return a window
         <Allotment.Pane
-          snap
           visible
           key={node.id}
           preferredSize="100%"
@@ -57,6 +57,7 @@ export default function WindowContainer({node, isVertical}: WindowContainerProps
       ) : (
         // return a window container
         <Allotment
+          snap
           proportionalLayout={true}
           separator={true}
           vertical={!isVertical}
