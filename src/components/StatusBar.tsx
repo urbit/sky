@@ -15,7 +15,7 @@ const sigilConfig = {
 
 export default function StatusBar() {
   return (
-    <div style={{ width: '100%', padding: '10px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div style={{ padding: '10px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <div style={{ height: '30px', backgroundColor: 'lightgray', borderRadius: '3px', paddingLeft: '10px', paddingRight: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '200px' }}>
         <span>Workspace 1</span>
         <div>
