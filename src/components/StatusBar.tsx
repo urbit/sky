@@ -3,6 +3,8 @@ import bellIcon from '../assets/images/bell.png'
 import closeIcon from '../assets/images/close.png'
 
 const sigilConfig = {
+  // TODO don't hard-code height all over this component
+  // changing size in sigilConfig upsets layout
   size: '30px',
   // TODO remove hard-coded ship
   point: '~sampel-palnet',
@@ -26,7 +28,9 @@ export default function StatusBar() {
         <div className='fr ac jc br1 b1' style={{ width: '30px', height: '30px' }}>
           <img src={bellIcon} alt="Open notifications" style={{ height: '20px' }} />
         </div>
-        <urbit-sigil style={{ overflow: 'hidden', borderRadius: '3px', marginLeft: '5px' }} {...sigilConfig} />
+        <div className='br1 scroll-hidden' style={{ height: '30px', marginLeft: '5px' }}>
+          <urbit-sigil {...sigilConfig} />
+        </div>
       </div>
     </div>
   );
