@@ -23,10 +23,10 @@ export default function StatusBar() {
         </div>
       </div>
       <div className='fr ac jb' style={{ height: '30px' }}>
-        <div className='fr ac jc br1 b1' style={{ width: '30px' }}>
+        <div className='fr ac jc br1 b1' style={{ width: '30px', height: '30px' }}>
           <img src={bellIcon} alt="Open notifications" style={{ height: '20px' }} />
         </div>
-        <urbit-sigil className='br1 scroll-hidden' style={{ marginLeft: '5px' }} {...sigilConfig} />
+        <urbit-sigil style={{ overflow: 'hidden', borderRadius: '3px', marginLeft: '5px' }} {...sigilConfig} />
       </div>
     </div>
   );
