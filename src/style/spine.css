@@ -1,0 +1,91 @@
+/*
+ *  page styling
+ *
+ */
+
+* {
+  font-size: var(--font-size);
+}
+html {
+  height: 100%;
+  font-family: sans-serif;
+}
+body {
+  margin: 0;
+  height: 100%;
+  color: var(--f0);
+  background: var(--b0);
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  min-height: 100%;
+  font-family: var(--font, sans-serif);
+  font-size: var(--font-size);
+  letter-spacing: var(--letter-spacing);
+  line-height: var(--line-height);
+}
+
+/*
+ *  styling for inputs and chrome
+ *
+ */
+
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background: var(--f4);
+  outline: none;
+  border-radius: 5px;
+}
+
+/* Style the slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0.8em;
+  height: 0.8em;
+  background: var(--f0);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 0.8em;
+  height: 0.8em;
+  background: var(--f0);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+button:focus {
+  filter: brightness(115%);
+}
+input:focus {
+  filter: brightness(115%);
+}
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Scrollbar Handle */
+::-webkit-scrollbar-thumb {
+  background-color: var(--b4); /* Color of the scrollbar handle */
+  border-radius: var(--br1); /* Roundness of the scrollbar handle */
+}
+
+/* Scrollbar Handle on Hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--b3); /* Color of the scrollbar handle when hovered */
+}
+
+/* Scrollbar Track Background */
+::-webkit-scrollbar-track {
+  background: var(--b2); /* Background color of the scrollbar track */
+}
+
+/*scrollbar-width: thick; /* Width of the scrollbar */
+/*scrollbar-color: var(--b4) var(--b3); /* Scrollbar handle color and track color */
+
