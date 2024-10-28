@@ -5,26 +5,23 @@ import { WindowProps } from '../types/windows'
 export default function Window({ id, path }: WindowProps) {
   const { addWindowNode } = useWindowStore()
 
-  // TODO handle case where path is null
-
   function handleClick() {
-    addWindowNode(id, '~sampel/home')
+    // TODO get real @p
+    addWindowNode(id, path || '~sampel/home')
   }
 
   return (
-    <div
-      style={{ width: '100%', height: '100%' }}
-      onClick={() => handleClick()}
-    >
+    <Allotment>
       <Allotment.Pane
         visible
         key={id}
-        preferredSize="100%"
       >
-        <div>
-          <p>{id}</p>
+        <div className='fc ac jc' style={{ width: '100%', height: '100%', padding: '5px' }} onClick={handleClick}>
+          <div className='fc ac jc b1 br1' style={{ width: '100%', height: '100%' }}>
+            <p>Window {id}</p>
+          </div>
         </div>
       </Allotment.Pane>
-    </div>
+    </Allotment>
   )
 }

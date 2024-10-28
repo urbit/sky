@@ -17,7 +17,7 @@ const sigilConfig = {
 
 export default function StatusBar() {
   return (
-    <div className='p2 fr ac jb'>
+    <div className='fr ac jb' style={{ height: '50px' }}>
       <div className='br1 fr ac jb b1' style={{ height: '30px', paddingLeft: '10px', paddingRight: '10px', width: '200px' }}>
         <span>Workspace 1</span>
         <div>

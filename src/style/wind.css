@@ -1,0 +1,11 @@
+:root {
+  --focus-border: var(--b0);
+  --sash-size: 8px;
+  --sash-hover-size: 8px;
+  --separator-border: rgba(128, 128, 128);
+  --sash-hover-transition-duration: 0s;
+}
+
+.sash {
+  background-color: var(--b0);
+}

@@ -2,7 +2,7 @@ import { Allotment } from 'allotment'
 import { WindowContainerProps } from '../types/windows.ts'
 import Window from './Window.tsx'
 
-export default function WindowContainer({node, isVertical}: WindowContainerProps): JSX.Element {
+export default function WindowContainer({ node, isVertical }: WindowContainerProps): JSX.Element {
   if (!node) return <></>
 
   const hasChildren = node.left || node.right
