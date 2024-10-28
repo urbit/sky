@@ -11,9 +11,6 @@ export default function Window({ id, path }: WindowProps) {
   }
 
   return (
-    //  TODO move b1 br1 classes to a div inside the pane
-    //  right now it looks as if corners are being cut off
-    //  by the space between windows
     <Allotment>
       <Allotment.Pane
         visible
