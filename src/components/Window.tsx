@@ -5,10 +5,9 @@ import { WindowProps } from '../types/windows'
 export default function Window({ id, path }: WindowProps) {
   const { addWindowNode } = useWindowStore()
 
-  // TODO handle case where path is null / empty
-
   function handleClick() {
-    addWindowNode(id, '~sampel/home')
+    // TODO get real @p
+    addWindowNode(id, path || '~sampel/home')
   }
 
   return (
