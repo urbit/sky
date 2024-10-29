@@ -8,7 +8,7 @@ export default function Window({ id, path }: WindowProps) {
 
   function handleClick() {
     // TODO get real @p
-    addWindowNode(id, path || '~sampel/home')
+    addWindowNode(id, '~sampel/home')
   }
 
   return (
