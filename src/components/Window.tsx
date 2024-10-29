@@ -1,6 +1,7 @@
 import { Allotment } from 'allotment'
 import useWindowStore from '../state/useWindowStore'
 import { WindowProps } from '../types/windows'
+import NavBar from './NavBar'
 
 export default function Window({ id, path }: WindowProps) {
   const { addWindowNode } = useWindowStore()
@@ -17,8 +18,11 @@ export default function Window({ id, path }: WindowProps) {
         key={id}
       >
         <div className='fc ac jc' style={{ width: '100%', height: '100%', padding: '5px' }} onClick={handleClick}>
-          <div className='fc ac jc b1 br1' style={{ width: '100%', height: '100%' }}>
-            <p>Window {id}</p>
+          <div className='fc as js b1 br1' style={{ width: '100%', height: '100%' }}>
+            <NavBar />
+            <div className='fc ac jc' style={{ width: '100%', height: '100%' }}>
+              <p>{id}</p>
+            </div>
           </div>
         </div>
       </Allotment.Pane>
