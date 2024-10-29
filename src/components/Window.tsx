@@ -18,7 +18,7 @@ export default function Window({ id, path }: WindowProps) {
         key={id}
       >
         <div className='fc ac jc' style={{ width: '100%', height: '100%', padding: '5px' }} onClick={handleClick}>
-          <div className='fc as js b1 br1' style={{ width: '100%', height: '100%' }}>
+          <div className='fc as js b1 br1' style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
             <NavBar />
             <div className='fc ac jc' style={{ width: '100%', height: '100%' }}>
               <p>{id}</p>
