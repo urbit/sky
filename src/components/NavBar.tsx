@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { NavBarProps } from '../types/navbar.ts'
 
-export default function NavBar() {
+export default function NavBar({ path }: NavBarProps) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -19,7 +20,7 @@ export default function NavBar() {
         opacity: hovered ? 1.0 : 0.0,
       }}
     >
-      <p>~sampel/path</p>
+      <p>{path}</p>
       <div className='fr ac jb' style={{ width: '30px' }}>
         <p>_</p>
         <p>x</p>

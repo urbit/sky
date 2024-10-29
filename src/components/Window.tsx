@@ -8,7 +8,7 @@ export default function Window({ id, path }: WindowProps) {
 
   function handleClick() {
     // TODO get real @p
-    addWindowNode(id, '~sampel/home')
+    addWindowNode(id, '~sampel/path')
   }
 
   return (
@@ -28,7 +28,7 @@ export default function Window({ id, path }: WindowProps) {
               position: 'relative',
             }}
           >
-            <NavBar />
+            <NavBar path={path} />
             <iframe
               src="https://en.wikipedia.org/wiki/Tiling_window_manager"
               style={{ width: '100%', height: '100%', border: 'none' }}
