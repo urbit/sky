@@ -13,16 +13,26 @@ export default function Window({ id, path }: WindowProps) {
 
   return (
     <Allotment>
-      <Allotment.Pane
-        visible
-        key={id}
-      >
-        <div className='fc ac jc' style={{ width: '100%', height: '100%', padding: '5px' }} onClick={handleClick}>
-          <div className='fc as js b1 br1' style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+      <Allotment.Pane visible key={id}>
+        <div
+          className='fc ac jc'
+          style={{ width: '100%', height: '100%', padding: '5px' }}
+          onClick={handleClick}
+        >
+          <div
+            className='fc as js b1 br1'
+            style={{
+              width: '100%',
+              height: '100%',
+              overflow: 'hidden',
+              position: 'relative',
+            }}
+          >
             <NavBar />
-            <div className='fc ac jc' style={{ width: '100%', height: '100%' }}>
-              <p>{id}</p>
-            </div>
+            <iframe
+              src="https://en.wikipedia.org/wiki/Tiling_window_manager"
+              style={{ width: '100%', height: '100%', border: 'none' }}
+            />
           </div>
         </div>
       </Allotment.Pane>

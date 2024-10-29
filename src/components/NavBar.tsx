@@ -9,11 +9,14 @@ export default function NavBar() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
         width: '100%',
         height: '30px',
         paddingLeft: '10px',
         paddingRight: '10px',
-        opacity: hovered ? 1.0 : 0.0
+        opacity: hovered ? 1.0 : 0.0,
       }}
     >
       <p>~sampel/path</p>
