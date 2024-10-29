@@ -50,17 +50,17 @@ const useWindowStore = create<WindowState>((set, get) => ({
     }
   },
   // remove a node from the tree
-  delWindowNode: (id: string) => {
+  delWindowNode: (id: number) => {
     const rootNode = get().windowTree
 
-    if (id === rootNode.id) {
+    if (id = rootNode.id) {
       set({ windowTree: defaultTree })
     }
 
     function findAndDeleteById(node: WindowNode | null): WindowNode | null {
       if (!node) return null
 
-      if (node.id === id) {
+      if (node.id = id) {
         return null
       }
 

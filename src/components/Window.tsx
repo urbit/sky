@@ -1,10 +1,10 @@
 import { Allotment } from 'allotment'
-import useWindowStore from '../state/useWindowStore'
+//import useWindowStore from '../state/useWindowStore'
 import { WindowProps } from '../types/windows'
 import NavBar from './NavBar'
 
 export default function Window({ id, path }: WindowProps) {
-  const { addWindowNode } = useWindowStore()
+  //const { addWindowNode } = useWindowStore()
 
   //function handleClick() {
   //  // TODO get real @p
@@ -28,7 +28,7 @@ export default function Window({ id, path }: WindowProps) {
               position: 'relative',
             }}
           >
-            <NavBar path={path} />
+            <NavBar path={path || `~sampel/path`} />
             <iframe
               src="https://en.wikipedia.org/wiki/Tiling_window_manager"
               style={{ width: '100%', height: '100%', border: 'none' }}
