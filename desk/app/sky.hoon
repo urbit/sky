@@ -1,4 +1,4 @@
-/+  dbug, default-agent, verb
+/+  dbug, default-agent, verb, schooner, server
 |%
 +$  versioned-state
   $%  state-0
@@ -32,7 +32,28 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  `this
+  |^
+    ?+    mark  (on-poke:def mark vase)
+        %handle-http-request
+      ?>  =(src.bowl our.bowl)
+      =^  cards  state
+        (handle-http !<([@ta =inbound-request:eyre] vase))
+      [cards this]
+    ==
+    ++  handle-http
+      |=  [eyre-id=@ta =inbound-request:eyre]
+      ^-  (quip card _state)
+      =/  ,request-line:server
+        (parse-request-line:server url.request.inbound-request)
+      =+  send=(cury response:schooner eyre-id)
+    ::
+      ?+    method.request.inbound-request  
+        [(send [405 ~ [%stock ~]]) state]
+      ::
+          %'POST'
+        !!
+      ==
+    --
 ::
 ++  on-peek
   |=  path=(pole knot)
