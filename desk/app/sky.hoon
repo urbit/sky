@@ -50,7 +50,20 @@
       ?+    method.request.inbound-request  
         [(send [405 ~ [%stock ~]]) state]
       ::
+          %'DELETE'
+        ~_  leaf/"DELETE failed successfully!"
+        !!
+      ::
+          %'GET'
+        ~_  leaf/"GET failed successfully!"
+        !!
+      ::
           %'POST'
+        ~_  leaf/"POST failed successfully!"
+        !!
+      ::
+          %'PUT'
+        ~_  leaf/"PUT failed successfully!"
         !!
       ==
     --
