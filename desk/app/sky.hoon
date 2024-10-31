@@ -68,30 +68,9 @@
       ==
     --
 ::
-++  on-peek
-  |=  path=(pole knot)
-  ^-  (unit (unit cage))
-  ``*cage
-  ::  ?+    path  (on-peek:def path)
-  ::    [%x %value idx=@ ~]  [~ ~ [%noun !>((snag idx.path values))]]
-  ::    [%x %values ~]  [~ ~ [%noun !>(values)]]
-  ::  ==
-++  on-watch
-  |=  path=(pole knot)
-  ^-  (quip card _this)
-  `this
-++  on-arvo
-  |=  [=wire =sign-arvo]
-  ^-  (quip card _this)
-  `this
-  ::  ?+    sign-arvo  (on-arvo:def [wire sign-arvo])
-  ::      [%eyre %bound *]
-  ::    ?:  accepted.sign-arvo
-  ::      %-  (slog leaf+"/apps/{(trip dap.bowl)} bound successfully!" ~)
-  ::      [~ this]
-  ::    %-  (slog leaf+"Binding /apps/{(trip dap.bowl)} failed!" ~)
-  ::    [~ this]
-  ::  ==
+++  on-peek   on-peek:def
+++  on-watch  on-watch:def
+++  on-arvo   on-arvo:def
 ++  on-leave  on-leave:def
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
