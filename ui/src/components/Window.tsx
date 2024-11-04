@@ -109,7 +109,10 @@ export default function Window({ id, path }: WindowProps) {
       console.log(`useEffect in window ${id} for new path ${path}`)
       if (path !== '~sampel/home') {
         const content = await renderContent(path || '~sampel/path')
-        setWindowContent(content)
+        // TODO error msg if content is null/undefined
+        if (content) {
+          setWindowContent(content)
+        }
       }
     }
 
