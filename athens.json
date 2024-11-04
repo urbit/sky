@@ -1,9 +1,10 @@
 {
   "domains": {
     "~bonbud-macryg": "https://hi.bonbud-macryg.computer",
-    "~tiller-tolbus" : {
+    "~tiller-tolbus": {
+      "athens": "https://tiller-tolbus.urbit.org",
       "ship": "https://tiller-tolbus.redhorizon.com"
-    }
+    },
     "~simsur-ronbet": "https://simsur-ronbet.tlon.network"
   }
 }

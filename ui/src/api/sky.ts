@@ -5,40 +5,60 @@ import Urbit from '@urbit/http-api'
 //      use Authorization header throughout for these
 //      requests
 
-async function get(path: string): Promise<Response | void> {
-  if (window.ship) {
-    // TODO remote scry over HTTP?
-    //      waiting on 410k
-    pokeSky({
-      method: 'GET',
-      body: {
-        path: path
-      }
-    })
-  } else {
-    const ship = path.split('/')[1].slice(1)
-    const endpoint = path.split('/').slice(1).join('/')
-    //const url = `https://${ship}.urbit.org/${endpoint}`
-    const testDomain = testGetDomain(ship)
-    const url = `${testDomain}/${endpoint}`
+async function findDomains(path: string) {
+  const ship = path.split('/')[0]
+  console.log(`Attempting to get domain for ${ship}`)
+  const res = await fetch(`http://localhost:3000/domains`)
+  const data = await res.json()
+  return data[ship]
+}
 
-    return fetch(url, {
-      method: 'GET'
-      // TODO Authorization header
-    })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`Response not ok at ${url}`)
-        }
-        return res
-      })
-      .then(data => {
-        return data
-      })
-      .catch(err => {
-        console.error(`GET request to ${url} failed:`, err)
-      })
+async function findUrls(path: string) {
+  const domains = await findDomains(path)
+  const endpoint = path.split('/').slice(1).join('/')
+  const athensUrl = `${domains.athens}/${endpoint}`
+  const shipUrl = `${domains.ship}/${endpoint}`
+
+  return {
+    athens: athensUrl,
+    ship: shipUrl
   }
+}
+
+async function get(path: string): Promise<Response | void> {
+  const urls = await findUrls(path)
+
+  return fetch(urls.athens, {
+    method: 'GET'
+    // TODO Authorization header
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`Response not ok at ${urls.athens}`)
+      }
+      return res
+    })
+    .then(data => {
+      return data
+    })
+    .catch(err => {
+      console.error(`GET request to ${urls.athens} failed:`, err)
+      return fetch(urls.ship, {
+        method: 'GET'
+      })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Response not ok at ${urls.ship}`)
+          }
+          return res
+        })
+        .then(data => {
+          return data
+        })
+        .catch(err => {
+          console.error(`GET request to ${urls.ship} failed:`, err)
+        })
+    })
 }
 
 async function put(path: string, json: JSON): Promise<Response | void> {
@@ -147,10 +167,4 @@ function pokeSky(json: any) {
   })
 }
 
-async function testGetDomain(ship: string) {
-  const res = await fetch(`http://localhost:3000/domains/${ship}`)
-  const data = await res.json()
-  return data[ship]
-}
-
-export { del, get, post, put }
+export { del, get, post, put, findDomains, findUrls }
