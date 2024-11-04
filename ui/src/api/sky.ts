@@ -18,6 +18,8 @@ async function findUrls(path: string) {
   const endpoint = path.split('/').slice(1).join('/')
   const athensUrl = `${domains.athens}/${endpoint}`
   const shipUrl = `${domains.ship}/${endpoint}`
+  console.log(athensUrl)
+  console.log(shipUrl)
 
   return {
     athens: athensUrl,

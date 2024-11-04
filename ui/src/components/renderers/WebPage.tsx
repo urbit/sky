@@ -1,5 +1,5 @@
 export default function WebPage({ page }: { page: Response }): JSX.Element {
-  console.log(page)
+  console.log('page: ', page)
 
   return (
     <iframe
