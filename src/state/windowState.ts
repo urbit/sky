@@ -1,7 +1,5 @@
-import { WindowNode } from '../types/windows.ts'
-
 export default interface WindowState {
-  windowTree: WindowNode
+  windowMap:  Map<number, string | null>;
   addWindowNode: (parentId: number, path: string) => void
   delWindowNode: (id: number) => void
   clearWindows: () => void

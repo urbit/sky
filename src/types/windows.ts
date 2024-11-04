@@ -10,7 +10,8 @@ export interface WindowNode {
 }
 
 export interface WindowContainerProps {
-	node: WindowNode,
+	map: Map<number, string | null>;
+	id: number;
 	isVertical: boolean
 }
 

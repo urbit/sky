@@ -10,7 +10,8 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 
 function App() {
-  const { windowTree } = useWindowStore()
+  const { windowMap } = useWindowStore()
+
 
   return (
     <div style={{ width: `calc(100vw - ${20}px)`, height: '100vh' }}>
@@ -21,7 +22,8 @@ function App() {
       */}
       <div style={{ width: '100%', height: `calc(100% - ${65}px)` }}>
         <WindowContainer
-          node={windowTree}
+          map={windowMap}
+          id={1}
           isVertical={window.innerWidth > window.innerHeight}
         />
       </div>
