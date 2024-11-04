@@ -5,7 +5,7 @@ import Urbit from '@urbit/http-api'
 //      use Authorization header throughout for these
 //      requests
 
-function get(path: string) {
+async function get(path: string): Promise<Response | void> {
   if (window.ship) {
     // TODO remote scry over HTTP?
     //      waiting on 410k
@@ -18,8 +18,11 @@ function get(path: string) {
   } else {
     const ship = path.split('/')[1].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
-    const url = `https://${ship}.urbit.org/${endpoint}`
-    fetch(url, {
+    //const url = `https://${ship}.urbit.org/${endpoint}`
+    const testDomain = testGetDomain(ship)
+    const url = `${testDomain}/${endpoint}`
+
+    return fetch(url, {
       method: 'GET'
       // TODO Authorization header
     })
@@ -27,7 +30,7 @@ function get(path: string) {
         if (!res.ok) {
           throw new Error(`Response not ok at ${url}`)
         }
-        return res.json()
+        return res
       })
       .then(data => {
         return data
@@ -38,7 +41,7 @@ function get(path: string) {
   }
 }
 
-function put(path: string, json: JSON) {
+async function put(path: string, json: JSON): Promise<Response | void> {
   if (window.ship) {
     pokeSky({
       method: 'PUT',
@@ -51,7 +54,8 @@ function put(path: string, json: JSON) {
     const ship = path.split('/')[1].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
-    fetch(url, {
+
+    return fetch(url, {
       method: 'PUT',
       // TODO Authorization header
       body: JSON.stringify(json)
@@ -59,7 +63,7 @@ function put(path: string, json: JSON) {
   }
 }
 
-function post(path: string, json: JSON) {
+async function post(path: string, json: JSON): Promise<Response | void> {
   if (window.ship) {
     pokeSky({
       method: 'POST',
@@ -72,7 +76,8 @@ function post(path: string, json: JSON) {
     const ship = path.split('/')[1].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
-    fetch(url, {
+
+    return fetch(url, {
       method: 'POST',
       // TODO Authorization header
       body: JSON.stringify(json)
@@ -92,7 +97,7 @@ function post(path: string, json: JSON) {
   }
 }
 
-function del(path: string) {
+async function del(path: string): Promise<Response | void> {
   if (window.ship) {
     pokeSky({
       method: 'DELETE',
@@ -104,7 +109,8 @@ function del(path: string) {
     const ship = path.split('/')[1].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
-    fetch(url, {
+
+    return fetch(url, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -139,6 +145,12 @@ function pokeSky(json: any) {
       console.error(`Failed ${json.method} request to %sky with JSON `, json.body.json)
     }
   })
+}
+
+async function testGetDomain(ship: string) {
+  const res = await fetch(`http://localhost:3000/domains/${ship}`)
+  const data = await res.json()
+  return data[ship]
 }
 
 export { del, get, post, put }

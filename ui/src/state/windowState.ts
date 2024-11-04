@@ -5,4 +5,5 @@ export default interface WindowState {
   addWindowNode: (parentId: number, path: string) => void
   delWindowNode: (id: number) => void
   clearWindows: () => void
+  updateWindowPath: (id: number, path: string) => void
 }
