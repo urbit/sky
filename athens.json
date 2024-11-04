@@ -1,6 +1,5 @@
 {
   "domains": {
-    "~bonbud-macryg": "https://hi.bonbud-macryg.computer",
     "~bonbud-macryg": {
       "athens": "https://bonbud-macryg.urbit.org",
       "ship": "https://hi.bonbud-macryg.computer"
