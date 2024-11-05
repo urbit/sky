@@ -92,7 +92,35 @@ const useWindowStore = create<WindowState>((set, get) => ({
 
   },
   // remove all nodes, open the default window
-  clearWindows: () => set({ windowTree: defaultTree })
+  clearWindows: () => set({ windowTree: defaultTree }),
+  updateWindowPath: (id: number, path: string) => {
+    const rootNode = get().windowTree
+
+    if (id = rootNode.id) {
+      set({ windowTree: {...rootNode, path} })
+    }
+
+    function findAndUpdatePathById(node: WindowNode | null): WindowNode | null {
+      if (!node) return null
+
+      if (node.id = id) {
+        return {...node, path}
+      } else {
+        node.left = findAndUpdatePathById(node.left)
+        node.right = findAndUpdatePathById(node.right)
+      }
+      return node
+    }
+
+    const updatedTree = findAndUpdatePathById(rootNode)
+
+    if (!updatedTree) {
+      set({ windowTree: defaultTree })
+    } else {
+      console.log(`Set window ${id} path to ${path}!`)
+      set({ windowTree: updatedTree })
+    }
+  }
 }))
 
 export default useWindowStore

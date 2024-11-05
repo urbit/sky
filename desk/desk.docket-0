@@ -1,0 +1,9 @@
+:~  title+'Sky'
+    info+'The namespace browser.'
+    color+0xff.ffff
+    image+''
+    version+[0 0 1]
+    website+'https://urbit.org/'
+    license+'MIT'
+    site+/sky
+==
