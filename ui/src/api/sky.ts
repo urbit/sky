@@ -1,4 +1,5 @@
 import Urbit from '@urbit/http-api'
+import { HTTPRequest } from '../types/api'
 
 // TODO authentication for urbit.org / Athens
 //      http-api should take care of pokes for us
@@ -172,7 +173,7 @@ async function del(path: string): Promise<Response | void> {
 
 // TODO make the type more specific than 'any' or 'JSON';
 // needs to be custom defined in /types folder
-function pokeSky(json: any) {
+function pokeSky(json: HTTPRequest) {
   const api = new Urbit('', '', 'sky')
   api.ship = window.ship
   return api.poke({
@@ -180,7 +181,7 @@ function pokeSky(json: any) {
     mark: 'handle-http-request',
     json: json,
     onError: () => {
-      console.error(`Failed ${json.method} request to %sky with JSON `, json.body.json)
+      console.error(`Failed ${json.method} request to %sky with JSON `, json.body)
     }
   })
 }
