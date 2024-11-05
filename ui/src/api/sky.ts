@@ -8,6 +8,7 @@ import Urbit from '@urbit/http-api'
 async function findDomains(path: string) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
+  // TODO fetch from urbit.org / Athens
   const res = await fetch(`http://localhost:3000/domains`)
   const data = await res.json()
 
