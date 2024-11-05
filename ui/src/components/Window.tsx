@@ -5,27 +5,29 @@ import { get, findUrls } from '../api/sky'
 import WebPage from './renderers/WebPage'
 import { useEffect, useState } from 'react'
 
-const defaultContent = <div className='p2'>
-  <p>Default content</p>
+const defaultContent = <div className='p2 fc ac jc' style={{ width: '100%', height: '100%' }}>
+  <p>Default content. Remove this from production!</p>
 </div>
 
-const notRecognizedContent = <div className='p2'>
+const notRecognizedContent = <div className='p2 fc ac jc' style={{ width: '100%', height: '100%' }}>
   <p>Resource is unrecognized or blocked</p>
 </div>
 
 const noURLcontent = (path: string) => {
-  return <div className="p2">
+  return <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
     <p>No URL found for {path}</p>
   </div>
 }
 
 const errorFetchingContent = (err: string) => {
-  return <div className='p2'>
-    <p>Error fetching content:</p>
-    <br />
-    <pre><code>
-      {err}
-    </code></pre>
+  return <div className='p2' style={{ width: '100%', height: '100%' }}>
+    <div>
+      <p>Error fetching content:</p>
+      <br />
+      <pre><code>
+        {err}
+      </code></pre>
+    </div>
   </div>
 }
 
@@ -138,8 +140,6 @@ export default function Window({ id, path }: WindowProps) {
       }
     }
 
-    // Optionally, set loading content while waiting
-    setWindowContent(<div>Loading...</div>)
     fetchContent()
   }, [path])
 
