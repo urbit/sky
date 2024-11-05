@@ -1,5 +1,5 @@
-import Urbit from "@urbit/http-api";
-import { HTTPRequest } from "../types/api";
+//import Urbit from "@urbit/http-api";
+//import { HTTPRequest } from "../types/api";
 
 // TODO authentication for urbit.org / Athens
 //      http-api should take care of pokes for us
@@ -82,13 +82,13 @@ async function get(path: string): Promise<Response | void> {
 
 async function put(path: string, json: JSON): Promise<Response | void> {
   if (window.ship) {
-    pokeSky({
-      method: "PUT",
-      body: {
-        path: path,
-        json: json,
-      },
-    });
+    //pokeSky({
+    //  method: "PUT",
+    //  body: {
+    //    path: path,
+    //    json: json,
+    //  },
+    //});
   } else {
     const ship = path.split("/")[1].slice(1);
     const endpoint = path.split("/").slice(1).join("/");
@@ -104,13 +104,13 @@ async function put(path: string, json: JSON): Promise<Response | void> {
 
 async function post(path: string, json: JSON): Promise<Response | void> {
   if (window.ship) {
-    pokeSky({
-      method: "POST",
-      body: {
-        path: path,
-        json: json,
-      },
-    });
+    //pokeSky({
+    //  method: "POST",
+    //  body: {
+    //    path: path,
+    //    json: json,
+    //  },
+    //});
   } else {
     const ship = path.split("/")[1].slice(1);
     const endpoint = path.split("/").slice(1).join("/");
@@ -138,12 +138,12 @@ async function post(path: string, json: JSON): Promise<Response | void> {
 
 async function del(path: string): Promise<Response | void> {
   if (window.ship) {
-    pokeSky({
-      method: "DELETE",
-      body: {
-        path: path,
-      },
-    });
+    //pokeSky({
+    //  method: "DELETE",
+    //  body: {
+    //    path: path,
+    //  },
+    //});
   } else {
     const ship = path.split("/")[1].slice(1);
     const endpoint = path.split("/").slice(1).join("/");
@@ -173,20 +173,20 @@ async function del(path: string): Promise<Response | void> {
 
 // TODO make the type more specific than 'any' or 'JSON';
 // needs to be custom defined in /types folder
-function pokeSky(json: HTTPRequest) {
-  const api = new Urbit("", "", "sky");
-  api.ship = window.ship;
-  return api.poke({
-    app: "sky",
-    mark: "handle-http-request",
-    json: json,
-    onError: () => {
-      console.error(
-        `Failed ${json.method} request to %sky with JSON `,
-        json.body,
-      );
-    },
-  });
-}
+//function pokeSky(json: HTTPRequest) {
+//  const api = new Urbit("", "", "sky");
+//  api.ship = window.ship;
+//  return api.poke({
+//    app: "sky",
+//    mark: "handle-http-request",
+//    json: json,
+//    onError: () => {
+//      console.error(
+//        `Failed ${json.method} request to %sky with JSON `,
+//        json.body,
+//      );
+//    },
+//  });
+//}
 
 export { del, get, post, put, findDomains, findUrls };
