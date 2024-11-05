@@ -3,6 +3,34 @@ import { NavBarProps } from '../types/navbar.ts'
 import useWindowStore from '../state/useWindowStore.ts'
 import ob from 'urbit-ob'
 
+const isValidPath = (path: string): boolean => {
+  if (path.startsWith('/')) return false
+  if (path.length > 0 && !/^~/.test(path)) return false
+  const azp = path.split('/')[0]
+
+  // validate @p
+  // TODO this doesn't catch everything, should be
+  //      as robust as the dojo is about this and
+  //      should behave the same way
+  if (azp.startsWith('~')) {
+    // star
+    if (azp.length === 7 && !ob.isValidPatp(azp)) return false
+    // planet
+    if (azp.length === 14 && !ob.isValidPatp(azp)) return false
+    // moon
+    if (azp.length === 21 && !ob.isValidPatp(azp)) return false
+    if (azp.length === 28 && !ob.isValidPatp(azp)) return false
+    // comet
+    if (azp.length === 57 && !ob.isValidPatp(azp)) return false
+  }
+
+  // check endpoint is url-safe
+  const end = `/${path.split('/').slice(1).join('/')}`
+  if (!/^[a-zA-Z0-9\/_.-]+$/.test(end)) return false
+
+  return true
+}
+
 export default function NavBar({ id, path }: NavBarProps) {
   const [hovered, setHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -13,34 +41,6 @@ export default function NavBar({ id, path }: NavBarProps) {
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const newValue = e.target.value
-
-    const isValidPath = (path: string): boolean => {
-      if (path.startsWith('/')) return false
-      if (path.length > 0 && !/^~/.test(path)) return false
-      const azp = path.split('/')[0]
-
-      // validate @p
-      // TODO this doesn't catch everything, should be
-      //      as robust as the dojo is about this and
-      //      should behave the same way
-      if (azp.startsWith('~')) {
-        // star
-        if (azp.length === 7 && !ob.isValidPatp(azp)) return false
-        // planet
-        if (azp.length === 14 && !ob.isValidPatp(azp)) return false
-        // moon
-        if (azp.length === 21 && !ob.isValidPatp(azp)) return false
-        if (azp.length === 28 && !ob.isValidPatp(azp)) return false
-        // comet
-        if (azp.length === 57 && !ob.isValidPatp(azp)) return false
-      }
-
-      // check endpoint is url-safe
-      const end = `/${path.split('/').slice(1).join('/')}`
-      if (!/^[a-zA-Z0-9\/_.-]+$/.test(end)) return false
-
-      return true
-    }
 
     if (isValidPath(newValue)) {
       setInputValue(newValue)
