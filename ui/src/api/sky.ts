@@ -10,25 +10,40 @@ async function findDomains(path: string) {
   console.log(`Attempting to get domain for ${ship}`)
   const res = await fetch(`http://localhost:3000/domains`)
   const data = await res.json()
-  return data[ship]
+
+  if (data[ship]) {
+    return data[ship]
+  } else {
+    console.error(`No domains found for ${ship}`)
+  }
 }
 
 async function findUrls(path: string) {
   const domains = await findDomains(path)
-  const endpoint = path.split('/').slice(1).join('/')
-  const athensUrl = `${domains.athens}/${endpoint}`
-  const shipUrl = `${domains.ship}/${endpoint}`
-  console.log(athensUrl)
-  console.log(shipUrl)
 
-  return {
-    athens: athensUrl,
-    ship: shipUrl
+  if (!domains || !domains.athens && !domains.ship) {
+    console.error(`No URLs found for ${path.split('/').slice(0)}`)
+  } else {
+    const endpoint = path.split('/').slice(1).join('/')
+    const athensUrl = `${domains.athens}/${endpoint}`
+    const shipUrl = `${domains.ship}/${endpoint}`
+    console.log(athensUrl)
+    console.log(shipUrl)
+
+    return {
+      athens: athensUrl,
+      ship: shipUrl
+    }
   }
 }
 
 async function get(path: string): Promise<Response | void> {
   const urls = await findUrls(path)
+
+  if (!urls) {
+    console.error(`Can't find a resource at ${path}`)
+    return;
+  }
 
   return fetch(urls.athens, {
     method: 'GET'

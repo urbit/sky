@@ -1,14 +1,33 @@
 import { Allotment } from 'allotment'
-//import useWindowStore from '../state/useWindowStore'
 import { WindowProps } from '../types/windows'
 import NavBar from './NavBar'
 import { get, findUrls } from '../api/sky'
 import WebPage from './renderers/WebPage'
-import { uesEffect, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const defaultContent = <div>
+const defaultContent = <div className='p2'>
   <p>Default content</p>
 </div>
+
+const notRecognizedContent = <div className='p2'>
+  <p>Resource is unrecognized or blocked</p>
+</div>
+
+const noURLcontent = (path: string) => {
+  return <div className="p2">
+    <p>No URL found for {path}</p>
+  </div>
+}
+
+const errorFetchingContent = (err: string) => {
+  return <div className='p2'>
+    <p>Error fetching content:</p>
+    <br />
+    <pre><code>
+      {err}
+    </code></pre>
+  </div>
+}
 
 function renderResponse(res: Response): JSX.Element {
   console.log('Received response')
@@ -19,7 +38,6 @@ function renderResponse(res: Response): JSX.Element {
       return <><p>Plain text content is not currently displayed.</p></>
     case 'text/html':
       console.log("Processing HTML document...")
-      //return <><p>I'm an HTML page!</p></>
       return <WebPage page={res} />
     case 'application/json':
       console.log("Processing JSON data...")
@@ -47,8 +65,7 @@ function renderResponse(res: Response): JSX.Element {
       return <><p>MP3 audio content is not currently displayed.</p></>
     default:
       console.log(`Resource isn't recognized or is blocked by CORS`)
-      // TODO should return content specific to this error
-      return defaultContent
+      return notRecognizedContent
   }
 }
 
@@ -63,6 +80,12 @@ async function renderContent(path: string) {
       return renderResponse(data)
     } else {
       const urls = await findUrls(path)
+
+      if (!urls) {
+        console.error(`No URLs found for ${path.split('/').slice(0)}`)
+        return noURLcontent(path)
+      }
+
       console.log(urls)
       console.log(urls.athens)
       console.log(urls.ship)
@@ -93,10 +116,9 @@ async function renderContent(path: string) {
         />
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching content:', error)
-    // TODO should return content specific to this error
-    return defaultContent
+    return errorFetchingContent(error.toString())
   }
 }
 
