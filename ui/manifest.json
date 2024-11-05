@@ -1,0 +1,9 @@
+{
+  "name": "Sky",
+  "short_name": "Sky",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "The namespace browser"
+}
