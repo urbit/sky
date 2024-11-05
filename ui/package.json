@@ -2,6 +2,7 @@
   "name": "sky",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "pnpm lint && pnpm format && tsc -b && vite build",

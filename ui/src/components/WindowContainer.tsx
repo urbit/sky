@@ -1,11 +1,14 @@
-import { Allotment } from 'allotment'
-import { WindowContainerProps } from '../types/windows.ts'
-import Window from './Window.tsx'
+import { Allotment } from "allotment";
+import { WindowContainerProps } from "../types/windows.ts";
+import Window from "./Window.tsx";
 
-export default function WindowContainer({ node, isVertical }: WindowContainerProps): JSX.Element {
-  if (!node) return <></>
+export default function WindowContainer({
+  node,
+  isVertical,
+}: WindowContainerProps): JSX.Element {
+  if (!node) return <></>;
 
-  const hasChildren = node.left || node.right
+  const hasChildren = node.left || node.right;
 
   // TODO should get size info from WindowNode and use
   // that for the preferredSize
@@ -23,7 +26,6 @@ export default function WindowContainer({ node, isVertical }: WindowContainerPro
     // TODO delete a window from state if the user has
     // made it invisible by shrinking it to size 0
   }
-
 
   return (
     <Allotment
@@ -50,11 +52,14 @@ export default function WindowContainer({ node, isVertical }: WindowContainerPro
           onVisibleChange={handleVisibleChange}
           defaultSizes={[50, 50]}
         >
-          {node.left && <WindowContainer node={node.left} isVertical={!isVertical} />}
-          {node.right && <WindowContainer node={node.right} isVertical={!isVertical} />}
+          {node.left && (
+            <WindowContainer node={node.left} isVertical={!isVertical} />
+          )}
+          {node.right && (
+            <WindowContainer node={node.right} isVertical={!isVertical} />
+          )}
         </Allotment>
       )}
     </Allotment>
-  )
+  );
 }
-
