@@ -8,3 +8,14 @@ declare global {
     ship?: string;
   }
 }
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "urbit-sigil": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & import("./types/sigil").SigilProps,
+        HTMLElement
+      >;
+    }
+  }
+}
