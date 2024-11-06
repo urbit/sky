@@ -1,16 +1,19 @@
-import { Allotment } from "allotment";
-import { WindowContainerProps } from "../types/windows.ts";
-import Window from "./Window.tsx";
+import { Allotment } from 'allotment'
+import { WindowContainerProps } from '../types/windows.ts'
+import Window from './Window.tsx'
 
 export default function WindowContainer({
-  node,
-  isVertical,
+  map,
+  id,
+  isVertical
 }: WindowContainerProps): JSX.Element {
-  if (!node) return <></>;
+  if (!map) return <></>
 
-  const hasChildren = node.left || node.right;
+  const childId = id * 2
+  const hasChildren = map.get(id) === null
+  //console.log('does ', id, 'have children', hasChildren)
 
-  // TODO should get size info from WindowNode and use
+  // TODO should get size info from Window and use
   // that for the preferredSize
 
   function handleDragEnd() {
@@ -39,7 +42,7 @@ export default function WindowContainer({
     >
       {!hasChildren ? (
         // return a window
-        <Window id={node.id} path={node.path} />
+        <Window id={id} path={map.get(id) ?? null} />
       ) : (
         // return a window container
         <Allotment
@@ -52,14 +55,18 @@ export default function WindowContainer({
           onVisibleChange={handleVisibleChange}
           defaultSizes={[50, 50]}
         >
-          {node.left && (
-            <WindowContainer node={node.left} isVertical={!isVertical} />
+          {map.has(childId) && (
+            <WindowContainer map={map} id={childId} isVertical={!isVertical} />
           )}
-          {node.right && (
-            <WindowContainer node={node.right} isVertical={!isVertical} />
+          {map.has(childId + 1) && (
+            <WindowContainer
+              map={map}
+              id={childId + 1}
+              isVertical={!isVertical}
+            />
           )}
         </Allotment>
       )}
     </Allotment>
-  );
+  )
 }
