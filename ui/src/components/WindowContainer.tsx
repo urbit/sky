@@ -13,7 +13,7 @@ export default function WindowContainer({
   const hasChildren = map.get(id) === null
   //console.log('does ', id, 'have children', hasChildren)
 
-  // TODO should get size info from WindowNode and use
+  // TODO should get size info from Window and use
   // that for the preferredSize
 
   function handleDragEnd() {

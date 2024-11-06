@@ -10,7 +10,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
   windowMap: defaultMap,
   // add a new window to the tree
-  addWindowNode: (parentId: number, path: string) => {
+  addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
     const parentPath = windowMap.get(parentId) ?? null
 
@@ -21,34 +21,34 @@ const useWindowStore = create<WindowState>((set, get) => ({
     set({ windowMap })
   },
   // remove a node from the tree
-  delWindowNode: (id: number) => {
+  delWindow: (id: number) => {
     const windowMap = get().windowMap
 
     windowMap.delete(id)
-
-    function updatedMap(id: number): void {
-      if (id === 1) {
-        set({ windowMap: defaultMap })
-        return
-      } else if (isEven(id)) {
-        const siblingId = id + 1
-        const siblingPath = windowMap.get(siblingId) ?? null
-        windowMap.set(id / 2, siblingPath)
-        windowMap.delete(siblingId)
-      } else {
-        const siblingId = id - 1
-        const siblingPath = windowMap.get(siblingId) ?? null
-        windowMap.set(siblingId / 2, siblingPath)
-        windowMap.delete(siblingId)
-      }
-    }
 
     function isEven(num: number): boolean {
       return num % 2 === 0
     }
 
-    updatedMap(id)
-    set({ windowMap })
+    if (id === 1) {
+      set({ windowMap: defaultMap })
+    } else if (isEven(id)) {
+      //  if we delete window 2, we remove window 3 as well
+      //  and asign path of window 3 to parent window 1
+      const siblingId = id + 1
+      const siblingPath = windowMap.get(siblingId) ?? null
+      windowMap.set(id / 2, siblingPath)
+      windowMap.delete(siblingId)
+      set({ windowMap })
+    } else {
+      //  if we delete window 3, we remove window 2 as well
+      //  and asign path of window 2 to parent window 1
+      const siblingId = id - 1
+      const siblingPath = windowMap.get(siblingId) ?? null
+      windowMap.set(siblingId / 2, siblingPath)
+      windowMap.delete(siblingId)
+      set({ windowMap })
+    }
   },
   // remove all nodes, open the default window
   clearWindows: () => set({ windowMap: defaultMap }),
