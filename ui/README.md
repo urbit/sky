@@ -19,4 +19,3 @@ cd sky
 pnpm add -g json-server
 npx json-server athens.json --port 3000
 ```
-

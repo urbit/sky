@@ -1,125 +1,65 @@
-import { create } from "zustand";
-import WindowState from "./windowState";
-import { WindowNode } from "../types/windows";
+import { create } from 'zustand'
+import WindowState from './windowState'
 
 // homepage
-const defaultTree = {
-  id: 1,
-  path: "~sampel/home",
-  left: null,
-  right: null,
-};
+const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
-  windowTree: defaultTree,
+  windowMap: defaultMap,
   // add a new window to the tree
-  addWindowNode: (parentId: number, path: string) => {
-    const rootNode = get().windowTree;
+  addWindow: (parentId: number, path: string) => {
+    const windowMap = get().windowMap
+    const parentPath = windowMap.get(parentId) ?? null
 
-    function findAndAddToParent(node: WindowNode | null): WindowNode | null {
-      if (!node) return null;
+    windowMap.set(parentId * 2, parentPath)
+    windowMap.set(parentId * 2 + 1, path)
+    windowMap.set(parentId, null)
 
-      if (node.id === parentId) {
-        node.left = {
-          id: parentId * 2,
-          path: node.path,
-          left: null,
-          right: null,
-        };
-        node.right = {
-          id: parentId * 2 + 1,
-          path: path,
-          left: null,
-          right: null,
-        };
-        node.path = null;
-      } else {
-        node.left = findAndAddToParent(node.left);
-        node.right = findAndAddToParent(node.right);
-      }
-      return node;
-    }
-
-    const updatedTree = findAndAddToParent(rootNode);
-
-    if (!updatedTree) {
-      set({ windowTree: defaultTree });
-    } else {
-      set({ windowTree: updatedTree });
-    }
+    set({ windowMap })
   },
   // remove a node from the tree
-  delWindowNode: (id: number) => {
-    const rootNode = get().windowTree;
+  delWindow: (id: number) => {
+    const windowMap = get().windowMap
 
-    if (id === rootNode.id) {
-      set({ windowTree: defaultTree });
+    windowMap.delete(id)
+
+    function isEven(num: number): boolean {
+      return num % 2 === 0
     }
 
-    function findAndDeleteById(node: WindowNode | null): WindowNode | null {
-      if (!node) return null;
-
-      if (node.id === id) {
-        return null;
-      }
-
-      node.left = findAndDeleteById(node.left);
-      node.right = findAndDeleteById(node.right);
-
-      if (!node.left && !node.right) {
-        return node;
-      }
-
-      if (!node.left && node.right) {
-        return node.right;
-      }
-
-      if (node.left && !node.right) {
-        return node.left;
-      }
-
-      return node;
-    }
-
-    const updatedTree = findAndDeleteById(rootNode);
-
-    if (!updatedTree) {
-      set({ windowTree: defaultTree });
+    if (id === 1) {
+      set({ windowMap: defaultMap })
+    } else if (isEven(id)) {
+      //  if we delete window 2, we remove window 3 as well
+      //  and asign path of window 3 to parent window 1
+      const siblingId = id + 1
+      const siblingPath = windowMap.get(siblingId) ?? null
+      windowMap.set(id / 2, siblingPath)
+      windowMap.delete(siblingId)
+      set({ windowMap })
     } else {
-      set({ windowTree: updatedTree });
+      //  if we delete window 3, we remove window 2 as well
+      //  and asign path of window 2 to parent window 1
+      const siblingId = id - 1
+      const siblingPath = windowMap.get(siblingId) ?? null
+      windowMap.set(siblingId / 2, siblingPath)
+      windowMap.delete(siblingId)
+      set({ windowMap })
     }
   },
   // remove all nodes, open the default window
-  clearWindows: () => set({ windowTree: defaultTree }),
+  clearWindows: () => set({ windowMap: defaultMap }),
   updateWindowPath: (id: number, path: string) => {
-    const rootNode = get().windowTree;
+    const windowMap = get().windowMap
 
-    if (id === rootNode.id) {
-      set({ windowTree: { ...rootNode, path } });
-    }
-
-    function findAndUpdatePathById(node: WindowNode | null): WindowNode | null {
-      if (!node) return null;
-
-      if (node.id === id) {
-        return { ...node, path };
-      } else {
-        node.left = findAndUpdatePathById(node.left);
-        node.right = findAndUpdatePathById(node.right);
-      }
-      return node;
-    }
-
-    const updatedTree = findAndUpdatePathById(rootNode);
-
-    if (!updatedTree) {
-      set({ windowTree: defaultTree });
+    if (windowMap.has(id)) {
+      windowMap.set(id, path)
+      set({ windowMap: windowMap })
     } else {
-      console.log(`Set window ${id} path to ${path}!`);
-      set({ windowTree: updatedTree });
+      set({ windowMap: windowMap })
     }
-  },
-}));
+  }
+}))
 
-export default useWindowStore;
+export default useWindowStore
