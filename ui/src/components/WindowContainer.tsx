@@ -1,23 +1,17 @@
-import { Allotment } from "allotment";
-import { WindowContainerProps } from "../types/windows.ts";
-import Window from "./Window.tsx";
+import { Allotment } from 'allotment'
+import { WindowContainerProps } from '../types/windows.ts'
+import Window from './Window.tsx'
 
-<<<<<<< HEAD:src/components/WindowContainer.tsx
-export default function WindowContainer({ map, id, isVertical }: WindowContainerProps): JSX.Element {
+export default function WindowContainer({
+  map,
+  id,
+  isVertical
+}: WindowContainerProps): JSX.Element {
   if (!map) return <></>
-  
+
   const childId = id * 2
   const hasChildren = map.get(id) === null
   //console.log('does ', id, 'have children', hasChildren)
-=======
-export default function WindowContainer({
-  node,
-  isVertical,
-}: WindowContainerProps): JSX.Element {
-  if (!node) return <></>;
-
-  const hasChildren = node.left || node.right;
->>>>>>> origin:ui/src/components/WindowContainer.tsx
 
   // TODO should get size info from WindowNode and use
   // that for the preferredSize
@@ -61,19 +55,18 @@ export default function WindowContainer({
           onVisibleChange={handleVisibleChange}
           defaultSizes={[50, 50]}
         >
-<<<<<<< HEAD:src/components/WindowContainer.tsx
-          {map.has(childId) && <WindowContainer map={map} id={childId} isVertical={!isVertical} />}
-          {map.has(childId + 1) && <WindowContainer map={map} id={childId + 1} isVertical={!isVertical} />}
-=======
-          {node.left && (
-            <WindowContainer node={node.left} isVertical={!isVertical} />
+          {map.has(childId) && (
+            <WindowContainer map={map} id={childId} isVertical={!isVertical} />
           )}
-          {node.right && (
-            <WindowContainer node={node.right} isVertical={!isVertical} />
+          {map.has(childId + 1) && (
+            <WindowContainer
+              map={map}
+              id={childId + 1}
+              isVertical={!isVertical}
+            />
           )}
->>>>>>> origin:ui/src/components/WindowContainer.tsx
         </Allotment>
       )}
     </Allotment>
-  );
+  )
 }
