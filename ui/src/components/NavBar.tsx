@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { NavBarProps } from '../types/navbar.ts'
-//import useWindowStore from '../state/useWindowStore'
+import useWindowStore from '../state/useWindowStore'
 
 export default function NavBar({ id, path }: NavBarProps) {
   const [hovered, setHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [inputValue, setInputValue] = useState(path)
+  const { updateWindowPath } = useWindowStore()
 
   //const { delWindow } = useWindowStore()
 
@@ -22,9 +23,10 @@ export default function NavBar({ id, path }: NavBarProps) {
     setIsEditing(false)
   }
 
-  function handleSubmit() {
-    // TODO change the path for this node in state
-    // TODO get() this path and render results in the iframe
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    updateWindowPath(id, inputValue)
+    setIsEditing(false)
   }
   // function handleClose() {
   //  delWindow(id)

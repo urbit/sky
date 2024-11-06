@@ -2,9 +2,7 @@ import { create } from 'zustand'
 import WindowState from './windowState'
 
 // homepage
-const defaultMap = new Map<number, string | null>([
-  [1, 'https://en.wikipedia.org/wiki/Tiling_window_manager']
-])
+const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
