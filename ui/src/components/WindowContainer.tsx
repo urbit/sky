@@ -13,7 +13,7 @@ export default function WindowContainer({
   const lastVisibleChange = useRef<number[]>([])
 
   const childId = id * 2
-  const hasChildren = map.get(id) === null
+  const hasChildren = map ? map.get(id) === null : false
 
   // TODO should get size info from Window and use
   // that for the preferredSize
@@ -45,7 +45,6 @@ export default function WindowContainer({
             console.log('invalid index')
           }
         }
-        console.log('map', map)
         lastVisibleChange.current = sizes
       }
     },
