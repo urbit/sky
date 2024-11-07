@@ -28,6 +28,24 @@ const useWindowStore = create<WindowState>((set, get) => ({
       return num % 2 === 0
     }
 
+    function delKids(map: Map<number, string | null>, id: number) {
+      const sequence = new Set<number>()
+      let currentValue = id
+
+      while (currentValue <= Math.max(...Array.from(map.keys()))) {
+        sequence.add(currentValue)
+        sequence.add(currentValue + 1)
+        currentValue *= 2
+      }
+
+      map.forEach((value, key) => {
+        if (sequence.has(key)) {
+          console.log(value)
+          map.delete(key)
+        }
+      })
+    }
+
     if (id === 1) {
       set({ windowMap: defaultMap })
     } else if (isEven(id)) {
@@ -36,15 +54,18 @@ const useWindowStore = create<WindowState>((set, get) => ({
       const siblingId = id + 1
       const siblingPath = windowMap.get(siblingId) ?? null
       windowMap.set(id / 2, siblingPath)
-      windowMap.delete(siblingId)
+      delKids(windowMap, id)
+      console.log('new map', windowMap)
       set({ windowMap })
     } else {
-      //  if we delete window 3, we remove window 2 as well
+      //  if we delete window 3, we remove all
       //  and asign path of window 2 to parent window 1
       const siblingId = id - 1
       const siblingPath = windowMap.get(siblingId) ?? null
       windowMap.set(siblingId / 2, siblingPath)
       windowMap.delete(siblingId)
+      delKids(windowMap, id)
+      console.log('new map', windowMap)
       set({ windowMap })
     }
   },

@@ -1,17 +1,19 @@
 import { Allotment } from 'allotment'
 import { WindowContainerProps } from '../types/windows.ts'
+import { useRef, useCallback } from 'react'
 import Window from './Window.tsx'
+import useWindowStore from '../state/useWindowStore'
 
 export default function WindowContainer({
   map,
   id,
   isVertical
 }: WindowContainerProps): JSX.Element {
-  if (!map) return <></>
+  const { delWindow } = useWindowStore()
+  const lastVisibleChange = useRef<number[]>([])
 
   const childId = id * 2
   const hasChildren = map.get(id) === null
-  //console.log('does ', id, 'have children', hasChildren)
 
   // TODO should get size info from Window and use
   // that for the preferredSize
@@ -25,10 +27,32 @@ export default function WindowContainer({
     // the default behaviour already
   }
 
-  function handleVisibleChange() {
-    // TODO delete a window from state if the user has
-    // made it invisible by shrinking it to size 0
-  }
+  const handleVisibleChange = useCallback(
+    (sizes: number[]): void => {
+      // delete a window from state if the user has
+      // made it invisible by shrinking it to size 0
+
+      if (JSON.stringify(sizes) != JSON.stringify(lastVisibleChange.current)) {
+        console.log('handleVisibleChange', sizes, id)
+        const index = sizes.findIndex((num) => num === 0)
+
+        if (index !== -1 && hasChildren) {
+          if (index === 0) {
+            delWindow(childId)
+          } else if (index === 1) {
+            delWindow(childId + 1)
+          } else {
+            console.log('invalid index')
+          }
+        }
+        console.log('map', map)
+        lastVisibleChange.current = sizes
+      }
+    },
+    [hasChildren, childId]
+  )
+
+  if (!map) return <></>
 
   return (
     <Allotment
@@ -38,7 +62,6 @@ export default function WindowContainer({
       vertical={isVertical}
       onDragEnd={handleDragEnd}
       onReset={handleReset}
-      onVisibleChange={handleVisibleChange}
     >
       {!hasChildren ? (
         // return a window
@@ -52,7 +75,9 @@ export default function WindowContainer({
           vertical={!isVertical}
           onDragEnd={handleDragEnd}
           onReset={handleReset}
-          onVisibleChange={handleVisibleChange}
+          onChange={(sizes) => {
+            handleVisibleChange(sizes)
+          }}
           defaultSizes={[50, 50]}
         >
           {map.has(childId) && (
