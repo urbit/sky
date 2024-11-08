@@ -79,9 +79,12 @@ export default function NavBar({ id, path }: NavBarProps) {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    updateWindowPath(id, inputValue);
-    setIsEditing(false);
+    if (isValidPath(inputValue)) {
+      updateWindowPath(id, inputValue);
+      setIsEditing(false);
+    }
   }
+
   // function handleClose() {
   //  delWindow(id)
   // }
