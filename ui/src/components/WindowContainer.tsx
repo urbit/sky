@@ -10,7 +10,7 @@ export default function WindowContainer({
   isVertical
 }: WindowContainerProps): JSX.Element {
   const { delWindow } = useWindowStore()
-  const lastVisibleChange = useRef<number[]>([])
+  const lastChange = useRef<number[]>([])
 
   const childId = id * 2
   const hasChildren = map ? map.get(id) === null : false
@@ -27,13 +27,12 @@ export default function WindowContainer({
     // the default behaviour already
   }
 
-  const handleVisibleChange = useCallback(
+  const handleChange = useCallback(
     (sizes: number[]): void => {
       // delete a window from state if the user has
       // made it invisible by shrinking it to size 0
 
-      if (JSON.stringify(sizes) != JSON.stringify(lastVisibleChange.current)) {
-        console.log('handleVisibleChange', sizes, id)
+      if (JSON.stringify(sizes) != JSON.stringify(lastChange.current)) {
         const index = sizes.findIndex((num) => num === 0)
 
         if (index !== -1 && hasChildren) {
@@ -45,7 +44,7 @@ export default function WindowContainer({
             console.log('invalid index')
           }
         }
-        lastVisibleChange.current = sizes
+        lastChange.current = sizes
       }
     },
     [hasChildren, childId]
@@ -75,7 +74,7 @@ export default function WindowContainer({
           onDragEnd={handleDragEnd}
           onReset={handleReset}
           onChange={(sizes) => {
-            handleVisibleChange(sizes)
+            handleChange(sizes)
           }}
           defaultSizes={[50, 50]}
         >
