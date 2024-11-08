@@ -26,7 +26,7 @@ const isValidPath = (path: string): boolean => {
 
   // check endpoint is url-safe
   const end = `/${path.split('/').slice(1).join('/')}`
-  if (!/^[a-zA-Z0-9\/_.-]+$/.test(end)) return false
+  if (!/^[a-zA-Z0-9/_.-]+$/.test(end)) return false
 
   return true
 }
