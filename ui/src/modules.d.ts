@@ -1,4 +1,3 @@
-declare module 'urbit-ob' {
-  function isValidPatp(ship: string): boolean
+declare module "urbit-ob" {
+  function isValidPatp(ship: string): boolean;
 }
-

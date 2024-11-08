@@ -1,4 +1,4 @@
 export interface NavBarProps {
-  id: number
-  path: string
+  id: number;
+  path: string;
 }
