@@ -1,19 +1,19 @@
-import { Allotment } from "allotment";
-import { WindowContainerProps } from "../types/windows.ts";
-import { useRef, useCallback } from "react";
-import Window from "./Window.tsx";
-import useWindowStore from "../state/useWindowStore";
+import { Allotment } from 'allotment'
+import { WindowContainerProps } from '../types/windows.ts'
+import { useRef, useCallback } from 'react'
+import Window from './Window.tsx'
+import useWindowStore from '../state/useWindowStore'
 
 export default function WindowContainer({
   map,
   id,
-  isVertical,
+  isVertical
 }: WindowContainerProps): JSX.Element {
-  const { delWindow } = useWindowStore();
-  const lastChange = useRef<number[]>([]);
+  const { delWindow } = useWindowStore()
+  const lastChange = useRef<number[]>([])
 
-  const childId = id * 2;
-  const hasChildren = map ? map.get(id) === null : false;
+  const childId = id * 2
+  const hasChildren = map ? map.get(id) === null : false
 
   // TODO should get size info from Window and use
   // that for the preferredSize
@@ -29,28 +29,38 @@ export default function WindowContainer({
 
   const handleChange = useCallback(
     (sizes: number[]): void => {
-      // delete a window from state if the user has
+      // delete a window from state if user
       // made it invisible by shrinking it to size 0
-
-      if (JSON.stringify(sizes) != JSON.stringify(lastChange.current)) {
-        const index = sizes.findIndex((num) => num === 0);
+      if (
+        sizes.length > 1 &&
+        JSON.stringify(sizes) != JSON.stringify(lastChange.current)
+      ) {
+        const index = sizes.findIndex((num) => num === 0)
 
         if (index !== -1 && hasChildren) {
-          if (index === 0) {
-            delWindow(childId);
-          } else if (index === 1) {
-            delWindow(childId + 1);
+          if (index === 0 && map.has(childId)) {
+            delWindow(childId)
+          } else if (index === 1 && map.has(childId + 1)) {
+            delWindow(childId + 1)
           } else {
-            console.log("invalid index");
+            console.log('invalid index')
           }
         }
-        lastChange.current = sizes;
+        lastChange.current = sizes
       }
     },
-    [hasChildren, childId],
-  );
+    [hasChildren, childId]
+  )
 
-  if (!map) return <></>;
+  console.log(
+    id,
+    `has ${childId}`,
+    map.has(childId),
+    `has ${childId + 1}`,
+    map.has(childId + 1)
+  )
+
+  if (!map) return <></>
 
   return (
     <Allotment
@@ -74,7 +84,7 @@ export default function WindowContainer({
           onDragEnd={handleDragEnd}
           onReset={handleReset}
           onChange={(sizes) => {
-            handleChange(sizes);
+            handleChange(sizes)
           }}
           defaultSizes={[50, 50]}
         >
@@ -91,5 +101,5 @@ export default function WindowContainer({
         </Allotment>
       )}
     </Allotment>
-  );
+  )
 }
