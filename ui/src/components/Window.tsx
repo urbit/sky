@@ -57,7 +57,7 @@ export default function Window({ id, path }: WindowProps) {
     );
   };
 
-  function renderResponse(res: Response): JSX.Element {
+  async function renderResponse(res: Response): Promise<JSX.Element> {
     console.log("Received response");
     console.log(res);
     switch (res.headers.get("Content-Type")) {
@@ -70,7 +70,9 @@ export default function Window({ id, path }: WindowProps) {
         );
       case "text/html":
         console.log("Processing HTML document...");
-        return <WebPage page={res} />;
+        const htmlContent = await res.text();
+
+        return <WebPage data={htmlContent} />;
       case "application/json":
         console.log("Processing JSON data...");
         return (

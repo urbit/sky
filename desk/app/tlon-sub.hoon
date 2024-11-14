@@ -91,15 +91,6 @@
   ?+  mark  !!
       %handle-http-request
     (handle-http !<([@ta =inbound-request:eyre] vase))
-      %noun 
-    =/  name  !<(term vase)
-    =/  group  (~(get by groups) [our.bowl name])
-    ?~  group  
-      ~&  >>>  "Group {<name>} wasn't published from {<our.bowl>}"
-      that
-    ~&  >  "Publishing {<name>} to /{<our.bowl>}/{<name>}"
-    %-  emit
-    [%pass /eyre/connect/[q.flag:(need group)] %arvo %e %connect `/[q.flag:(need group)] %tlon-sub]
   ==
 ::
 ++  handle-http
@@ -107,13 +98,12 @@
   ^+  that
   =/  ,request-line:server
     (parse-request-line:server url.request.inbound-request)
-  ~&  'got request'
-  ~&  >  site
   ::
   ?+    method.request.inbound-request  that
       %'GET'
     ?+  site  that
         [@ ~]
+      ~&  inbound-request
       =/  group  (~(get by groups) [our.bowl -:site])
       ?~  group  
         =/  =response-header:http
@@ -133,7 +123,12 @@
         :~  'Access-Control-Allow-Origin'^'*'
             'Content-Type'^'text/html'
         ==
-      =/  data  (as-octs:mimes:html (crip (en-xml:html (view (need group)))))
+      =/  data  
+        %-  as-octs:mimes:html 
+        %-  crip 
+        %-  en-xml:html 
+        %+  view  (need group) 
+            authenticated.inbound-request
       %-  emil   
       %:  http-response-cards 
           response-header
@@ -168,54 +163,52 @@
       ((slog 'Subscribe failed!' ~) that)
       ::
         %fact
-      ?+    p.cage.sign  that
-          %group-previews
-        =/  previews  !<(previews:g q.cage.sign)
-        =/  hosting=(list (pair flag:g preview:g))
-          %+  skim  ~(tap by previews)
-          |=  [p=flag:g q=preview:g]
+      ?>  ?=(%group-previews p.cage.sign)
+      =/  previews  !<(previews:g q.cage.sign)
+      ::  groups that  don't exist in published/public/private groups anymore
+      ::  removing eyre binding
+      =/  remove-binding=(list card)
+        %+  murn  ~(tap by previews)
+        |=  [p=flag:g q=preview:g]
+        ?:  (~(has by previews) p)  ~
+        ~&  >>  :-  'removing eyre binding to'  p
+        `[%pass /eyre/connect/[q.p] %arvo %e %disconnect `/[q.p]]
+      =/  bind=(list card)
+        %+  murn  ~(tap by previews)
+        |=  [p=flag:g q=preview:g]
+        ?.
           ::  if has in groups ignore 
           ::  if secret ignore
           ?&  !(~(has by groups) p)
               !secret.q
           ==
-        =.  groups  `previews:g`(~(uni by groups) previews)
-        %-  emil
-        %+  turn  hosting
-          |=  [p=flag:g q=preview:g]
-          [%pass /eyre/connect/[q.p] %arvo %e %connect `/[q.p] %tlon-sub]
-      ==
+            ~
+          `[%pass /eyre/connect/[q.p] %arvo %e %connect `/[q.p] %tlon-sub]
+      =.  groups  previews
+      %-  emil
+      %+  welp  remove-binding
+      bind
+      ::
         %kick
-      ~&  'Got kick'
       %-  emit
-          [%pass /re-sub %arvo %b %wait (add now.bowl ~m3)]
+          [%pass /re-sub %arvo %b %wait (add now.bowl ~m1)]
     ==
   ==
 ::
 ++  arvo 
   |=  [=wire =sign-arvo]
   ^+  that
-  ?+    wire  that
+  ?+  wire  that
       [%re-sub ~]
-    ?+    sign-arvo  that
-        [%behn %wake *]
+    ?>  ?=([%behn %wake *] sign-arvo)
       ?~  error.sign-arvo
         %-  emit
             [%pass /sub/groups %agent [our.bowl %groups] %watch /gangs/index/(scot %p our.bowl)]
       that
-    ==
-    ::
-      [%eyre %connect @ ~]
-    ?>  ?=([%eyre %bound *] sign-arvo)
-    ?:  accepted.sign-arvo
-      ~&  :-  'bound successfully'  wire
-      that
-    ~&  :-  'binding failed'  wire
-    that
   ==
 ::
 ++  view 
-  |=  group=preview:g
+  |=  [group=preview:g authenticated=?]
   =/  image  (trip image.meta.group)
   =/  cover  (trip cover.meta.group)
   =/  css-image  
@@ -226,6 +219,8 @@
     ?:  (gth (lent cover) 7)
       "background-image: url('{cover}');"
     "background: {cover};"
+  =/  access=tape  (access-type -.cordon.group)
+  ::
   ^-  manx
   ;html
       ;head
@@ -233,10 +228,10 @@
         ;style: {style}
       ==
     ;body
-      ;div.fc.g1.p2
+      ;div.fc.p2.background
       =style  "{css-cover} border-radius: 8px;"
         ;div.fr.g1
-          ;div.fc
+          ;div.fc.background
           =style  "{css-image} border-radius: 8px; width: 100px; height: 100px;"
             ;p.m2
             =style  "color: white;"
@@ -245,15 +240,26 @@
           ==
           ;div.fc
             ;p.m2:  {<p.flag.group>}
-            ;p.m2:  status: {(scow %tas -.cordon.group)}
-            ;p:  {(trip description.meta.group)}
+            ;p.m2:  {access}
+            ;p.m2:  {(trip description.meta.group)}
           ==
         ==
-        ;button.p2
-          ;span:  join
-        ==
+        ;+ 
+          ?:  &(authenticated !=(src.bowl our.bowl))
+            ;button.p2
+              ;span:  join
+            ==
+          ;div;
       ==
     ==
+  ==
+::
+++  access-type
+  |=  policy=@tas
+  ?+  policy  "Undefined"
+    %shut  "Private"
+    %afar  "Secret"
+    %open  "Public"
   ==
 ::
 ++  style 
@@ -286,6 +292,11 @@
       }
       .p2{
         padding: 8px;
+      }
+      .background{
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
       }
     '''
 ::
