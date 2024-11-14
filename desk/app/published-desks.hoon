@@ -93,9 +93,6 @@
 ++  on-arvo   on-arvo:def
 ++  on-leave  on-leave:def
 ++  on-agent
-  ::  XX bind init published desks
-  ::  XX bind a new published desk
-  ::  XX un-bind a desk we've unpublished
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+      -.sign
@@ -113,7 +110,6 @@
     ~&  >  "Got %fact on {<wire>}"
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
-    ::  XX bind/unbind URLs, error if URL is taken
     ?+      mark
           ~_  leaf/"Unexpected mark {<mark>}"
           !!
@@ -121,21 +117,38 @@
       =/  upd  !<(sovereign-update vase)
       ?-  -.upd
           %ini
-        ~&  >  "Got %ini!"
-        ~&  >>  +.upd
-        `this
+        :_  this
+        ::  XX check if URL exists, error if so
+        %+  turn
+          ~(tap by +.upd)
+        |=  [=desk =treaty]
+        ^-  card
+        :*  %pass  /bind  %arvo  %e
+            %set-response  (cat 3 '/' `@t`desk)
+            ~  %.n  %payload
+            [200 ['Content-Type' 'text/html; charset=utf-8']~]
+            ::  XX publish treaty info to page
+            `(as-octs:mimes:html (crip "{<our.bowl>}/{<`@t`desk>}"))
+        ==
       ::
           %add
-        ~&  >  "Got %add!"
-        ~&  >>  desk.upd
-        ~&  >>  treaty.upd
-        `this
+        :_  this
+        ::  XX check if URL exists, error if so
+        :~  :*  %pass  /bind  %arvo  %e
+                %set-response  (cat 3 '/' `@t`desk.upd)
+                ~  %.n  %payload
+                [200 ['Content-Type' 'text/html; charset=utf-8']~]
+                ::  XX publish treaty info to page
+                `(as-octs:mimes:html (crip "{<our.bowl>}/{<`@t`desk.upd>}"))
+            ==
+        ==
       ::
           %del
-        ~&  >  "Got %del!"
-        ~&  >>  desk.upd
-        ~&  >>  treaty.upd
-        `this
+        :_  this
+        :~  :*  %pass  /bind  %arvo  %e
+                %set-response  [(cat 3 '/' `@t`desk.upd) ~]
+            ==
+        ==
       ==
     ==
   ==
