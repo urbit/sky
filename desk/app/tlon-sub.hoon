@@ -91,6 +91,12 @@
   ?+  mark  !!
       %handle-http-request
     (handle-http !<([@ta =inbound-request:eyre] vase))
+    ::
+    ::   %tlon-poke
+    :: =/  group  !<(@tas vase)
+    :: =/  =join:g  :-  [our.bowl name]  %.y
+    :: %-   emit
+    :: [%pass /join/group %agent [src.bowl %groups] %poke !>()]
   ==
 ::
 ++  handle-http
@@ -103,7 +109,6 @@
       %'GET'
     ?+  site  that
         [@ ~]
-      ~&  inbound-request
       =/  group  (~(get by groups) [our.bowl -:site])
       ?~  group  
         =/  =response-header:http
@@ -123,12 +128,18 @@
         :~  'Access-Control-Allow-Origin'^'*'
             'Content-Type'^'text/html'
         ==
+      =/  group-scry
+        .^(group:g %gx /(scot %p our.bowl)/groups/(scot %da now.bowl)/groups/(scot %p our.bowl)/[-:site]/noun)
+      ~&  >>  group-scry
       =/  data  
         %-  as-octs:mimes:html 
         %-  crip 
         %-  en-xml:html 
-        %+  view  (need group) 
+        %:  view  
+            -:site  
+            group-scry
             authenticated.inbound-request
+        ==
       %-  emil   
       %:  http-response-cards 
           response-header
@@ -183,7 +194,7 @@
               !secret.q
           ==
             ~
-          `[%pass /eyre/connect/[q.p] %arvo %e %connect `/[q.p] %tlon-sub]
+          `[%pass /eyre/connect/[q.p] %arvo %e %connect `/[q.p] dap.bowl]
       =.  groups  previews
       %-  emil
       %+  welp  remove-binding
@@ -208,7 +219,7 @@
   ==
 ::
 ++  view 
-  |=  [group=preview:g authenticated=?]
+  |=  [name=@tas =group:g authenticated=?]
   =/  image  (trip image.meta.group)
   =/  cover  (trip cover.meta.group)
   =/  css-image  
@@ -220,6 +231,7 @@
       "background-image: url('{cover}');"
     "background: {cover};"
   =/  access=tape  (access-type -.cordon.group)
+  =/  infleet  ?!  =(~ (~(get by fleet.group) src.bowl))
   ::
   ^-  manx
   ;html
@@ -239,17 +251,20 @@
             ==
           ==
           ;div.fc
-            ;p.m2:  {<p.flag.group>}
+            ;p.m2:  {(scow %tas name)}
+            ;p.m2:  Participants: {<(lent ~(tap by fleet.group))>}
             ;p.m2:  {access}
             ;p.m2:  {(trip description.meta.group)}
           ==
         ==
         ;+ 
-          ?:  &(authenticated !=(src.bowl our.bowl))
+          ?:  &(authenticated !infleet)
             ;button.p2
-              ;span:  join
+              ;span:  Join
             ==
-          ;div;
+          ;button.p2
+            ;span:  Visit group
+          ==
       ==
     ==
   ==
