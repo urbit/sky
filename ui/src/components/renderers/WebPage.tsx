@@ -1,5 +1,5 @@
 export default function WebPage({ data }: { data: string }): JSX.Element {
-  console.log(data)
+
   if (data) {
     console.log(data)
 

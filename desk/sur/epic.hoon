@@ -1,3 +1,5 @@
+::  Metadata types copied in from %groups
+::  Imported in sur/groups.hoon
 |%
 ::  $saga: version synchronisation state
 ::    %dex: publisher is ahead

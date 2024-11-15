@@ -14,7 +14,7 @@
 =|  state-0
 =*  state  -
 ::
-%+  verb  &
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =<
@@ -44,12 +44,6 @@
     =^  cards  state  abet:(poke:hc mark vase)
     [cards this]
   ::
-  ++  on-watch
-    |=  =path
-    ^-  (quip card _this)
-    =^  cards  state  abet:(watch:hc path)
-    [cards this]
-  ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
@@ -62,6 +56,7 @@
     =^  cards  state  abet:(arvo:hc wire sign-arvo)
     [cards this]
   ::
+  ++  on-watch  on-watch:def
   ++  on-peek   on-peek:def
   ++  on-fail   on-fail:def
   ++  on-leave  on-leave:def
@@ -72,12 +67,10 @@
 ++  emil  |=(lac=(list card) that(deck (welp (flop lac) deck)))
 ++  abet  ^-((quip card _state) [(flop deck) state])
 ::
-++  from-self    =(our src):bowl
-::
 ++  init
   ^+  that
   %-  emit 
-      [%pass /sub/groups %agent [our.bowl %groups] %watch /gangs/index/(scot %p our.bowl)]
+  [%pass /sub/groups %agent [our.bowl %groups] %watch /gangs/index/(scot %p our.bowl)]
 ::
 ++  load
   |=  vaz=vase
@@ -91,12 +84,6 @@
   ?+  mark  !!
       %handle-http-request
     (handle-http !<([@ta =inbound-request:eyre] vase))
-    ::
-    ::   %tlon-poke
-    :: =/  group  !<(@tas vase)
-    :: =/  =join:g  :-  [our.bowl name]  %.y
-    :: %-   emit
-    :: [%pass /join/group %agent [src.bowl %groups] %poke !>()]
   ==
 ::
 ++  handle-http
@@ -108,13 +95,15 @@
   ?+    method.request.inbound-request  that
       %'GET'
     ?+  site  that
+    ::  and check if alredy binded in eyre (scry to eyre to see if it's alredy taken)
+    ::  change to perhaps [%group @ ~]
         [@ ~]
       =/  group  (~(get by groups) [our.bowl -:site])
       ?~  group  
         =/  =response-header:http
           :-  404
-          :~  'Access-Control-Allow-Origin'^'*'
-              'Content-Type'^'text/html'
+          :~  ['Access-Control-Allow-Origin' '*']
+              ['Content-Type' 'text/html']
           ==
         =/  data  (as-octs:mimes:html '404 Error - Page Not Found')
         %-  emil
@@ -125,12 +114,17 @@
         ==
       =/  =response-header:http
         :-  200
-        :~  'Access-Control-Allow-Origin'^'*'
-            'Content-Type'^'text/html'
+        :~  ['Access-Control-Allow-Origin' '*']
+            ['Content-Type' 'text/html']
         ==
       =/  group-scry
         .^(group:g %gx /(scot %p our.bowl)/groups/(scot %da now.bowl)/groups/(scot %p our.bowl)/[-:site]/noun)
-      ~&  >>  group-scry
+      ::  check if in fleet and not publisher 
+    ::   =/  joining
+    ::     ?&
+    ::       (~(has by fleet.group-scry) src.bowl)
+    ::       ?!  =(our.bowl src.bowl)
+    ::     ==
       =/  data  
         %-  as-octs:mimes:html 
         %-  crip 
@@ -157,27 +151,18 @@
     [%give %kick [/http-response/[eyre-id]]~ ~]
   ==
 ::
-++  watch
-  |=  =path
-  ^+  that  
-  (emil ~)
-::
 ++  agent
   |=  [=wire =sign:agent:gall]
   ^+  that
   ?+    wire  that
       [%sub %groups ~]
-    ?+    -.sign  that
-        %watch-ack
-      ?~  p.sign
-        ((slog 'Subscribe succeeded!' ~) that)
-      ((slog 'Subscribe failed!' ~) that)
+    ?+  -.sign  that
+        %watch-ack  that
       ::
         %fact
       ?>  ?=(%group-previews p.cage.sign)
       =/  previews  !<(previews:g q.cage.sign)
-      ::  groups that  don't exist in published/public/private groups anymore
-      ::  removing eyre binding
+      ::  remove public/private groups that don't exist anymore from eyre bindings
       =/  remove-binding=(list card)
         %+  murn  ~(tap by previews)
         |=  [p=flag:g q=preview:g]
@@ -188,8 +173,7 @@
         %+  murn  ~(tap by previews)
         |=  [p=flag:g q=preview:g]
         ?.
-          ::  if has in groups ignore 
-          ::  if secret ignore
+          ::  don't bind groups if they're secret, or if we've already bound them
           ?&  !(~(has by groups) p)
               !secret.q
           ==
@@ -197,12 +181,13 @@
           `[%pass /eyre/connect/[q.p] %arvo %e %connect `/[q.p] dap.bowl]
       =.  groups  previews
       %-  emil
-      %+  welp  remove-binding
+      %+  welp  
+        remove-binding
       bind
       ::
         %kick
       %-  emit
-          [%pass /re-sub %arvo %b %wait (add now.bowl ~m1)]
+      [%pass /re-sub %arvo %b %wait (add now.bowl ~m1)]
     ==
   ==
 ::
@@ -212,10 +197,10 @@
   ?+  wire  that
       [%re-sub ~]
     ?>  ?=([%behn %wake *] sign-arvo)
-      ?~  error.sign-arvo
-        %-  emit
-            [%pass /sub/groups %agent [our.bowl %groups] %watch /gangs/index/(scot %p our.bowl)]
-      that
+    ?~  error.sign-arvo
+      %-  emit
+      [%pass /sub/groups %agent [our.bowl %groups] %watch /gangs/index/(scot %p our.bowl)]
+    that
   ==
 ::
 ++  view 
@@ -231,7 +216,7 @@
       "background-image: url('{cover}');"
     "background: {cover};"
   =/  access=tape  (access-type -.cordon.group)
-  =/  infleet  ?!  =(~ (~(get by fleet.group) src.bowl))
+  =/  infleet  (~(has by fleet.group) src.bowl)
   ::
   ^-  manx
   ;html

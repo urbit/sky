@@ -1,3 +1,4 @@
+::  Metadata types copied in from %groups
 /-  meta, e=epic
 |%
 ++  okay  `epic:e`3
