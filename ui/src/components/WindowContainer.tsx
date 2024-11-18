@@ -7,7 +7,7 @@ import useWindowStore from '../state/useWindowStore'
 export default function WindowContainer({
   map,
   id,
-  isVertical,
+  isVertical
 }: WindowContainerProps): JSX.Element {
   const { delWindow } = useWindowStore()
   const lastChange = useRef<number[]>([])
@@ -29,16 +29,18 @@ export default function WindowContainer({
 
   const handleChange = useCallback(
     (sizes: number[]): void => {
-      // delete a window from state if the user has
+      // delete a window from state if user
       // made it invisible by shrinking it to size 0
-
-      if (JSON.stringify(sizes) != JSON.stringify(lastChange.current)) {
-        const index = sizes.findIndex(num => num === 0)
+      if (
+        sizes.length > 1 &&
+        JSON.stringify(sizes) != JSON.stringify(lastChange.current)
+      ) {
+        const index = sizes.findIndex((num) => num === 0)
 
         if (index !== -1 && hasChildren) {
-          if (index === 0) {
+          if (index === 0 && map.has(childId)) {
             delWindow(childId)
-          } else if (index === 1) {
+          } else if (index === 1 && map.has(childId + 1)) {
             delWindow(childId + 1)
           } else {
             console.log('invalid index')
@@ -48,6 +50,14 @@ export default function WindowContainer({
       }
     },
     [hasChildren, childId]
+  )
+
+  console.log(
+    id,
+    `has ${childId}`,
+    map.has(childId),
+    `has ${childId + 1}`,
+    map.has(childId + 1)
   )
 
   if (!map) return <></>
