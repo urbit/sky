@@ -83,7 +83,7 @@ export default function WindowContainer({
           vertical={!isVertical}
           onDragEnd={handleDragEnd}
           onReset={handleReset}
-          onChange={(sizes) => {
+          onChange={sizes => {
             handleChange(sizes)
           }}
           defaultSizes={[50, 50]}

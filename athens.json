@@ -8,6 +8,10 @@
       "athens": "https://tiller-tolbus.urbit.org",
       "ship": "https://tiller-tolbus.redhorizon.com"
     },
-    "~simsur-ronbet": "https://simsur-ronbet.tlon.network"
+    "~simsur-ronbet": "https://simsur-ronbet.tlon.network",
+    "~zod": {
+      "athens": "http://localhost:80",
+      "ship": "http://localhost:80"
+    }
   }
 }

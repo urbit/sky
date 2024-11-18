@@ -34,7 +34,7 @@ async function findUrls(path: string) {
 
     return {
       athens: athensUrl,
-      ship: shipUrl
+      ship: shipUrl,
     }
   }
 }
@@ -48,33 +48,33 @@ async function get(path: string): Promise<Response | void> {
   }
 
   return fetch(urls.athens, {
-    method: 'GET'
+    method: 'GET',
     // TODO Authorization header
   })
-    .then((res) => {
+    .then(res => {
       if (!res.ok) {
         throw new Error(`Response not ok at ${urls.athens}`)
       }
       return res
     })
-    .then((data) => {
+    .then(data => {
       return data
     })
-    .catch((err) => {
+    .catch(err => {
       console.error(`GET request to ${urls.athens} failed:`, err)
       return fetch(urls.ship, {
-        method: 'GET'
+        method: 'GET',
       })
-        .then((res) => {
+        .then(res => {
           if (!res.ok) {
             throw new Error(`Response not ok at ${urls.ship}`)
           }
           return res
         })
-        .then((data) => {
+        .then(data => {
           return data
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(`GET request to ${urls.ship} failed:`, err)
         })
     })
@@ -97,7 +97,7 @@ async function put(path: string, json: JSON): Promise<Response | void> {
     return fetch(url, {
       method: 'PUT',
       // TODO Authorization header
-      body: JSON.stringify(json)
+      body: JSON.stringify(json),
     })
   }
 }
@@ -121,16 +121,16 @@ async function post(path: string, json: JSON): Promise<Response | void> {
       // TODO Authorization header
       body: JSON.stringify(json)
     })
-      .then((res) => {
+      .then(res => {
         if (!res.ok) {
           throw new Error(`Response not ok at ${url}`)
         }
         return res.json()
       })
-      .then((data) => {
+      .then(data => {
         return data
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(`POST request to ${url} failed:`, err)
       })
   }
@@ -152,20 +152,20 @@ async function del(path: string): Promise<Response | void> {
     return fetch(url, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
         // TODO Authorization header
       }
     })
-      .then((res) => {
+      .then(res => {
         if (!res.ok) {
           throw new Error(`Response not ok at ${url}`)
         }
         return res.json()
       })
-      .then((data) => {
+      .then(data => {
         console.log('Delete successful:', data)
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(`DELETE request to ${url} failed:`, err)
       })
   }

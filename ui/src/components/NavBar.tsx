@@ -99,7 +99,7 @@ export default function NavBar({ id, path }: NavBarProps) {
         width: '100%',
         height: '30px',
         paddingRight: '10px',
-        opacity: hovered ? 1.0 : 0.0
+        opacity: hovered ? 1.0 : 0.0,
       }}
     >
       <div
