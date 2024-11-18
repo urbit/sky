@@ -18,17 +18,17 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
           navigator.serviceWorker
-            .register("./service-worker.js")
-            .then((registration) =>
-              console.log("ServiceWorker registered:", registration),
+            .register('./service-worker.js')
+            .then(registration =>
+              console.log('ServiceWorker registered:', registration)
             )
-            .catch((err) =>
-              console.log("ServiceWorker registration failed:", err),
-            );
-        });
+            .catch(err =>
+              console.log('ServiceWorker registration failed:', err)
+            )
+        })
       }
     </script>
   </body>
