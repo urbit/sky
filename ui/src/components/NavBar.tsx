@@ -35,7 +35,7 @@ export default function NavBar({ id, path }: NavBarProps) {
   const [hovered, setHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [inputValue, setInputValue] = useState(path)
-  const { updateWindowPath, delWindow } = useWindowStore()
+  const { delWindow, updateWindowPath } = useWindowStore()
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const newValue = e.target.value
@@ -77,8 +77,10 @@ export default function NavBar({ id, path }: NavBarProps) {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    updateWindowPath(id, inputValue)
-    setIsEditing(false)
+    if (isValidPath(inputValue)) {
+      updateWindowPath(id, inputValue)
+      setIsEditing(false)
+    }
   }
 
   function handleXClick() {
@@ -97,7 +99,7 @@ export default function NavBar({ id, path }: NavBarProps) {
         width: '100%',
         height: '30px',
         paddingRight: '10px',
-        opacity: hovered ? 1.0 : 0.0
+        opacity: hovered ? 1.0 : 0.0,
       }}
     >
       <div
@@ -121,9 +123,7 @@ export default function NavBar({ id, path }: NavBarProps) {
         )}
       </div>
       {/* TODO add real buttons */}
-      <p onClick={handleXClick} style={{ cursor: 'pointer' }}>
-        x
-      </p>
+      <p onClick={handleXClick} style={{ cursor: "pointer" }}>
     </div>
   )
 }

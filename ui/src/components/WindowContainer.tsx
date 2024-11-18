@@ -33,7 +33,7 @@ export default function WindowContainer({
       // made it invisible by shrinking it to size 0
 
       if (JSON.stringify(sizes) != JSON.stringify(lastChange.current)) {
-        const index = sizes.findIndex((num) => num === 0)
+        const index = sizes.findIndex(num => num === 0)
 
         if (index !== -1 && hasChildren) {
           if (index === 0) {
@@ -73,7 +73,7 @@ export default function WindowContainer({
           vertical={!isVertical}
           onDragEnd={handleDragEnd}
           onReset={handleReset}
-          onChange={(sizes) => {
+          onChange={sizes => {
             handleChange(sizes)
           }}
           defaultSizes={[50, 50]}

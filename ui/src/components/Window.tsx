@@ -72,6 +72,7 @@ export default function Window({ id, path }: WindowProps) {
         console.log('Processing HTML document...')
 
         return <WebPage data={await res.text()} />
+
       case 'application/json':
         console.log('Processing JSON data...')
         return (
@@ -225,7 +226,7 @@ export default function Window({ id, path }: WindowProps) {
               width: '100%',
               height: '100%',
               overflow: 'hidden',
-              position: 'relative'
+              position: 'relative',
             }}
           >
             <NavBar id={id} path={path || `~sampel/path`} />

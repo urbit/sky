@@ -80,7 +80,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     } else {
       set({ windowMap: windowMap })
     }
-  }
+  },
 }))
 
 export default useWindowStore

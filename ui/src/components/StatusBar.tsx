@@ -12,7 +12,7 @@ const sigilConfig = {
   foreground: '#FFF',
   background: '#000',
   detail: 'none',
-  space: 'default'
+  space: 'default',
 }
 
 export default function StatusBar() {
@@ -24,7 +24,7 @@ export default function StatusBar() {
           height: '30px',
           paddingLeft: '10px',
           paddingRight: '10px',
-          width: '200px'
+          width: '200px',
         }}
       >
         <span>Workspace 1</span>
