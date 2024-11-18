@@ -123,9 +123,7 @@ export default function NavBar({ id, path }: NavBarProps) {
         )}
       </div>
       {/* TODO add real buttons */}
-      <p onClick={handleXClick} style={{ cursor: 'pointer' }}>
-        x
-      </p>
+      <p onClick={handleXClick} style={{ cursor: "pointer" }}>
     </div>
   )
 }
