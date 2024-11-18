@@ -99,7 +99,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
         //  handles single window delete case (when x-button being used)
         //  if window doesn't have kids, sibling window doesn't have kids and sibling isn't null,
         //  setting valid parent(top tree node that has sibling) to sibling window path and deleteing all winodws below it
-        validParent(map, siblingId)
+        //validParent(map, siblingId)
       } else if (idHasKids && siblingHasKids) {
         //  handles nested window delete case (when multiple window shrinked to 0)
         //  if window has kids and sibling has kids
@@ -110,7 +110,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
         //  if window has kids and sibling doesn't
         //  setting valid parent(top tree node that has sibling) to sibling window path and deleteing all winodws below it
         //  deleteing window kids
-        validParent(map, siblingId)
+        //validParent(map, siblingId)
         delKids(windowMap, kids)
       }
       //  otherwise keep sibling window state

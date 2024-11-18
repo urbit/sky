@@ -213,9 +213,11 @@ export default function Window({ id, path }: WindowProps) {
     fetchContent()
   }, [path])
 
+
+
   return (
     <Allotment>
-      <Allotment.Pane visible key={id}>
+      <Allotment.Pane visible key={id} className="paneContainer">
         <div
           className="fc ac jc"
           style={{ width: '100%', height: '100%', padding: '5px' }}
