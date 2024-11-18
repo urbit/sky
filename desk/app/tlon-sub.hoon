@@ -56,7 +56,12 @@
     =^  cards  state  abet:(arvo:hc wire sign-arvo)
     [cards this]
   ::
-  ++  on-watch  on-watch:def
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    =^  cards  state  abet:(watch:hc path)
+    [cards this]
+  ::
   ++  on-peek   on-peek:def
   ++  on-fail   on-fail:def
   ++  on-leave  on-leave:def
@@ -95,10 +100,8 @@
   ?+    method.request.inbound-request  that
       %'GET'
     ?+  site  that
-    ::  and check if alredy binded in eyre (scry to eyre to see if it's alredy taken)
-    ::  change to perhaps [%group @ ~]
-        [@ ~]
-      =/  group  (~(get by groups) [our.bowl -:site])
+        [%group @ ~]
+      =/  group  (~(get by groups) [our.bowl +6:site])
       ?~  group  
         =/  =response-header:http
           :-  404
@@ -118,7 +121,7 @@
             ['Content-Type' 'text/html']
         ==
       =/  group-scry
-        .^(group:g %gx /(scot %p our.bowl)/groups/(scot %da now.bowl)/groups/(scot %p our.bowl)/[-:site]/noun)
+        .^(group:g %gx /(scot %p our.bowl)/groups/(scot %da now.bowl)/groups/(scot %p our.bowl)/[+6:site]/noun)
       ::  check if in fleet and not publisher 
     ::   =/  joining
     ::     ?&
@@ -168,7 +171,13 @@
         |=  [p=flag:g q=preview:g]
         ?:  (~(has by previews) p)  ~
         ~&  >>  :-  'removing eyre binding to'  p
-        `[%pass /eyre/connect/[q.p] %arvo %e %disconnect `/[q.p]]
+        `[%pass /eyre/connect/[q.p] %arvo %e %disconnect `/group/[q.p]]
+      =/  bindings=(map binding:eyre [duct action:eyre])
+        %-  malt
+        %+  turn
+          .^((list [binding:eyre duct action:eyre]) %e /(scot %p our.bowl)/bindings/(scot %da now.bowl))
+        |=  [=binding:eyre =duct =action:eyre]
+        [binding [duct action]]
       =/  bind=(list card)
         %+  murn  ~(tap by previews)
         |=  [p=flag:g q=preview:g]
@@ -176,9 +185,10 @@
           ::  don't bind groups if they're secret, or if we've already bound them
           ?&  !(~(has by groups) p)
               !secret.q
+              !(~(has by bindings) `binding:eyre`[~ ['group' (scot %tas q.p) ~]])
           ==
             ~
-          `[%pass /eyre/connect/[q.p] %arvo %e %connect `/[q.p] dap.bowl]
+          `[%pass /eyre/connect/[q.p] %arvo %e %connect `/group/[q.p] dap.bowl]
       =.  groups  previews
       %-  emil
       %+  welp  
@@ -202,6 +212,11 @@
       [%pass /sub/groups %agent [our.bowl %groups] %watch /gangs/index/(scot %p our.bowl)]
     that
   ==
+::
+++  watch
+  |=  =path
+  ^+  that  that
+::
 ::
 ++  view 
   |=  [name=@tas =group:g authenticated=?]
@@ -236,7 +251,6 @@
             ==
           ==
           ;div.fc
-            ;p.m2:  {(scow %tas name)}
             ;p.m2:  Participants: {<(lent ~(tap by fleet.group))>}
             ;p.m2:  {access}
             ;p.m2:  {(trip description.meta.group)}
