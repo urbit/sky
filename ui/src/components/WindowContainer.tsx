@@ -7,7 +7,7 @@ import useWindowStore from '../state/useWindowStore'
 export default function WindowContainer({
   map,
   id,
-  isVertical
+  isVertical,
 }: WindowContainerProps): JSX.Element {
   const { delWindow } = useWindowStore()
   const lastChange = useRef<number[]>([])
