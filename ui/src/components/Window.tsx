@@ -1,7 +1,7 @@
 import { Allotment } from 'allotment'
 import { WindowProps } from '../types/windows'
 import NavBar from './NavBar'
-import { get, findUrls } from '../api/sky'
+import { get, findShipUrls } from '../api/sky'
 import WebPage from './renderers/WebPage'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
@@ -145,7 +145,7 @@ export default function Window({ id, path }: WindowProps) {
       if (data) {
         return renderResponse(data)
       } else {
-        const urls = await findUrls(path)
+        const urls = await findShipUrls(path)
 
         if (!urls) {
           console.error(`No URLs found for ${path.split('/').slice(0)}`)
