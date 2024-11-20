@@ -119,7 +119,7 @@ async function post(path: string, json: JSON): Promise<Response | void> {
     return fetch(url, {
       method: 'POST',
       // TODO Authorization header
-      body: JSON.stringify(json)
+      body: JSON.stringify(json),
     })
       .then(res => {
         if (!res.ok) {
@@ -154,7 +154,7 @@ async function del(path: string): Promise<Response | void> {
       headers: {
         'Content-Type': 'application/json',
         // TODO Authorization header
-      }
+      },
     })
       .then(res => {
         if (!res.ok) {

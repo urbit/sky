@@ -84,7 +84,10 @@ export default function NavBar({ id, path }: NavBarProps) {
   }
 
   function handleXClick() {
-    delWindow(id)
+    setTimeout(() => {
+      delWindow(id)
+      console.log('deleteing', id)
+    }, 500)
   }
 
   return (
