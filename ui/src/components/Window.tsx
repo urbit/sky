@@ -1,5 +1,4 @@
 import { Allotment } from 'allotment'
-import styled from 'styled-components'
 import { WindowProps } from '../types/windows'
 import NavBar from './NavBar'
 import { get, findUrls } from '../api/sky'
@@ -214,15 +213,10 @@ export default function Window({ id, path }: WindowProps) {
     fetchContent()
   }, [path])
 
-  const StyledPane = styled(Allotment.Pane)`
-    display: flex;
-    width: 100%;
-    height: 100%;
-  `
 
   return (
     <Allotment>
-      <StyledPane visible key={id}>
+      <Allotment.Pane visible key={id} className="wf hf fr">
         <div
           className="fc ac jc"
           style={{ width: '100%', height: '100%', padding: '5px' }}
@@ -240,7 +234,7 @@ export default function Window({ id, path }: WindowProps) {
             {windowContent}
           </div>
         </div>
-      </StyledPane>
+      </Allotment.Pane>
     </Allotment>
   )
 }
