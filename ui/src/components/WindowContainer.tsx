@@ -39,9 +39,13 @@ export default function WindowContainer({
 
         if (index !== -1 && hasChildren) {
           if (index === 0 && map.has(childId)) {
-            delWindow(childId)
+            setTimeout(() => {
+              delWindow(childId)
+            }, 1000);
           } else if (index === 1 && map.has(childId + 1)) {
-            delWindow(childId + 1)
+            setTimeout(() => {
+              delWindow(childId + 1)
+            }, 1000);
           } else {
             console.log('invalid index')
           }
