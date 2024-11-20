@@ -114,7 +114,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
         delKids(windowMap, kids)
       }
       //  otherwise keep sibling window state
-      console.log('map', new Map(map))
+      //console.log('map', new Map(map))
       set({ windowMap: map })
     }
 
