@@ -5,11 +5,12 @@ async function findShipDomain(path: string) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
   // TODO replace with real server
-  const res = await fetch(`http://localhost:3000/${ship}`)
+  const res = await fetch(`http://localhost:3000/domains`)
   const data = await res.json()
 
-  if (data){
-    return data
+  // TODO don't return all domains for all ships
+  if (data[ship]){
+    return data[ship]
   } else {
     console.error(`No domains found for ${ship}`)
   }
@@ -21,7 +22,7 @@ async function findShipUrls(path: string) {
   if (!shipDomain) {
     console.error(`No URL found for ${path.split('/').slice(0)}`)
   } else {
-    const ship = path.split('/')[1].slice(1)
+    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const shipUrl = `${shipDomain}/${endpoint}`
     const athensUrl = `https://${ship}/${endpoint}`
@@ -83,7 +84,7 @@ async function put(path: string, json: JSON): Promise<Response | void> {
     //  },
     //})
   } else {
-    const ship = path.split('/')[1].slice(1)
+    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
 
@@ -105,7 +106,7 @@ async function post(path: string, json: JSON): Promise<Response | void> {
     //  },
     //})
   } else {
-    const ship = path.split('/')[1].slice(1)
+    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
 
@@ -138,7 +139,7 @@ async function del(path: string): Promise<Response | void> {
     //  },
     //})
   } else {
-    const ship = path.split('/')[1].slice(1)
+    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
 
