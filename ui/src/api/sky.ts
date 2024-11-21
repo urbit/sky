@@ -9,7 +9,7 @@ async function findShipDomain(path: string) {
   const data = await res.json()
 
   // TODO don't return all domains for all ships
-  if (data[ship]){
+  if (data[ship]) {
     return data[ship]
   } else {
     console.error(`No domains found for ${ship}`)
