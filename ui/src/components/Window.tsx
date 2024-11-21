@@ -213,6 +213,7 @@ export default function Window({ id, path }: WindowProps) {
     fetchContent()
   }, [path])
 
+
   return (
     <Allotment>
       <Allotment.Pane visible key={id} className="wf hf fr">
