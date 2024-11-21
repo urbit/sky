@@ -3,12 +3,10 @@ import { NavBarProps } from '../types/navbar.ts'
 import PathBar from './renderers/PathBar'
 import useWindowStore from '../state/useWindowStore.ts'
 
-
 export default function NavBar({ id, path }: NavBarProps) {
   const [hovered, setHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const { delWindow} = useWindowStore()
-
+  const { delWindow } = useWindowStore()
 
   function handlePathClick() {
     console.log(id)
@@ -39,11 +37,7 @@ export default function NavBar({ id, path }: NavBarProps) {
         style={{ width: '100%', height: '100%' }}
         onClick={handlePathClick}
       >
-        {isEditing ? (
-          <PathBar id={id} path={path} />
-        ) : (
-          <p>{path}</p>
-        )}
+        {isEditing ? <PathBar id={id} path={path} /> : <p>{path}</p>}
       </div>
       {/* TODO add real buttons */}
       <p onClick={handleXClick} style={{ cursor: 'pointer' }}>

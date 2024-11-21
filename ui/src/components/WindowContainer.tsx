@@ -52,7 +52,6 @@ export default function WindowContainer({
     [hasChildren, childId]
   )
 
-
   if (!map) return <></>
 
   return (

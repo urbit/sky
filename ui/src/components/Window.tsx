@@ -7,13 +7,8 @@ import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 
 export default function Window({ id, path }: WindowProps) {
-
-
   const defaultContent = (
-    <div
-      className="p2 fc ac jc"
-      style={{ width: '100%', height: '100%' }}
-    >
+    <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
       <PathBar id={id} path={path} />
     </div>
   )
@@ -21,7 +16,7 @@ export default function Window({ id, path }: WindowProps) {
   const [windowContent, setWindowContent] = useState(defaultContent)
   const { isActive } = useWindowStore()
 
-  function handleMouseEnter(){
+  function handleMouseEnter() {
     // console.log('is active', id)
     isActive(id)
   }
@@ -35,10 +30,7 @@ export default function Window({ id, path }: WindowProps) {
   const noURLcontent = (path: string) => {
     console.log('nourl content for ', id, path)
     return (
-      <div
-        className="p2 fc ac jc"
-        style={{ width: '100%', height: '100%' }}
-      >
+      <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
         <p>No URL found for {path}</p>
       </div>
     )
@@ -204,7 +196,7 @@ export default function Window({ id, path }: WindowProps) {
   useEffect(() => {
     const fetchContent = async () => {
       if (path !== '~sampel/home') {
-        if(path){
+        if (path) {
           const content = await renderContent(path)
           // TODO error msg if content is null/undefined
           if (content) {

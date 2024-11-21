@@ -142,7 +142,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     console.log(windowMap)
   },
   // switchig active window id
-  isActive: (id: number) => set({active: id}),
+  isActive: (id: number) => set({ active: id }),
 }))
 
 export default useWindowStore
