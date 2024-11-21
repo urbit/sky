@@ -4,9 +4,12 @@ import WindowState from './windowState'
 // homepage
 const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 
+const defaultActive = null
+
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
   windowMap: defaultMap,
+  active: defaultActive,
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
@@ -16,6 +19,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     windowMap.set(parentId * 2 + 1, path)
     windowMap.set(parentId, null)
 
+    console.log(windowMap)
     set({ windowMap })
   },
 
@@ -56,7 +60,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     }
 
     function delKids(map: Map<number, string | null>, kids: Set<number>) {
-      kids.forEach((key) => {
+      kids.forEach(key => {
         map.delete(key)
       })
     }
@@ -135,7 +139,10 @@ const useWindowStore = create<WindowState>((set, get) => ({
     } else {
       set({ windowMap: windowMap })
     }
+    console.log(windowMap)
   },
+  // switchig active window id
+  isActive: (id: number) => set({active: id}),
 }))
 
 export default useWindowStore
