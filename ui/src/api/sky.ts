@@ -41,7 +41,10 @@ async function get(path: string): Promise<Response | void> {
 
   if (!urls) {
     console.error(`Can't find any resource for ${path}`)
-    return
+    return new Response(`Resource not found for ${path}`, {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain' }
+    })
   }
 
   try {

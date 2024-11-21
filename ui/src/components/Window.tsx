@@ -3,6 +3,7 @@ import { WindowProps } from '../types/windows'
 import { get, findShipUrls } from '../api/sky'
 import WebPage from './renderers/WebPage'
 import PathBar from './PathBar'
+import FileSystem from './renderers/FileSystem'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 
@@ -53,79 +54,90 @@ export default function Window({ id, path }: WindowProps) {
   async function renderResponse(res: Response): Promise<JSX.Element> {
     console.log('Received response')
     console.log(res)
-    switch (res.headers.get('Content-Type')) {
-      case 'text/plain':
-        console.log('Processing plain text file...')
-        return (
-          <>
-            <p>Plain text content is not currently displayed.</p>
-          </>
-        )
-      case 'text/html':
-        console.log('Processing HTML document...')
+    if (res.status >= 200 && res.status <= 300) {
+      switch (res.headers.get('Content-Type')) {
+        case 'text/plain':
+          console.log('Processing plain text file...')
+          return (
+            <>
+              <p>Plain text content is not currently displayed.</p>
+            </>
+          )
+        case 'text/html':
+          console.log('Processing HTML document...')
 
-        return <WebPage data={await res.text()} />
+          return <WebPage data={await res.text()} />
 
-      case 'application/json':
-        console.log('Processing JSON data...')
-        return (
-          <>
-            <p>JSON content is not currently displayed.</p>
-          </>
-        )
-      case 'application/xml':
-        console.log('Processing XML file...')
-        return (
-          <>
-            <p>XML content is not currently displayed.</p>
-          </>
-        )
-      case 'application/pdf':
-        console.log('Processing PDF document...')
-        return (
-          <>
-            <p>PDF content is not currently displayed.</p>
-          </>
-        )
-      case 'image/jpeg':
-        console.log('Processing JPEG image...')
-        return (
-          <>
-            <p>JPEG image content is not currently displayed.</p>
-          </>
-        )
-      case 'image/png':
-        console.log('Processing PNG image...')
-        return (
-          <>
-            <p>PNG image content is not currently displayed.</p>
-          </>
-        )
-      case 'image/gif':
-        console.log('Processing GIF image...')
-        return (
-          <>
-            <p>GIF image content is not currently displayed.</p>
-          </>
-        )
-      case 'video/mp4':
-        console.log('Processing MP4 video file...')
-        return (
-          <>
-            <p>MP4 video content is not currently displayed.</p>
-          </>
-        )
-      case 'audio/mpeg':
-        console.log('Processing MP3 audio file...')
-        return (
-          <>
-            <p>MP3 audio content is not currently displayed.</p>
-          </>
-        )
-      default:
-        console.log(`Resource isn't recognized or is blocked by CORS`)
-        return notRecognizedContent
+        case 'application/json':
+          console.log('Processing JSON data...')
+          return (
+            <>
+              <p>JSON content is not currently displayed.</p>
+            </>
+          )
+        case 'application/xml':
+          console.log('Processing XML file...')
+          return (
+            <>
+              <p>XML content is not currently displayed.</p>
+            </>
+          )
+        case 'application/pdf':
+          console.log('Processing PDF document...')
+          return (
+            <>
+              <p>PDF content is not currently displayed.</p>
+            </>
+          )
+        case 'image/jpeg':
+          console.log('Processing JPEG image...')
+          return (
+            <>
+              <p>JPEG image content is not currently displayed.</p>
+            </>
+          )
+        case 'image/png':
+          console.log('Processing PNG image...')
+          return (
+            <>
+              <p>PNG image content is not currently displayed.</p>
+            </>
+          )
+        case 'image/gif':
+          console.log('Processing GIF image...')
+          return (
+            <>
+              <p>GIF image content is not currently displayed.</p>
+            </>
+          )
+        case 'video/mp4':
+          console.log('Processing MP4 video file...')
+          return (
+            <>
+              <p>MP4 video content is not currently displayed.</p>
+            </>
+          )
+        case 'audio/mpeg':
+          console.log('Processing MP3 audio file...')
+          return (
+            <>
+              <p>MP3 audio content is not currently displayed.</p>
+            </>
+          )
+        default:
+          console.log(`Resource isn't recognized or is blocked by CORS`)
+          return notRecognizedContent
+      }
     }
+
+    if (res.status === 404) {
+      if (path && path.split('/')[0] === window.ship) {
+        return <FileSystem path={path} />
+      }
+    }
+
+    // TODO proper unhandled error content
+    return notRecognizedContent
   }
 
   async function renderContent(path: string) {
