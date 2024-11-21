@@ -27,7 +27,9 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
             >
               {segment}
             </span>
-            {index < segments.length - 1 && <span className='f4' style={{ margin: '0 5px' }}>/</span>}
+            {index < segments.length - 1 &&
+              <span className='f4' style={{ margin: '0 5px' }}>/</span>
+            }
           </React.Fragment>
         ))}
       </div>
