@@ -17,5 +17,5 @@ Run [json-server](https://github.com/typicode/json-server) on `localhost:3000` t
 ```
 cd sky
 pnpm add -g json-server
-npx json-server athens.json --port 3000
+npx json-server dns.json --port 3000
 ```

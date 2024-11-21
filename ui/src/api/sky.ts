@@ -1,83 +1,77 @@
-//import Urbit from "@urbit/http-api";
-//import { HTTPRequest } from "../types/api";
-
+//
 // TODO authentication for urbit.org / Athens
-//      http-api should take care of pokes for us
-//      use Authorization header throughout for these
-//      requests
-
-async function findDomains(path: string) {
+//
+async function findShipDomain(path: string) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
-  // TODO fetch from urbit.org / Athens
+  // TODO replace with real server
   const res = await fetch(`http://localhost:3000/domains`)
   const data = await res.json()
 
-  if (data[ship]) {
+  // TODO don't return all domains for all ships
+  if (data[ship]){
     return data[ship]
   } else {
     console.error(`No domains found for ${ship}`)
   }
 }
 
-async function findUrls(path: string) {
-  const domains = await findDomains(path)
+async function findShipUrls(path: string) {
+  const shipDomain = await findShipDomain(path)
 
-  if (!domains || (!domains.athens && !domains.ship)) {
-    console.error(`No URLs found for ${path.split('/').slice(0)}`)
+  if (!shipDomain) {
+    console.error(`No URL found for ${path.split('/').slice(0)}`)
   } else {
+    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
-    const athensUrl = `${domains.athens}/${endpoint}`
-    const shipUrl = `${domains.ship}/${endpoint}`
-    console.log(athensUrl)
+    const shipUrl = `${shipDomain}/${endpoint}`
+    const athensUrl = `https://${ship}/${endpoint}`
     console.log(shipUrl)
+    console.log(athensUrl)
 
     return {
-      athens: athensUrl,
       ship: shipUrl,
+      athens: athensUrl,
     }
   }
 }
 
 async function get(path: string): Promise<Response | void> {
-  const urls = await findUrls(path)
+  const urls = await findShipUrls(path)
 
   if (!urls) {
-    console.error(`Can't find a resource at ${path}`)
+    console.error(`Can't find any resource for ${path}`)
     return
   }
 
-  return fetch(urls.athens, {
-    method: 'GET',
-    // TODO Authorization header
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${urls.athens}`)
-      }
-      return res
+  try {
+    const res = await fetch(urls.athens, {
+      method: 'GET',
+      // TODO Authorization header
     })
-    .then(data => {
-      return data
-    })
-    .catch(err => {
-      console.error(`GET request to ${urls.athens} failed:`, err)
-      return fetch(urls.ship, {
+
+    if (!res.ok) {
+      throw new Error(`Response not ok at ${urls.athens}`)
+    }
+
+    return res
+  } catch (err) {
+    console.error(`GET request to ${urls.athens} failed:`, err)
+
+    try {
+      const res = await fetch(urls.ship, {
         method: 'GET',
       })
-        .then(res => {
-          if (!res.ok) {
-            throw new Error(`Response not ok at ${urls.ship}`)
-          }
-          return res
-        })
-        .then(data => {
-          return data
-        })
-        .catch(err => {
-          console.error(`GET request to ${urls.ship} failed:`, err)
-        })
-    })
+
+      if (!res.ok) {
+        throw new Error(`Response not ok at ${urls.ship}`)
+      }
+
+      return res
+    } catch (err) {
+      console.error(`GET request to ${urls.ship} failed:`, err)
+    }
+  }
 }
 
 async function put(path: string, json: JSON): Promise<Response | void> {
@@ -88,9 +82,9 @@ async function put(path: string, json: JSON): Promise<Response | void> {
     //    path: path,
     //    json: json,
     //  },
-    //});
+    //})
   } else {
-    const ship = path.split('/')[1].slice(1)
+    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
 
@@ -110,9 +104,9 @@ async function post(path: string, json: JSON): Promise<Response | void> {
     //    path: path,
     //    json: json,
     //  },
-    //});
+    //})
   } else {
-    const ship = path.split('/')[1].slice(1)
+    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
 
@@ -143,9 +137,9 @@ async function del(path: string): Promise<Response | void> {
     //  body: {
     //    path: path,
     //  },
-    //});
+    //})
   } else {
-    const ship = path.split('/')[1].slice(1)
+    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const url = `https://${ship}.urbit.org/${endpoint}`
 
@@ -171,11 +165,11 @@ async function del(path: string): Promise<Response | void> {
   }
 }
 
-// TODO make the type more specific than 'any' or 'JSON';
+// TODO make the type more specific than 'any' or 'JSON'
 // needs to be custom defined in /types folder
 //function pokeSky(json: HTTPRequest) {
-//  const api = new Urbit("", "", "sky");
-//  api.ship = window.ship;
+//  const api = new Urbit("", "", "sky")
+//  api.ship = window.ship
 //  return api.poke({
 //    app: "sky",
 //    mark: "handle-http-request",
@@ -184,9 +178,9 @@ async function del(path: string): Promise<Response | void> {
 //      console.error(
 //        `Failed ${json.method} request to %sky with JSON `,
 //        json.body,
-//      );
+//      )
 //    },
-//  });
+//  })
 //}
 
-export { del, get, post, put, findDomains, findUrls }
+export { del, get, post, put, findShipDomain, findShipUrls }
