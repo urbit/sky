@@ -7,7 +7,7 @@ import useWindowStore from '../state/useWindowStore'
 export default function WindowContainer({
   map,
   id,
-  isVertical
+  isVertical,
 }: WindowContainerProps): JSX.Element {
   const { delWindow } = useWindowStore()
   const lastChange = useRef<number[]>([])
@@ -35,13 +35,17 @@ export default function WindowContainer({
         sizes.length > 1 &&
         JSON.stringify(sizes) != JSON.stringify(lastChange.current)
       ) {
-        const index = sizes.findIndex((num) => num === 0)
+        const index = sizes.findIndex(num => num === 0)
 
         if (index !== -1 && hasChildren) {
           if (index === 0 && map.has(childId)) {
-            delWindow(childId)
+            setTimeout(() => {
+              delWindow(childId)
+            }, 1000)
           } else if (index === 1 && map.has(childId + 1)) {
-            delWindow(childId + 1)
+            setTimeout(() => {
+              delWindow(childId + 1)
+            }, 1000)
           } else {
             console.log('invalid index')
           }

@@ -215,7 +215,7 @@ export default function Window({ id, path }: WindowProps) {
 
   return (
     <Allotment>
-      <Allotment.Pane visible key={id}>
+      <Allotment.Pane visible key={id} className="wf hf fr">
         <div
           className="fc ac jc"
           style={{ width: '100%', height: '100%', padding: '5px' }}

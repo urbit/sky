@@ -56,7 +56,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     }
 
     function delKids(map: Map<number, string | null>, kids: Set<number>) {
-      kids.forEach((key) => {
+      kids.forEach(key => {
         map.delete(key)
       })
     }
@@ -110,7 +110,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
         //  if window has kids and sibling doesn't
         //  setting valid parent(top tree node that has sibling) to sibling window path and deleteing all winodws below it
         //  deleteing window kids
-        validParent(map, siblingId)
+        //validParent(map, siblingId)
         delKids(windowMap, kids)
       }
       //  otherwise keep sibling window state

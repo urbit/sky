@@ -9,7 +9,7 @@ async function findShipDomain(path: string) {
   const data = await res.json()
 
   // TODO don't return all domains for all ships
-  if (data[ship]){
+  if (data[ship]) {
     return data[ship]
   } else {
     console.error(`No domains found for ${ship}`)
@@ -113,7 +113,7 @@ async function post(path: string, json: JSON): Promise<Response | void> {
     return fetch(url, {
       method: 'POST',
       // TODO Authorization header
-      body: JSON.stringify(json)
+      body: JSON.stringify(json),
     })
       .then(res => {
         if (!res.ok) {
@@ -148,7 +148,7 @@ async function del(path: string): Promise<Response | void> {
       headers: {
         'Content-Type': 'application/json',
         // TODO Authorization header
-      }
+      },
     })
       .then(res => {
         if (!res.ok) {
