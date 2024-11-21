@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload Server</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+        #uploadForm { background: #f4f4f4; padding: 20px; border-radius: 5px; }
+        #fileList { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="uploadForm">
+        <h2>File Upload</h2>
+        <input type="file" id="fileInput" multiple>
+        <button onclick="uploadFiles()">Upload Files</button>
+    </div>
+    <div id="fileList">
+        <h3>Uploaded Files</h3>
+        <ul id="files"></ul>
+    </div>
+
+    <script>
+        async function uploadFiles() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            const fileList = document.getElementById('files');
+
+            for (let file of files) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        // Create a link to the uploaded file
+                        const listItem = document.createElement('li');
+                        const link = document.createElement('a');
+                        link.href = `/uploads/${result.filename}`;
+                        link.textContent = result.filename;
+                        link.target = '_blank';
+                        listItem.appendChild(link);
+                        fileList.appendChild(listItem);
+                    }
+                } catch (error) {
+                    console.error('Upload failed:', error);
+                }
+            }
+        }
+
+        // Fetch and display existing files on page load
+        async function loadFiles() {
+            try {
+                const response = await fetch('/uploads/');
+                const text = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const links = doc.getElementsByTagName('a');
+                const fileList = document.getElementById('files');
+                
+                for (let link of links) {
+                    if (link.href.includes('/uploads/')) {
+                        const listItem = document.createElement('li');
+                        const newLink = document.createElement('a');
+                        newLink.href = link.href;
+                        newLink.textContent = decodeURIComponent(link.textContent);
+                        newLink.target = '_blank';
+                        listItem.appendChild(newLink);
+                        fileList.appendChild(listItem);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading files:', error);
+            }
+        }
+
+        // Load files when page loads
+        window.onload = loadFiles;
+    </script>
+</body>
+</html>
