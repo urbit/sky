@@ -132,7 +132,7 @@ export default function Window({ id, path }: WindowProps) {
 
     if (res.status === 404) {
       if (path && path.split('/')[0] === window.ship) {
-        return <FileSystem path={path} />
+        return <FileSystem id={id} path={path} />
       }
     }
 
