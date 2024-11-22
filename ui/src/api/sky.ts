@@ -25,7 +25,7 @@ async function findShipUrls(path: string) {
     const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
     const shipUrl = `${shipDomain}/${endpoint}`
-    const athensUrl = `https://${ship}/${endpoint}`
+    const athensUrl = `https://${ship}.urbit.org/${endpoint}`
     console.log(shipUrl)
     console.log(athensUrl)
 
@@ -40,8 +40,8 @@ async function get(path: string): Promise<Response | void> {
   const urls = await findShipUrls(path)
 
   if (!urls) {
-    console.error(`Can't find any resource for ${path}`)
-    return new Response(`Resource not found for ${path}`, {
+    console.error(`File not found at ${path}`)
+    return new Response(`File not found for ${path}`, {
       status: 404,
       headers: { 'Content-Type': 'text/plain' }
     })
@@ -72,7 +72,10 @@ async function get(path: string): Promise<Response | void> {
 
       return res
     } catch (err) {
-      console.error(`GET request to ${urls.ship} failed:`, err)
+      return new Response(`File not found for ${path}`, {
+        status: 404,
+        headers: { 'Content-Type': 'text/plain' }
+      })
     }
   }
 }
