@@ -11,8 +11,14 @@ import StatusBar from './components/StatusBar.tsx'
 import { useEffect } from 'react'
 
 function App() {
-  const { windowMap, active, addWindow, delWindow, updateWindowPath } =
-    useWindowStore()
+  const {
+    windowMap,
+    active,
+    addWindow,
+    delWindow,
+    updateWindowPath,
+    isActive,
+  } = useWindowStore()
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -28,7 +34,9 @@ function App() {
           if (active === 1) {
             updateWindowPath(active, '')
           } else {
+            console.log('del window', active)
             delWindow(active)
+            isActive(null)
           }
         }
       }
@@ -40,7 +48,7 @@ function App() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
     }
-  }, [active, delWindow, addWindow, updateWindowPath])
+  }, [active, delWindow, addWindow, updateWindowPath, isActive])
 
   return (
     <div style={{ width: `calc(100vw - ${20}px)`, height: '100vh' }}>

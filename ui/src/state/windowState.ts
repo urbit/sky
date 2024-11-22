@@ -5,5 +5,5 @@ export default interface WindowState {
   delWindow: (id: number) => void
   clearWindows: () => void
   updateWindowPath: (id: number, path: string) => void
-  isActive: (id: number) => void
+  isActive: (id: number | null) => void
 }

@@ -195,7 +195,7 @@ export default function Window({ id, path }: WindowProps) {
 
   useEffect(() => {
     const fetchContent = async () => {
-      if (path !== '~sampel/home' && path) {
+      if (path) {
         const content = await renderContent(path)
         // TODO error msg if content is null/undefined
         if (content) {

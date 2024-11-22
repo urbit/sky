@@ -9,7 +9,6 @@ export default function NavBar({ id, path }: NavBarProps) {
   const { delWindow } = useWindowStore()
 
   function handlePathClick() {
-    console.log(id)
     setIsEditing(true)
   }
 
