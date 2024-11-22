@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useWindowStore from '../../state/useWindowStore';
+import { findShipUrls } from '../../api/sky'
 
 interface FileSystemProps {
   id: number;
@@ -27,16 +28,17 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     if (!fileList) return;
 
     setUploading(true);
+    const shipUrls = await findShipUrls(path)
+    const endpoint = path.split('/').slice(1).join('/')
 
     for (let file of Array.from(fileList)) {
       const formData = new FormData();
       formData.append('file', file);
-      // TODO add path to formData
+      formData.append('path', path)
 
       try {
-        // TODO remove hard-coded URL
-        // TODO post to path
-        const response = await fetch('http://localhost:8000/upload', {
+        // TODO account for athens url
+        const response = await fetch(`${shipUrls?.ship}/${endpoint}`, {
           method: 'POST',
           body: formData
         });
