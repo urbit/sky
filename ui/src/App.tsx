@@ -34,7 +34,6 @@ function App() {
           if (active === 1) {
             updateWindowPath(active, '')
           } else {
-            console.log('del window', active)
             delWindow(active)
             isActive(null)
           }

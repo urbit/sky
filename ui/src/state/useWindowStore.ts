@@ -66,6 +66,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
 
     function findValidParent(map: Map<number, string | null>, id: number) {
       let currentId = id
+      
       while (currentId !== 1) {
         const parentId = isEven(currentId) ? currentId / 2 : (currentId - 1) / 2
         const parentSiblingId = isEven(parentId) ? parentId + 1 : parentId - 1
@@ -73,7 +74,6 @@ const useWindowStore = create<WindowState>((set, get) => ({
 
         //  if parent has sibling set parent to original path and return parent
         if (map.has(parentSiblingId)) {
-          //map.set(parentId, path)
           return parentId
         }
         //  delete parent window form map and move to grandparent
