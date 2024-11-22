@@ -1,28 +1,24 @@
 import { Allotment } from 'allotment'
 import { WindowProps } from '../types/windows'
-import NavBar from './NavBar'
 import { get, findShipUrls } from '../api/sky'
 import WebPage from './renderers/WebPage'
+import PathBar from './PathBar'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 
 export default function Window({ id, path }: WindowProps) {
   const defaultContent = (
-    <div
-      className="p2 fc ac jc"
-      style={{ width: '100%', height: '100%' }}
-      onClick={handleClick}
-    >
-      <p>Default content. Remove this from production!</p>
+    <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
+      <PathBar id={id} path={path} />
     </div>
   )
 
   const [windowContent, setWindowContent] = useState(defaultContent)
-  const { addWindow } = useWindowStore()
+  const { isActive } = useWindowStore()
 
-  function handleClick() {
-    // TODO get real @p
-    addWindow(id, '~sampel/path')
+  function handleMouseEnter() {
+    // console.log('is active', id)
+    isActive(id)
   }
 
   const notRecognizedContent = (
@@ -32,12 +28,9 @@ export default function Window({ id, path }: WindowProps) {
   )
 
   const noURLcontent = (path: string) => {
+    console.log('nourl content for ', id, path)
     return (
-      <div
-        className="p2 fc ac jc"
-        style={{ width: '100%', height: '100%' }}
-        onClick={handleClick}
-      >
+      <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
         <p>No URL found for {path}</p>
       </div>
     )
@@ -136,6 +129,7 @@ export default function Window({ id, path }: WindowProps) {
   }
 
   async function renderContent(path: string) {
+    console.log('render', path)
     try {
       const res = await get(path)
       const data = res
@@ -201,15 +195,14 @@ export default function Window({ id, path }: WindowProps) {
 
   useEffect(() => {
     const fetchContent = async () => {
-      if (path !== '~sampel/home') {
-        const content = await renderContent(path || '~sampel/path')
+      if (path) {
+        const content = await renderContent(path)
         // TODO error msg if content is null/undefined
         if (content) {
           setWindowContent(content)
         }
       }
     }
-
     fetchContent()
   }, [path])
 
@@ -219,6 +212,7 @@ export default function Window({ id, path }: WindowProps) {
         <div
           className="fc ac jc"
           style={{ width: '100%', height: '100%', padding: '5px' }}
+          onMouseEnter={handleMouseEnter}
         >
           <div
             className="fc as js b1 br1"
@@ -229,7 +223,6 @@ export default function Window({ id, path }: WindowProps) {
               position: 'relative',
             }}
           >
-            <NavBar id={id} path={path || `~sampel/path`} />
             {windowContent}
           </div>
         </div>

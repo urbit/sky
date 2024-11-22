@@ -4,13 +4,16 @@ import WindowState from './windowState'
 // homepage
 const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 
+const defaultActive = 1
+
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
   windowMap: defaultMap,
+  active: defaultActive,
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
-    const parentPath = windowMap.get(parentId) ?? null
+    const parentPath = windowMap.get(parentId) ?? ''
 
     windowMap.set(parentId * 2, parentPath)
     windowMap.set(parentId * 2 + 1, path)
@@ -36,7 +39,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     ) {
       const leftChild = id * 2
       const rightChild = id * 2 + 1
-      console.log('looking for kids in this map', new Map(map))
+      //console.log('looking for kids in this map', new Map(map))
 
       // If left child exists in the map, add it to the sequence and recurse
       if (map.has(leftChild)) {
@@ -61,10 +64,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
       })
     }
 
-    //  decrements id of window to parent id, if sibling is being deleted
-    function validParent(map: Map<number, string | null>, id: number) {
-      //  saving path to set valid parent in map to that path
-      const path = map.get(id) ?? '~sampel/home'
+    function findValidParent(map: Map<number, string | null>, id: number) {
       let currentId = id
 
       while (currentId !== 1) {
@@ -74,14 +74,24 @@ const useWindowStore = create<WindowState>((set, get) => ({
 
         //  if parent has sibling set parent to original path and return parent
         if (map.has(parentSiblingId)) {
-          map.set(parentId, path)
-          break
+          return parentId
         }
         //  delete parent window form map and move to grandparent
         currentId = parentId
       }
-      if (currentId === 1) {
+      return 1
+    }
+
+    //  decrements id of window to parent id, if sibling is being deleted
+    function validParent(map: Map<number, string | null>, id: number) {
+      //  saving path to set valid parent in map to that path
+      const path = map.get(id) ?? ''
+      const parentId = findValidParent(map, id)
+
+      if (parentId === 1) {
         map.set(1, path)
+      } else {
+        map.set(parentId, path)
       }
     }
 
@@ -95,11 +105,15 @@ const useWindowStore = create<WindowState>((set, get) => ({
       findKids(map, siblingId, siblingKids)
       const siblingHasKids = hasKids(siblingKids)
 
-      if (!idHasKids && !siblingHasKids && siblingPath != null) {
-        //  handles single window delete case (when x-button being used)
-        //  if window doesn't have kids, sibling window doesn't have kids and sibling isn't null,
-        //  setting valid parent(top tree node that has sibling) to sibling window path and deleteing all winodws below it
-        validParent(map, siblingId)
+      if (!idHasKids && !siblingHasKids && siblingPath === null) {
+        //  handles single window delete case (when meta+w being used)
+        //  if window doesn't have kids, sibling doesn't have kids and null(doesn't have sibling)
+        //  delete nested parent windows till first window that has sibling
+        const validParent = findValidParent(map, siblingId)
+        const parentKids = new Set<number>()
+        findKids(map, validParent, parentKids)
+        delKids(windowMap, parentKids)
+        windowMap.delete(validParent)
       } else if (idHasKids && siblingHasKids) {
         //  handles nested window delete case (when multiple window shrinked to 0)
         //  if window has kids and sibling has kids
@@ -136,6 +150,8 @@ const useWindowStore = create<WindowState>((set, get) => ({
       set({ windowMap: windowMap })
     }
   },
+  // switchig active window id
+  isActive: (id: number | null) => set({ active: id }),
 }))
 
 export default useWindowStore

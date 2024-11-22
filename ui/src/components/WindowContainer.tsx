@@ -53,15 +53,7 @@ export default function WindowContainer({
         lastChange.current = sizes
       }
     },
-    [hasChildren, childId]
-  )
-
-  console.log(
-    id,
-    `has ${childId}`,
-    map.has(childId),
-    `has ${childId + 1}`,
-    map.has(childId + 1)
+    [map, hasChildren, childId, delWindow]
   )
 
   if (!map) return <></>
