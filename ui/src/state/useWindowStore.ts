@@ -4,7 +4,7 @@ import WindowState from './windowState'
 // homepage
 const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 
-const defaultActive = null
+const defaultActive = 1
 
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage

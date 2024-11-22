@@ -49,7 +49,7 @@ export default function WindowContainer({
         lastChange.current = sizes
       }
     },
-    [hasChildren, childId]
+    [map, hasChildren, childId, delWindow]
   )
 
   if (!map) return <></>

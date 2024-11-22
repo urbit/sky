@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavBarProps } from '../types/navbar.ts'
-import PathBar from './renderers/PathBar'
+import PathBar from './PathBar'
 import useWindowStore from '../state/useWindowStore.ts'
 
 export default function NavBar({ id, path }: NavBarProps) {

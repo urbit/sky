@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import useWindowStore from '../../state/useWindowStore.ts'
+import { useState, useEffect } from 'react'
+import useWindowStore from '../state/useWindowStore.ts'
 import ob from 'urbit-ob'
 
 export default function PathBar({
@@ -12,7 +12,9 @@ export default function PathBar({
   const [inputValue, setInputValue] = useState('')
   const { updateWindowPath } = useWindowStore()
 
-  setInputValue(path || '')
+  useEffect(() => {
+    setInputValue(path || '')
+  }, [path])
 
   const isValidPath = (path: string): boolean => {
     if (path.startsWith('/')) return false

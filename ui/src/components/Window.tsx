@@ -2,7 +2,7 @@ import { Allotment } from 'allotment'
 import { WindowProps } from '../types/windows'
 import { get, findShipUrls } from '../api/sky'
 import WebPage from './renderers/WebPage'
-import PathBar from './renderers/PathBar'
+import PathBar from './PathBar'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 
@@ -195,13 +195,11 @@ export default function Window({ id, path }: WindowProps) {
 
   useEffect(() => {
     const fetchContent = async () => {
-      if (path !== '~sampel/home') {
-        if (path) {
-          const content = await renderContent(path)
-          // TODO error msg if content is null/undefined
-          if (content) {
-            setWindowContent(content)
-          }
+      if (path !== '~sampel/home' && path) {
+        const content = await renderContent(path)
+        // TODO error msg if content is null/undefined
+        if (content) {
+          setWindowContent(content)
         }
       }
     }

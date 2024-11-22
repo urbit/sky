@@ -40,7 +40,7 @@ function App() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
     }
-  }, [active])
+  }, [active, delWindow, addWindow, updateWindowPath])
 
   return (
     <div style={{ width: `calc(100vw - ${20}px)`, height: '100vh' }}>
