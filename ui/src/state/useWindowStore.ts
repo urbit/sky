@@ -66,7 +66,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
 
     function findValidParent(map: Map<number, string | null>, id: number) {
       let currentId = id
-      
+
       while (currentId !== 1) {
         const parentId = isEven(currentId) ? currentId / 2 : (currentId - 1) / 2
         const parentSiblingId = isEven(parentId) ? parentId + 1 : parentId - 1
