@@ -13,6 +13,7 @@ UPLOAD_DIRECTORY = 'uploads'
 class FileServerHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         # Add CORS headers
+        # TODO restrict Access-Control-Allow-Origin
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')

@@ -31,9 +31,11 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     for (let file of Array.from(fileList)) {
       const formData = new FormData();
       formData.append('file', file);
+      // TODO add path to formData
 
       try {
         // TODO remove hard-coded URL
+        // TODO post to path
         const response = await fetch('http://localhost:8000/upload', {
           method: 'POST',
           body: formData
@@ -58,6 +60,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   const loadFiles = async () => {
     try {
       // TODO remove hard-coded URL
+      // TODO post to path
       const response = await fetch('http://localhost:8000/uploads/');
       const text = await response.text();
       const parser = new DOMParser();
