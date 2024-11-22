@@ -49,10 +49,10 @@ function App() {
     }
   }, [active, delWindow, addWindow, updateWindowPath, isActive])
 
-  // TODO handle real window.ship, not suitable for production
+  // TODO handle real window.urbitID, not suitable for production
   useEffect(() => {
-    if (!window.ship) {
-      window.ship = '~sampel';
+    if (!window.urbitID) {
+      window.urbitID= '~sampel'
     }
   }, [])
 

@@ -131,7 +131,7 @@ export default function Window({ id, path }: WindowProps) {
     }
 
     if (res.status === 404) {
-      if (path && path.split('/')[0] === window.ship) {
+      if (path && path.split('/')[0] === window.urbitID) {
         return <FileSystem id={id} path={path} />
       }
     }
