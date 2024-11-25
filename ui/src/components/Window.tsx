@@ -126,6 +126,7 @@ export default function Window({ id, path }: WindowProps) {
             </>
           )
         default:
+          // TODO reconsider this; won't fire if status code is 2XX
           console.log(`Resource isn't recognized or is blocked by CORS`)
           return notRecognizedContent
       }
