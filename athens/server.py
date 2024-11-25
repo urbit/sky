@@ -43,8 +43,9 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
                 if fileitem.filename and pathitem.value:
                     # Sanitize filename and path
                     safe_filename = os.path.basename(fileitem.filename)
+                    # Split the path into components and join them to create nested directories
                     safe_path = os.path.normpath(pathitem.value)
-                    full_path = os.path.join(os.getcwd(), safe_path)
+                    full_path = os.path.join(os.getcwd(), *safe_path.split(os.sep))
 
                     # Ensure the directory exists
                     os.makedirs(full_path, exist_ok=True)
