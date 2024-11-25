@@ -60,10 +60,12 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   };
 
   const loadFiles = async () => {
+    const shipUrls = await findShipUrls(path)
+    const endpoint = path.split('/').slice(1).join('/')
+
     try {
-      // TODO remove hard-coded URL
-      // TODO post to path
-      const response = await fetch('http://localhost:8000/uploads/');
+      // TODO handle athens url
+      const response = await fetch(`${shipUrls?.ship}/${endpoint}`);
       const text = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(text, 'text/html');
@@ -71,12 +73,10 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
       const newFiles: FileInfo[] = [];
       for (let link of Array.from(links)) {
-        if (link.href.includes('/uploads/')) {
-          newFiles.push({
-            filename: decodeURIComponent(link.textContent || ''),
-            url: link.href
-          });
-        }
+        newFiles.push({
+          filename: decodeURIComponent(link.textContent || ''),
+          url: link.href
+        });
       }
       setFiles(newFiles);
     } catch (error) {

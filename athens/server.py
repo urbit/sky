@@ -73,8 +73,7 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
             # If file upload fails
             self.send_response(400)
             self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin',
-                             'http://localhost:5173')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             response = json.dumps(
                 {'status': 'error', 'message': 'File upload failed'})

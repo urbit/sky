@@ -74,7 +74,10 @@ async function get(path: string): Promise<Response | void> {
     } catch (err) {
       return new Response(`File not found for ${path}`, {
         status: 404,
-        headers: { 'Content-Type': 'text/plain' }
+        headers: {
+          'Content-Type': 'text/plain',
+          'X-Response-URL': urls.ship
+        }
       })
     }
   }

@@ -52,8 +52,9 @@ export default function Window({ id, path }: WindowProps) {
   }
 
   async function renderResponse(res: Response): Promise<JSX.Element> {
-    console.log('Received response')
+    console.log('Running renderResponse()')
     console.log(res)
+
     if (res.status >= 200 && res.status <= 300) {
       switch (res.headers.get('Content-Type')) {
         case 'text/plain':
@@ -133,6 +134,16 @@ export default function Window({ id, path }: WindowProps) {
     if (res.status === 404) {
       if (path && path.split('/')[0] === window.urbitID) {
         return <FileSystem id={id} path={path} />
+      } else if (path && path.split('/')[0] !== window.urbitID) {
+        // last-ditch attempt to load something, in the
+        // event it's a clearweb resource that doesn't
+        // respond to GET requests
+        console.log(`Attempting to load a page from ${res.url}`)
+        return <iframe
+                 className='hf wf'
+                 style={{ border: 'none' }}
+                 src={`${res.headers.get('X-Response-URL')}`}
+               />
       }
     }
 
