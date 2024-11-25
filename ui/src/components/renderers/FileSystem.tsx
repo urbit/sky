@@ -18,6 +18,11 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [uploading, setUploading] = useState(false);
 
+  const handleUploadClick = () => {
+    const input = document.querySelector('input')
+    { input && input.click() }
+  }
+
   const handleClick = (index: number) => {
     const newPath = segments.slice(0, index + 1).join('/');
     updateWindowPath(id, newPath);
@@ -109,37 +114,17 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
       <div className="fc ac jc b1" style={{ flex: 1, padding: '20px', gap: '20px' }}>
         <div className="fc" style={{ gap: '10px' }}>
-          <h2>File Upload</h2>
           <div className="fr ac" style={{ gap: '10px' }}>
-            <label className="fr ac" style={{ cursor: 'pointer', gap: '5px' }}>
-              <span>Choose Files</span>
-              <input
-                type="file"
-                style={{ display: 'none' }}
-                multiple
-                onChange={uploadFiles}
-                disabled={uploading}
-              />
-            </label>
+            <button onClick={handleUploadClick}>Upload a file or folder</button>
+            <input
+              type="file"
+              style={{ display: 'none' }}
+              multiple
+              onChange={uploadFiles}
+              disabled={uploading}
+            />
             {uploading && <span>Uploading...</span>}
           </div>
-        </div>
-
-        <div className="fc" style={{ gap: '10px' }}>
-          <h3>Uploaded Files</h3>
-          <ul className="fc" style={{ gap: '5px', listStyle: 'none', padding: 0 }}>
-            {files.map((file, index) => (
-              <li key={index}>
-                <a
-                  href={file.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {file.filename}
-                </a>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </div>
