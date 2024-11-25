@@ -1,4 +1,3 @@
-# server.py
 import os
 import json
 import cgi
@@ -71,9 +70,9 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
                     return
 
             # If file upload fails
+            print(f"Failed to upload to {self.path}")
             self.send_response(400)
             self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             response = json.dumps(
                 {'status': 'error', 'message': 'File upload failed'})
@@ -81,15 +80,22 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         # Default POST handler
-        super().do_POST()
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        try:
+            post_data_str = post_data.decode('utf-8')
+            response = f"POST request received: {post_data_str}"
+        except UnicodeDecodeError:
+            response = "POST request received with non-UTF-8 data"
+        self.wfile.write(response.encode('utf-8'))
 
     def do_GET(self):
         # Decode the path to handle non-ASCII filenames
         decoded_path = unquote(self.path)
-
         self.path = decoded_path
-
-        self.send_header('Access-Control-Allow-Origin', '*')
         super().do_GET()
 
 

@@ -34,7 +34,6 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
     setUploading(true);
     const shipUrls = await findShipUrls(path)
-    const endpoint = path.split('/').slice(1).join('/')
 
     for (let file of Array.from(fileList)) {
       const formData = new FormData();
@@ -43,18 +42,13 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
       try {
         // TODO account for athens url
-        const response = await fetch(`${shipUrls?.ship}/${endpoint}`, {
+        console.log(`Attempting to POST to ${path}`)
+        const response = await fetch(`${shipUrls?.ship}`, {
           method: 'POST',
           body: formData
         });
 
-        const result = await response.json();
-        if (result.status === 'success') {
-          setFiles(prev => [...prev, {
-            filename: result.filename,
-            url: `/uploads/${result.filename}`
-          }]);
-        }
+        console.log(response)
       } catch (error) {
         console.error('Upload failed:', error);
       }
@@ -66,12 +60,13 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const loadFiles = async () => {
     const shipUrls = await findShipUrls(path)
-    const endpoint = path.split('/').slice(1).join('/')
 
     try {
       // TODO handle athens url
-      const response = await fetch(`${shipUrls?.ship}/${endpoint}`);
+      console.log(`Attempting to GET from ${path}`)
+      const response = await fetch(`${shipUrls?.ship}`);
       const text = await response.text();
+      console.log(text)
       const parser = new DOMParser();
       const doc = parser.parseFromString(text, 'text/html');
       const links = doc.getElementsByTagName('a');
