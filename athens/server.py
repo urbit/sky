@@ -7,73 +7,51 @@ from urllib.parse import unquote
 
 
 class FileServerHandler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=os.getcwd(), **kwargs)
 
-    def end_headers(self):
+    def send_custom_headers(self):
+        # Add CORS headers to every response
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+
+    def end_headers(self):
+        # Ensure custom headers are included with end_headers call
+        self.send_custom_headers()
         super().end_headers()
 
     def do_OPTIONS(self):
         self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_custom_headers()
         self.end_headers()
 
     def do_POST(self):
-        # Handle file upload
         if self.path == '/upload':
-            # Parse multipart form data
-            content_type = self.headers['Content-Type']
-            if content_type and content_type.startswith('multipart/form-data'):
-                form = cgi.FieldStorage(
-                    fp=self.rfile,
-                    headers=self.headers,
-                    environ={'REQUEST_METHOD': 'POST'}
-                )
+            form = cgi.FieldStorage(fp=self.rfile, headers=self.headers, environ={
+                                    'REQUEST_METHOD': 'POST'})
+            fileitem = form['file']
+            pathitem = form['endpoint']
 
-                # Find the file field and path field
-                fileitem = form['file']
-                pathitem = form['endpoint']
+            if fileitem.filename and pathitem.value:
+                safe_filename = os.path.basename(fileitem.filename)
+                safe_path = os.path.normpath(pathitem.value)
+                full_path = os.path.join(os.getcwd(), *safe_path.split(os.sep))
+                os.makedirs(full_path, exist_ok=True)
+                filepath = os.path.join(full_path, safe_filename)
 
-                # Check if file was uploaded and path is provided
-                if fileitem.filename and pathitem.value:
-                    # Sanitize filename and path
-                    safe_filename = os.path.basename(fileitem.filename)
-                    # Split the path into components and join them to create nested directories
-                    safe_path = os.path.normpath(pathitem.value)
-                    full_path = os.path.join(
-                        os.getcwd(), *safe_path.split(os.sep))
+                with open(filepath, 'wb') as f:
+                    f.write(fileitem.file.read())
 
-                    # Ensure the directory exists
-                    os.makedirs(full_path, exist_ok=True)
+                self.send_response(200)
+                self.send_custom_headers()
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                response = json.dumps(
+                    {'status': 'success', 'filename': safe_filename, 'path': safe_path})
+                self.wfile.write(response.encode())
+                return
 
-                    # Write the uploaded file
-                    filepath = os.path.join(full_path, safe_filename)
-                    with open(filepath, 'wb') as f:
-                        f.write(fileitem.file.read())
-
-                    # Send success response
-                    self.send_response(200)
-                    self.send_header('Content-type', 'application/json')
-                    self.send_header('Access-Control-Allow-Origin', '*')
-                    self.end_headers()
-                    response = json.dumps(
-                        {
-                            'status': 'success',
-                            'filename': safe_filename,
-                            'path': safe_path
-                        }
-                    )
-                    self.wfile.write(response.encode())
-                    return
-
-            # If file upload fails
-            print(f"Failed to upload to {self.path}")
             self.send_response(400)
+            self.send_custom_headers()
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             response = json.dumps(
@@ -81,10 +59,10 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(response.encode())
             return
 
-        # Default POST handler
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
         self.send_response(200)
+        self.send_custom_headers()
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         try:
@@ -92,14 +70,12 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
             response = f"POST request received: {post_data_str}"
         except UnicodeDecodeError:
             response = "POST request received with non-UTF-8 data"
-        self.wfile.write(response.encode('utf-8'))
+        self.wfile.write(response.encode())
 
     def do_GET(self):
-        # Decode the path to handle non-ASCII filenames
         decoded_path = unquote(self.path)
         self.path = decoded_path
-        self.send_header('Access-Control-Allow-Origin', '*')
-        super().do_GET()
+        super().do_GET()  # Calls SimpleHTTPRequestHandler do_GET which handles sending the file or directory contents
 
 
 def run_server(port=8000):
