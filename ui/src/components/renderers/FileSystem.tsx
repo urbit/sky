@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useWindowStore from '../../state/useWindowStore';
-import { findShipDomain, findShipUrls } from '../../api/sky'
+import { get, findShipDomain, findShipUrls } from '../../api/sky'
 
 interface FileSystemProps {
   id: number;
@@ -28,39 +28,39 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     updateWindowPath(id, newPath);
   };
 
-  const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = event.target.files;
-    if (!fileList) return;
+const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const fileList = event.target.files;
+  if (!fileList) return;
 
-    setUploading(true);
-    const shipDomain = await findShipDomain(path)
+  setUploading(true);
+  const shipDomain = await findShipDomain(path);
+  const endpoint = path.split('/').slice(1).join('/')
 
-    for (let file of Array.from(fileList)) {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('path', path)
+  for (let file of Array.from(fileList)) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('path', endpoint);
 
-      // TODO should be put(path) via the Sky API, rather
-      // than a custom fetch() to a specific /upload endpoint;
-      // it's important for Sky API to treat Athens and Urbit
-      // exactly the same
-      try {
-        // TODO account for athens url
-        console.log(`Attempting to POST to ${path}`)
-        const response = await fetch(`${shipDomain}/upload`, {
-          method: 'POST',
-          body: formData
-        });
+    try {
+      console.log(`Attempting to POST to ${path}`);
+      const response = await fetch(`${shipDomain}/upload`, {
+        method: 'POST',
+        body: formData
+      });
 
-        console.log(response)
-      } catch (error) {
-        console.error('Upload failed:', error);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    }
 
-    setUploading(false);
-    event.target.value = ''; // Reset file input
-  };
+      console.log('Upload successful:', response);
+    } catch (error) {
+      console.error('Upload failed:', error);
+    }
+  }
+
+  setUploading(false);
+  event.target.value = ''; // Reset file input
+};
 
   const loadFiles = async () => {
     const shipUrls = await findShipUrls(path)
@@ -68,21 +68,10 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     try {
       // TODO handle athens url
       console.log(`Attempting to GET from ${path}`)
-      const response = await fetch(`${shipUrls?.ship}`);
-      const text = await response.text();
-      console.log(text)
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(text, 'text/html');
-      const links = doc.getElementsByTagName('a');
+      //const response = await fetch(`${shipUrls?.ship}`);
+      const response = await get(path)
+      console.log(response)
 
-      const newFiles: FileInfo[] = [];
-      for (let link of Array.from(links)) {
-        newFiles.push({
-          filename: decodeURIComponent(link.textContent || ''),
-          url: link.href
-        });
-      }
-      setFiles(newFiles);
     } catch (error) {
       console.error('Error loading files:', error);
     }
@@ -90,7 +79,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   useEffect(() => {
     loadFiles();
-  }, []);
+  }, [setUploading]);
 
   return (
     <div className="fc hf wf">
