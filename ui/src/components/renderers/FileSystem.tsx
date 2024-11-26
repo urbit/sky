@@ -103,7 +103,7 @@ const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
       <div className="fc ac jc b1" style={{ flex: 1, padding: '20px', gap: '20px' }}>
         <div className="fc" style={{ gap: '10px' }}>
           <div className="fr ac" style={{ gap: '10px' }}>
-            <button onClick={handleUploadClick}>Upload a file or folder</button>
+            <button onClick={handleUploadClick}>Upload a file</button>
             <input
               type="file"
               style={{ display: 'none' }}
