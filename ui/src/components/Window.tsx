@@ -6,11 +6,11 @@ import PathBar from './PathBar'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 
-export default function Window({ 
-  id, 
-  path, 
-  handleDrop, 
-  handleDragStart 
+export default function Window({
+  id,
+  path,
+  handleDrop,
+  handleDragStart,
 }: WindowProps) {
   const defaultContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
@@ -197,20 +197,51 @@ export default function Window({
     }
   }
 
-  function handleMouseMove(event: React.MouseEvent){
-    const container = document.getElementById(id.toString());  // Get the container element
+  //on hover of top 40px changes cursor to grab
+  function handleMouseMove(event: React.MouseEvent) {
+    const container = document.getElementById(id.toString())
     if (container) {
-      const containerTop = container.getBoundingClientRect().top;  // Get the top position of the container
-      if (event.clientY >= containerTop && event.clientY <= containerTop + 40){
-        container.classList.add('grabber');
-      }else{
-        container.classList.remove('grabber');
+      const containerTop = container.getBoundingClientRect().top
+      if (event.clientY >= containerTop && event.clientY <= containerTop + 40) {
+        console.log('top')
+        const findOverlay = container.getElementsByClassName(
+          'overlay'
+        )[0] as HTMLElement
+        if (!findOverlay) {
+          const overlay = document.createElement('div')
+          Object.assign(overlay.style, {
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '40px',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            zIndex: '5',
+          })
+          overlay.classList.add('overlay')
+          overlay.classList.add('grabber')
+          overlay.style.display = 'block'
+          container.appendChild(overlay)
+          console.log('append child')
+          container.classList.add('grabber')
+        }
+      } else {
+        const overlay = container.getElementsByClassName(
+          'overlay'
+        )[0] as HTMLElement
+        if (overlay) {
+          container.removeChild(overlay)
+        }
+        container.classList.remove('grabber')
       }
     }
   }
 
   useEffect(() => {
     const fetchContent = async () => {
+      if (path === '') {
+        setWindowContent(defaultContent)
+      }
       if (path) {
         const content = await renderContent(path)
         // TODO error msg if content is null/undefined
@@ -229,14 +260,17 @@ export default function Window({
           className="fc ac jc"
           style={{ width: '100%', height: '100%', padding: '5px' }}
           onMouseEnter={handleMouseEnter}
-          onMouseMove={(e) => handleMouseMove(e)}
+          onMouseMove={e => handleMouseMove(e)}
         >
           <div
             id={id.toString()}
+            draggable="true"
             className="container fc as js b1 br1"
-            onDragStart={(e) => handleDragStart(e, id)}
-            onDrop={(e) => handleDrop(e, id)}
-            onDragOver={(e) => e.preventDefault()}
+            onDragStart={e => handleDragStart(e, id)}
+            onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
+            onDragOver={e => {
+              e.preventDefault()
+            }}
             style={{
               width: '100%',
               height: '100%',

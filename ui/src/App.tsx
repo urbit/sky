@@ -20,47 +20,72 @@ function App() {
     isActive,
   } = useWindowStore()
 
-  const [dragWindow, setDragWindow] = useState(0);
+  const [dragWindow, setDragWindow] = useState(0)
 
-  function handleDragStart(event: React.DragEvent, id: number){
-    const container = document.getElementById(id.toString());
-    console.log(container)
+  function handleDragStart(event: React.DragEvent, id: number) {
+    const container = document.getElementById(id.toString())
 
-    if(container){
-      const containerTop = container.getBoundingClientRect().top;
-      if (event.clientY >= containerTop && event.clientY <= containerTop + 40 && windowMap.size >= 2) {
-        event.dataTransfer.effectAllowed = 'move';
-        console.log('set drag window to', id)
+    if (container) {
+      const containerTop = container.getBoundingClientRect().top
+      if (
+        event.clientY >= containerTop &&
+        event.clientY <= containerTop + 40 &&
+        windowMap.size >= 2
+      ) {
+        //  window styling
+        event.dataTransfer.effectAllowed = 'move'
         setDragWindow(id)
-        container.classList.add('o5');
-        container.classList.add('bd1');
+        container.classList.add('o5')
+        container.classList.add('bd1')
+
+        //  removing iframe top-overlay
+        const overlay = container.getElementsByClassName(
+          'overlay'
+        )[0] as HTMLElement
+        container.removeChild(overlay)
+
+        //  removing pointer events from iframes while onDrag event active
+        const containers = document.querySelectorAll('.container')
+        containers.forEach(container => {
+          const iframe = container.querySelector('iframe') as HTMLElement
+          if (iframe) {
+            iframe.style.pointerEvents = 'none'
+          }
+        })
+        // const content = container.innerHTML;
+        // event.dataTransfer.setData('text/plain', content);
       }
-    }
-  };
-
-  function handleDrop(event: React.DragEvent<HTMLDivElement>, id: number){
-    event.preventDefault(); 
-
-    if(dragWindow === null || dragWindow === id) return;
-
-    console.log('handle drop')
-    if(dragWindow !== 0){
-      const container = document.getElementById(dragWindow.toString());
-      console.log('container', container)
-      container?.classList.remove('o5');
-      container?.classList.remove('bd1');
-      container?.classList.remove('grabber');
-
-      console.log('dropping in ', id)
-      const idPath =  windowMap.get(id) ?? ''
-      updateWindowPath(id, windowMap.get(dragWindow) ?? '')
-      console.log('updating ', id , 'to', windowMap.get(dragWindow))
-      updateWindowPath(dragWindow, idPath)
-      console.log('updating ', dragWindow , 'to', idPath)
-      setDragWindow(0)
     }
   }
 
+  function handleDrop(event: React.DragEvent<HTMLDivElement>, id: number) {
+    event.preventDefault()
+
+    //  removing styling
+    const container = document.getElementById(dragWindow.toString())
+    container?.classList.remove('o5')
+    container?.classList.remove('bd1')
+    container?.classList.remove('grabber')
+
+    //  pointer events on iframes set back to automatic
+    const containers = document.querySelectorAll('.container')
+    containers.forEach(container => {
+      const iframe = container.querySelector('iframe') as HTMLElement
+      if (iframe) {
+        iframe.style.pointerEvents = 'auto'
+      }
+    })
+
+    if (dragWindow === null || dragWindow === id) return
+
+    //  swap content logic
+    if (dragWindow !== 0) {
+      const idPath = windowMap.get(id) ?? '/~sampel/home'
+      updateWindowPath(id, windowMap.get(dragWindow) ?? '/~sampel/home')
+      updateWindowPath(dragWindow, idPath)
+      setDragWindow(0)
+    }
+  }
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -84,11 +109,11 @@ function App() {
     }
 
     if (active !== null) {
-      window.addEventListener('keydown', handleKeyDown, { capture: true });
+      window.addEventListener('keydown', handleKeyDown, { capture: true })
     }
     // Cleanup event listener when the component is unmounted
     return () => {
-      window.removeEventListener('keydown', handleKeyDown, { capture: true });
+      window.removeEventListener('keydown', handleKeyDown, { capture: true })
     }
   }, [active, delWindow, addWindow, updateWindowPath, isActive])
 
@@ -104,7 +129,7 @@ function App() {
           map={windowMap}
           id={1}
           isVertical={window.innerWidth > window.innerHeight}
-          handleDrop={handleDrop} 
+          handleDrop={handleDrop}
           handleDragStart={handleDragStart}
         />
       </div>
