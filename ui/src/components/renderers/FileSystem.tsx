@@ -43,7 +43,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       try {
         // TODO account for athens url
         console.log(`Attempting to POST to ${path}`)
-        const response = await fetch(`${shipUrls?.ship}/${endpoint}`, {
+        const response = await fetch(`http://localhost:8000/upload`, {
           method: 'POST',
           body: formData
         });
