@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useWindowStore from '../../state/useWindowStore';
-import { findShipUrls } from '../../api/sky'
+import { findShipDomain, findShipUrls } from '../../api/sky'
 
 interface FileSystemProps {
   id: number;
@@ -33,17 +33,21 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     if (!fileList) return;
 
     setUploading(true);
-    const shipUrls = await findShipUrls(path)
+    const shipDomain = findShipDomain(path)
 
     for (let file of Array.from(fileList)) {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('path', path)
 
+      // TODO should be put(path) via the Sky API, rather
+      // than a custom fetch() to a specific /upload endpoint;
+      // it's important for Sky API to treat Athens and Urbit
+      // exactly the same
       try {
         // TODO account for athens url
         console.log(`Attempting to POST to ${path}`)
-        const response = await fetch(`http://localhost:8000/upload`, {
+        const response = await fetch(`${shipDomain}/upload`, {
           method: 'POST',
           body: formData
         });
