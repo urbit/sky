@@ -45,7 +45,8 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
                     safe_filename = os.path.basename(fileitem.filename)
                     # Split the path into components and join them to create nested directories
                     safe_path = os.path.normpath(pathitem.value)
-                    full_path = os.path.join(os.getcwd(), *safe_path.split(os.sep))
+                    full_path = os.path.join(
+                        os.getcwd(), *safe_path.split(os.sep))
 
                     # Ensure the directory exists
                     os.makedirs(full_path, exist_ok=True)
@@ -97,6 +98,7 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
         # Decode the path to handle non-ASCII filenames
         decoded_path = unquote(self.path)
         self.path = decoded_path
+        self.send_header('Access-Control-Allow-Origin', '*')
         super().do_GET()
 
 

@@ -33,7 +33,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     if (!fileList) return;
 
     setUploading(true);
-    const shipDomain = findShipDomain(path)
+    const shipDomain = await findShipDomain(path)
 
     for (let file of Array.from(fileList)) {
       const formData = new FormData();
