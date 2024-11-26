@@ -6,7 +6,12 @@ import PathBar from './PathBar'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 
-export default function Window({ id, path }: WindowProps) {
+export default function Window({ 
+  id, 
+  path, 
+  handleDrop, 
+  handleDragStart 
+}: WindowProps) {
   const defaultContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
       <PathBar id={id} path={path} />
@@ -17,7 +22,6 @@ export default function Window({ id, path }: WindowProps) {
   const { isActive } = useWindowStore()
 
   function handleMouseEnter() {
-    // console.log('is active', id)
     isActive(id)
   }
 
@@ -193,6 +197,18 @@ export default function Window({ id, path }: WindowProps) {
     }
   }
 
+  function handleMouseMove(event: React.MouseEvent){
+    const container = document.getElementById(id.toString());  // Get the container element
+    if (container) {
+      const containerTop = container.getBoundingClientRect().top;  // Get the top position of the container
+      if (event.clientY >= containerTop && event.clientY <= containerTop + 40){
+        container.classList.add('grabber');
+      }else{
+        container.classList.remove('grabber');
+      }
+    }
+  }
+
   useEffect(() => {
     const fetchContent = async () => {
       if (path) {
@@ -213,9 +229,14 @@ export default function Window({ id, path }: WindowProps) {
           className="fc ac jc"
           style={{ width: '100%', height: '100%', padding: '5px' }}
           onMouseEnter={handleMouseEnter}
+          onMouseMove={(e) => handleMouseMove(e)}
         >
           <div
-            className="fc as js b1 br1"
+            id={id.toString()}
+            className="container fc as js b1 br1"
+            onDragStart={(e) => handleDragStart(e, id)}
+            onDrop={(e) => handleDrop(e, id)}
+            onDragOver={(e) => e.preventDefault()}
             style={{
               width: '100%',
               height: '100%',

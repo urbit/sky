@@ -144,6 +144,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     const windowMap = get().windowMap
 
     if (windowMap.has(id)) {
+      console.log('path', path)
       windowMap.set(id, path)
       set({ windowMap: windowMap })
     } else {
