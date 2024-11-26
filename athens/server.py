@@ -37,7 +37,7 @@ class FileServerHandler(http.server.SimpleHTTPRequestHandler):
 
                 # Find the file field and path field
                 fileitem = form['file']
-                pathitem = form['path']
+                pathitem = form['endpoint']
 
                 # Check if file was uploaded and path is provided
                 if fileitem.filename and pathitem.value:

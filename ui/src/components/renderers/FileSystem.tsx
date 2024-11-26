@@ -39,7 +39,7 @@ const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
   for (let file of Array.from(fileList)) {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('path', endpoint);
+    formData.append('endpoint', endpoint);
 
     try {
       console.log(`Attempting to POST to ${path}`);
