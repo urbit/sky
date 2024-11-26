@@ -7,15 +7,9 @@ interface FileSystemProps {
   path: string;
 }
 
-interface FileInfo {
-  filename: string;
-  url: string;
-}
-
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   const { updateWindowPath } = useWindowStore();
   const segments = path.split('/');
-  const [files, setFiles] = useState<FileInfo[]>([]);
   const [uploading, setUploading] = useState(false);
 
   const handleUploadClick = () => {
@@ -28,58 +22,39 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     updateWindowPath(id, newPath);
   };
 
-const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  const fileList = event.target.files;
-  if (!fileList) return;
+  const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = event.target.files;
+    if (!fileList) return;
 
-  setUploading(true);
-  const shipDomain = await findShipDomain(path);
-  const endpoint = path.split('/').slice(1).join('/')
+    setUploading(true);
+    const shipDomain = await findShipDomain(path);
+    const endpoint = path.split('/').slice(1).join('/')
 
-  for (let file of Array.from(fileList)) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('endpoint', endpoint);
+    for (let file of Array.from(fileList)) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('endpoint', endpoint);
 
-    try {
-      console.log(`Attempting to POST to ${path}`);
-      const response = await fetch(`${shipDomain}/upload`, {
-        method: 'POST',
-        body: formData
-      });
+      try {
+        console.log(`Attempting to POST to ${path}`);
+        const response = await fetch(`${shipDomain}/upload`, {
+          method: 'POST',
+          body: formData
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        console.log('Upload successful:', response);
+      } catch (error) {
+        console.error('Upload failed:', error);
       }
-
-      console.log('Upload successful:', response);
-    } catch (error) {
-      console.error('Upload failed:', error);
     }
-  }
 
-  setUploading(false);
-  event.target.value = ''; // Reset file input
-};
-
-  const loadFiles = async () => {
-    const shipUrls = await findShipUrls(path)
-
-    try {
-      // TODO handle athens url
-      console.log(`Attempting to GET from ${path}`)
-      //const response = await fetch(`${shipUrls?.ship}`);
-      const response = await get(path)
-      console.log(response)
-
-    } catch (error) {
-      console.error('Error loading files:', error);
-    }
+    setUploading(false);
+    event.target.value = ''; // Reset file input
   };
-
-  useEffect(() => {
-    loadFiles();
-  }, [setUploading]);
 
   return (
     <div className="fc hf wf">
