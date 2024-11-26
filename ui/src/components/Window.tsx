@@ -24,7 +24,19 @@ export default function Window({ id, path }: WindowProps) {
 
   const notRecognizedContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
-      <p>Resource is unrecognized or blocked</p>
+      <p>Unrecognized MIME type</p>
+    </div>
+  )
+
+  const unhandledStatusCodeContent = (
+    <div className="fc ac jc hf wf p2">
+      <p>Unhandled status code</p>
+    </div>
+  )
+
+  const corsErrorContent = (
+    <div className="fc ac jc hf wf p2">
+      <p>Blocked by CORS</p>
     </div>
   )
 
@@ -54,6 +66,10 @@ export default function Window({ id, path }: WindowProps) {
   async function renderResponse(res: Response): Promise<JSX.Element> {
     console.log('Running renderResponse()')
     console.log(res)
+
+    if (res.type === 'cors') {
+      return corsErrorContent
+    }
 
     if (res.status >= 200 && res.status <= 300) {
       switch (res.headers.get('Content-Type')) {
@@ -127,7 +143,7 @@ export default function Window({ id, path }: WindowProps) {
           )
         default:
           // TODO reconsider this; won't fire if status code is 2XX
-          console.log(`Resource isn't recognized or is blocked by CORS`)
+          console.log(`Resource isn't recognized`)
           return notRecognizedContent
       }
     }
@@ -141,15 +157,14 @@ export default function Window({ id, path }: WindowProps) {
         // respond to GET requests
         console.log(`Attempting to load a page from ${res.headers.get('X-Response-URL')}`)
         return <iframe
-                 className='hf wf'
-                 style={{ border: 'none' }}
-                 src={`${res.headers.get('X-Response-URL')}`}
-               />
+          className='hf wf'
+          style={{ border: 'none' }}
+          src={`${res.headers.get('X-Response-URL')}`}
+        />
       }
     }
 
-    // TODO proper unhandled error content
-    return notRecognizedContent
+    return unhandledStatusCodeContent
   }
 
   async function renderContent(path: string) {
