@@ -1,53 +1,52 @@
-import { Allotment } from 'allotment'
-import { WindowProps } from '../types/windows'
-import { get, findShipUrls } from '../api/sky'
-import WebPage from './renderers/WebPage'
-import PathBar from './PathBar'
-import FileSystem from './renderers/FileSystem'
-import { useEffect, useState } from 'react'
-import useWindowStore from '../state/useWindowStore'
+import { Allotment } from 'allotment';
+import { WindowProps } from '../types/windows';
+import { get, findShipUrls } from '../api/sky';
+import WebPage from './renderers/WebPage';
+import PathBar from './PathBar';
+import FileSystem from './renderers/FileSystem';
+import { useEffect, useState } from 'react';
+import useWindowStore from '../state/useWindowStore';
 
 export default function Window({ id, path }: WindowProps) {
   const defaultContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
       <PathBar id={id} path={path} />
     </div>
-  )
+  );
 
-  const [windowContent, setWindowContent] = useState(defaultContent)
-  const { isActive } = useWindowStore()
+  const [windowContent, setWindowContent] = useState(defaultContent);
+  const { isActive } = useWindowStore();
 
   function handleMouseEnter() {
-    // console.log('is active', id)
-    isActive(id)
+    isActive(id);
   }
 
   const notRecognizedContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
       <p>Unrecognized MIME type</p>
     </div>
-  )
+  );
 
   const unhandledStatusCodeContent = (
     <div className="fc ac jc hf wf p2">
       <p>Unhandled status code</p>
     </div>
-  )
+  );
 
   const corsErrorContent = (
     <div className="fc ac jc hf wf p2">
       <p>Blocked by CORS</p>
     </div>
-  )
+  );
 
   const noURLcontent = (path: string) => {
-    console.log('nourl content for ', id, path)
+    console.log('nourl content for ', id, path);
     return (
       <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
         <p>No URL found for {path}</p>
       </div>
-    )
-  }
+    );
+  };
 
   const errorFetchingContent = (err: string) => {
     return (
@@ -60,178 +59,180 @@ export default function Window({ id, path }: WindowProps) {
           </pre>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   async function renderResponse(res: Response): Promise<JSX.Element> {
-    console.log('Running renderResponse()')
-    console.log(res)
+    console.log('Running renderResponse()');
+    console.log(res);
 
-    if (res.type === 'cors') {
-      return corsErrorContent
-    }
+    // TODO remove?
+    //if (res.type === 'cors') {
+    //  return corsErrorContent;
+    //}
 
     if (res.status >= 200 && res.status <= 300) {
-      switch (res.headers.get('Content-Type')) {
+      const contentType = res.headers.get('Content-Type');
+      console.log(`Content-Type: ${contentType}`);
+
+      switch (contentType) {
         case 'text/plain':
-          console.log('Processing plain text file...')
+          console.log('Processing plain text file...');
           return (
             <>
               <p>Plain text content is not currently displayed.</p>
             </>
-          )
+          );
         case 'text/html':
-          console.log('Processing HTML document...')
-
-          return <WebPage data={await res.text()} />
-
+          console.log('Processing HTML document...');
+          return <WebPage data={await res.text()} />;
         case 'application/json':
-          console.log('Processing JSON data...')
+          console.log('Processing JSON data...');
           return (
             <>
               <p>JSON content is not currently displayed.</p>
             </>
-          )
+          );
         case 'application/xml':
-          console.log('Processing XML file...')
+          console.log('Processing XML file...');
           return (
             <>
               <p>XML content is not currently displayed.</p>
             </>
-          )
+          );
         case 'application/pdf':
-          console.log('Processing PDF document...')
+          console.log('Processing PDF document...');
           return (
             <>
               <p>PDF content is not currently displayed.</p>
             </>
-          )
+          );
         case 'image/jpeg':
-          console.log('Processing JPEG image...')
+          console.log('Processing JPEG image...');
           return (
             <>
               <p>JPEG image content is not currently displayed.</p>
             </>
-          )
+          );
         case 'image/png':
-          console.log('Processing PNG image...')
+          console.log('Processing PNG image...');
+          // Process the PNG image and display it
+          const blob = await res.blob();
+          const objectURL = URL.createObjectURL(blob);
           return (
-            <>
-              <p>PNG image content is not currently displayed.</p>
-            </>
-          )
+            <div
+              className="p2 fc ac jc"
+              style={{ width: '100%', height: '100%' }}
+            >
+              <img
+                src={objectURL}
+                alt="PNG Image"
+                style={{ maxWidth: '100%', maxHeight: '100%' }}
+              />
+            </div>
+          );
         case 'image/gif':
-          console.log('Processing GIF image...')
+          console.log('Processing GIF image...');
           return (
             <>
               <p>GIF image content is not currently displayed.</p>
             </>
-          )
+          );
         case 'video/mp4':
-          console.log('Processing MP4 video file...')
+          console.log('Processing MP4 video file...');
           return (
             <>
               <p>MP4 video content is not currently displayed.</p>
             </>
-          )
+          );
         case 'audio/mpeg':
-          console.log('Processing MP3 audio file...')
+          console.log('Processing MP3 audio file...');
           return (
             <>
               <p>MP3 audio content is not currently displayed.</p>
             </>
-          )
+          );
         default:
-          // TODO reconsider this; won't fire if status code is 2XX
-          console.log(`Resource isn't recognized`)
-          return notRecognizedContent
+          // This will fire if the MIME type doesn't match any case
+          console.log(`Resource isn't recognized`);
+          return notRecognizedContent;
       }
     }
 
     if (res.status === 404) {
       if (path && path.split('/')[0] === window.urbitID) {
-        return <FileSystem id={id} path={path} />
+        return <FileSystem id={id} path={path} />;
       } else if (path && path.split('/')[0] !== window.urbitID) {
-        // last-ditch attempt to load something, in the
-        // event it's a clearweb resource that doesn't
-        // respond to GET requests
+        // Last-ditch attempt to load something
         console.log(
           `Attempting to load a page from ${res.headers.get('X-Response-URL')}`
-        )
+        );
         return (
           <iframe
             className="hf wf"
             style={{ border: 'none' }}
             src={`${res.headers.get('X-Response-URL')}`}
           />
-        )
+        );
       }
     }
 
-    return unhandledStatusCodeContent
+    return unhandledStatusCodeContent;
   }
 
   async function renderContent(path: string) {
-    console.log('render', path)
+    console.log('render', path);
     try {
-      const res = await get(path)
-      const data = res
+      const res = await get(path);
 
-      console.log('Data in renderContent is', data)
+      console.log('Data in renderContent is', res);
 
-      if (data) {
-        return renderResponse(data)
+      if (res) {
+        return await renderResponse(res);
       } else {
-        const urls = await findShipUrls(path)
+        const urls = await findShipUrls(path);
 
         if (!urls) {
-          console.error(`No URLs found for ${path.split('/').slice(0)}`)
-          return noURLcontent(path)
+          console.error(`No URLs found for ${path.split('/').slice(0)}`);
+          return noURLcontent(path);
         }
 
-        console.log(urls)
-        console.log(urls.athens)
-        console.log(urls.ship)
+        console.log(urls);
+        console.log(urls.athens);
+        console.log(urls.ship);
         if (urls.athens && !urls.ship) {
           return (
             <iframe
               src={`${urls.athens}`}
               style={{ width: '100%', height: '100%', border: 'none' }}
             />
-          )
+          );
         } else if (urls.ship && !urls.athens) {
           return (
             <iframe
               src={`${urls.ship}`}
               style={{ width: '100%', height: '100%', border: 'none' }}
             />
-          )
+          );
         } else if (!urls.ship && !urls.athens) {
-          console.log(`No URLs detected for ${path.split('/').slice(0)}`)
+          console.log(`No URLs detected for ${path.split('/').slice(0)}`);
         } else {
-          // TODO ping athens URL and ship URL and render whichever one
-          //      of them has a resource; if there's a resource at both of
-          //      these URLs, mistakes have been made
-          // NOTE can't do this properly because there's no Athens to GET
-          //      need to ping sampel-palnet.urbit.org and recieve a response
-          //      that's not just a CORS error, which breaks renderResponse()
-          //      in practice if we reach this code, we should probably just
-          //      try to render urls.ship because we already know there's no Athens
+          // TODO: Implement logic to choose between URLs
           return (
             <iframe
               src={`${urls.ship}`}
               style={{ width: '100%', height: '100%', border: 'none' }}
             />
-          )
+          );
         }
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error('Error fetching content:', error)
-        return errorFetchingContent(error.toString())
+        console.error('Error fetching content:', error);
+        return errorFetchingContent(error.toString());
       } else {
-        console.error('Unknown error fetching content:', error)
-        return errorFetchingContent('Unknown')
+        console.error('Unknown error fetching content:', error);
+        return errorFetchingContent('Unknown');
       }
     }
   }
@@ -239,15 +240,16 @@ export default function Window({ id, path }: WindowProps) {
   useEffect(() => {
     const fetchContent = async () => {
       if (path) {
-        const content = await renderContent(path)
-        // TODO error msg if content is null/undefined
+        const content = await renderContent(path);
+        // TODO: Error message if content is null/undefined
         if (content) {
-          setWindowContent(content)
+          setWindowContent(content);
         }
       }
-    }
-    fetchContent()
-  }, [])
+    };
+    fetchContent();
+    // Add 'path' as a dependency to re-fetch when the path changes
+  }, [path]);
 
   return (
     <Allotment>
@@ -271,5 +273,5 @@ export default function Window({ id, path }: WindowProps) {
         </div>
       </Allotment.Pane>
     </Allotment>
-  )
+  );
 }

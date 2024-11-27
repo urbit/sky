@@ -36,6 +36,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       formData.append('file', file)
 
       try {
+        // TODO should use put() from Sky API
         console.log(`Attempting to POST to ${shipDomain}/${endpoint}`)
         const response = await fetch(`${shipDomain}/${endpoint}`, {
           method: 'POST',
