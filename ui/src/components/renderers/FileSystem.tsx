@@ -8,25 +8,14 @@ interface FileSystemProps {
 }
 
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
-  const { updateWindowPath } = useWindowStore()
-  const segments = path.split('/')
-  const [uploading, setUploading] = useState(false)
-
   const handleUploadClick = () => {
     const input = document.querySelector('input[type="file"]')
     if (input) (input as HTMLInputElement).click()
   }
 
-  const handleClick = (index: number) => {
-    const newPath = segments.slice(0, index + 1).join('/')
-    updateWindowPath(id, newPath)
-  }
-
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
     if (!fileList) return
-
-    setUploading(true)
 
     const shipDomain = await findShipDomain(path)
     const endpoint = path.split('/').slice(1).join('/')
@@ -53,19 +42,38 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       }
     }
 
-    setUploading(false)
     event.target.value = ''
   }
 
+  const createFileMenu = (
+    <div className="fc ac jc hf wf b2">
+      <button onClick={handleUploadClick}>Upload a file</button>
+      <input
+        type="file"
+        accept='image/png'
+        style={{ display: 'none' }}
+        onChange={uploadFiles}
+      />
+    </div>
+  )
+
+  const segments = path.split('/')
+  const { updateWindowPath } = useWindowStore()
+  const [fileViewerContent, setFileViewerContent] = useState(createFileMenu)
+
+  function handlePathSegmentClick(index: number) {
+    updateWindowPath(id, path.split('/').slice(index).join('/'))
+  }
+
   return (
-    <div className="fc hf wf">
+    <div className="fc hf wf p2">
       <div className="fr ac b1" style={{ padding: '10px' }}>
         {segments.map((segment, index) => (
           <React.Fragment key={index}>
             <span
               className="f0"
               style={{ cursor: 'pointer' }}
-              onClick={() => handleClick(index)}
+              onClick={() => handlePathSegmentClick(index)}
             >
               {segment}
             </span>
@@ -77,17 +85,8 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
           </React.Fragment>
         ))}
       </div>
-
-      <div className="fc ac jc hf wf b1">
-        <button onClick={handleUploadClick}>Upload a file</button>
-        <input
-          type="file"
-          accept='image/png'
-          style={{ display: 'none' }}
-          onChange={uploadFiles}
-          disabled={uploading}
-        />
-        {uploading && <span>Uploading...</span>}
+      <div className="hf wf b1 br1" style={{ overflow: 'scroll' }}>
+        {fileViewerContent}
       </div>
     </div>
   )
