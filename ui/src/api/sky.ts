@@ -43,7 +43,7 @@ async function get(path: string): Promise<Response | void> {
     console.error(`File not found at ${path}`)
     return new Response(`File not found for ${path}`, {
       status: 404,
-      headers: { 'Content-Type': 'text/plain' }
+      headers: { 'Content-Type': 'text/plain' },
     })
   }
 
@@ -72,12 +72,13 @@ async function get(path: string): Promise<Response | void> {
 
       return res
     } catch (err) {
+      console.log(`GET request to ${urls.ship} failed: `, err)
       return new Response(`File not found for ${path}`, {
         status: 404,
         headers: {
           'Content-Type': 'text/plain',
-          'X-Response-URL': urls.ship
-        }
+          'X-Response-URL': urls.ship,
+        },
       })
     }
   }

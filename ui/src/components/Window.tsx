@@ -155,12 +155,16 @@ export default function Window({ id, path }: WindowProps) {
         // last-ditch attempt to load something, in the
         // event it's a clearweb resource that doesn't
         // respond to GET requests
-        console.log(`Attempting to load a page from ${res.headers.get('X-Response-URL')}`)
-        return <iframe
-          className='hf wf'
-          style={{ border: 'none' }}
-          src={`${res.headers.get('X-Response-URL')}`}
-        />
+        console.log(
+          `Attempting to load a page from ${res.headers.get('X-Response-URL')}`
+        )
+        return (
+          <iframe
+            className="hf wf"
+            style={{ border: 'none' }}
+            src={`${res.headers.get('X-Response-URL')}`}
+          />
+        )
       }
     }
 
@@ -243,7 +247,7 @@ export default function Window({ id, path }: WindowProps) {
       }
     }
     fetchContent()
-  }, [path])
+  }, [])
 
   return (
     <Allotment>

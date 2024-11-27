@@ -1,60 +1,60 @@
-import React, { useState } from 'react';
-import useWindowStore from '../../state/useWindowStore';
-import { findShipDomain } from '../../api/sky';
+import React, { useState } from 'react'
+import useWindowStore from '../../state/useWindowStore'
+import { findShipDomain } from '../../api/sky'
 
 interface FileSystemProps {
-  id: number;
-  path: string;
+  id: number
+  path: string
 }
 
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
-  const { updateWindowPath } = useWindowStore();
-  const segments = path.split('/');
-  const [uploading, setUploading] = useState(false);
+  const { updateWindowPath } = useWindowStore()
+  const segments = path.split('/')
+  const [uploading, setUploading] = useState(false)
 
   const handleUploadClick = () => {
-    const input = document.querySelector('input[type="file"]');
-    if (input) (input as HTMLInputElement).click();
-  };
+    const input = document.querySelector('input[type="file"]')
+    if (input) (input as HTMLInputElement).click()
+  }
 
   const handleClick = (index: number) => {
-    const newPath = segments.slice(0, index + 1).join('/');
-    updateWindowPath(id, newPath);
-  };
+    const newPath = segments.slice(0, index + 1).join('/')
+    updateWindowPath(id, newPath)
+  }
 
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = event.target.files;
-    if (!fileList) return;
+    const fileList = event.target.files
+    if (!fileList) return
 
-    setUploading(true);
+    setUploading(true)
 
     const shipDomain = await findShipDomain(path)
     const endpoint = path.split('/').slice(1).join('/')
 
-    for (let file of Array.from(fileList)) {
-      const formData = new FormData();
-      formData.append('file', file);
+    for (const file of Array.from(fileList)) {
+      const formData = new FormData()
+      formData.append('file', file)
 
       try {
-        console.log(`Attempting to POST to ${shipDomain}/${endpoint}`);
+        console.log(`Attempting to POST to ${shipDomain}/${endpoint}`)
         const response = await fetch(`${shipDomain}/${endpoint}`, {
           method: 'POST',
           body: formData,
-        });
+        })
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error! status: ${response.status}`)
         }
 
-        console.log('Upload successful:', response);
+        console.log('Upload successful:', response)
       } catch (error) {
-        console.error('Upload failed:', error);
+        console.error('Upload failed:', error)
       }
     }
 
-    setUploading(false);
-    event.target.value = ''; // Reset file input
-  };
+    setUploading(false)
+    event.target.value = ''
+  }
 
   return (
     <div className="fc hf wf">
@@ -69,7 +69,9 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
               {segment}
             </span>
             {index < segments.length - 1 && (
-              <span className="f4" style={{ margin: '0 5px' }}>/</span>
+              <span className="f4" style={{ margin: '0 5px' }}>
+                /
+              </span>
             )}
           </React.Fragment>
         ))}
@@ -91,5 +93,5 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
         </div>
       </div>
     </div>
-  );
+  )
 }

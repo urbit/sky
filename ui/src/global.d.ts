@@ -5,7 +5,7 @@ export {}
 
 declare global {
   interface Window {
-    ship?: string,
+    ship?: string
     urbitID?: string
   }
 }

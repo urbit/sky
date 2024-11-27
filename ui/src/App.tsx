@@ -52,7 +52,7 @@ function App() {
   // TODO handle real window.urbitID, not suitable for production
   useEffect(() => {
     if (!window.urbitID) {
-      window.urbitID= '~sampel'
+      window.urbitID = '~sampel'
     }
   }, [])
 
