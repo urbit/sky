@@ -33,11 +33,11 @@ export default function Window({ id, path }: WindowProps) {
     </div>
   );
 
-  const corsErrorContent = (
-    <div className="fc ac jc hf wf p2">
-      <p>Blocked by CORS</p>
-    </div>
-  );
+  //const corsErrorContent = (
+  //  <div className="fc ac jc hf wf p2">
+  //    <p>Blocked by CORS</p>
+  //  </div>
+  //);
 
   const noURLcontent = (path: string) => {
     console.log('nourl content for ', id, path);

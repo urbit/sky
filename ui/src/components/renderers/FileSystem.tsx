@@ -84,8 +84,8 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
             <button onClick={handleUploadClick}>Upload a file</button>
             <input
               type="file"
+              accept='image/png'
               style={{ display: 'none' }}
-              multiple
               onChange={uploadFiles}
               disabled={uploading}
             />
