@@ -1,88 +1,79 @@
+from flask import Flask, request, send_file, abort, Response
+from flask_cors import CORS  # Import flask_cors
 import os
-import json
-import cgi
-import http.server
-import socketserver
-from urllib.parse import unquote
+import mimetypes
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
+# Directory where files will be saved
+UPLOAD_FOLDER = './uploads'
 
 
-class FileServerHandler(http.server.SimpleHTTPRequestHandler):
+@app.route('/<path:url_path>', methods=['GET', 'POST'])
+def handle_file(url_path):
+    if request.method == 'POST':
+        # Check if the POST request has the file part
+        if 'file' not in request.files:
+            return 'No file part in the request', 400
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file', 400
 
-    def send_custom_headers(self):
-        # Add CORS headers to every response
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        # Build the file path
+        filename = url_path
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        filepath = os.path.normpath(filepath)  # Normalize path
 
-    def end_headers(self):
-        # Ensure custom headers are included with end_headers call
-        self.send_custom_headers()
-        super().end_headers()
+        # Security check: Ensure the file path is within the UPLOAD_FOLDER
+        upload_folder_abs = os.path.abspath(UPLOAD_FOLDER)
+        filepath_abs = os.path.abspath(filepath)
+        if not filepath_abs.startswith(upload_folder_abs):
+            return 'Invalid path', 400
 
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_custom_headers()
-        self.end_headers()
+        # Ensure the directory exists
+        dirname = os.path.dirname(filepath)
+        os.makedirs(dirname, exist_ok=True)
 
-    def do_POST(self):
-        if self.path == '/upload':
-            form = cgi.FieldStorage(fp=self.rfile, headers=self.headers, environ={
-                                    'REQUEST_METHOD': 'POST'})
-            fileitem = form['file']
-            pathitem = form['endpoint']
+        # Save the file
+        file.save(filepath)
 
-            if fileitem.filename and pathitem.value:
-                safe_filename = os.path.basename(fileitem.filename)
-                safe_path = os.path.normpath(pathitem.value)
-                full_path = os.path.join(os.getcwd(), *safe_path.split(os.sep))
-                os.makedirs(full_path, exist_ok=True)
-                filepath = os.path.join(full_path, safe_filename)
+        # Save the MIME type
+        mime_type = file.mimetype or 'application/octet-stream'
+        mime_file_path = filepath + '.mime'
+        with open(mime_file_path, 'w') as mime_file:
+            mime_file.write(mime_type)
 
-                with open(filepath, 'wb') as f:
-                    f.write(fileitem.file.read())
+        return 'File uploaded successfully', 201
+    else:
+        # Serve the file corresponding to the URL path
+        filepath = os.path.join(UPLOAD_FOLDER, url_path)
+        filepath = os.path.normpath(filepath)  # Normalize path
 
-                self.send_response(200)
-                self.send_custom_headers()
-                self.send_header('Content-type', 'application/json')
-                self.end_headers()
-                response = json.dumps(
-                    {'status': 'success', 'filename': safe_filename, 'path': safe_path})
-                self.wfile.write(response.encode())
-                return
+        # Security check: Ensure the file path is within the UPLOAD_FOLDER
+        upload_folder_abs = os.path.abspath(UPLOAD_FOLDER)
+        filepath_abs = os.path.abspath(filepath)
+        if not filepath_abs.startswith(upload_folder_abs):
+            abort(404)
 
-            self.send_response(400)
-            self.send_custom_headers()
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            response = json.dumps(
-                {'status': 'error', 'message': 'File upload failed'})
-            self.wfile.write(response.encode())
-            return
+        if os.path.isfile(filepath):
+            # Try to read the stored MIME type
+            mime_file_path = filepath + '.mime'
+            if os.path.isfile(mime_file_path):
+                with open(mime_file_path, 'r') as mime_file:
+                    mime_type = mime_file.read().strip()
+            else:
+                # Fallback to guessing the MIME type
+                mime_type, _ = mimetypes.guess_type(filepath)
+                if mime_type is None:
+                    mime_type = 'application/octet-stream'
 
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        self.send_response(200)
-        self.send_custom_headers()
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        try:
-            post_data_str = post_data.decode('utf-8')
-            response = f"POST request received: {post_data_str}"
-        except UnicodeDecodeError:
-            response = "POST request received with non-UTF-8 data"
-        self.wfile.write(response.encode())
-
-    def do_GET(self):
-        decoded_path = unquote(self.path)
-        self.path = decoded_path
-        super().do_GET()  # Calls SimpleHTTPRequestHandler do_GET which handles sending the file or directory contents
+            # Serve the file with the correct MIME type
+            return send_file(filepath, mimetype=mime_type)
+        else:
+            # Return a 404 error if the file is not found
+            abort(404)
 
 
-def run_server(port=8000):
-    with socketserver.TCPServer(("", port), FileServerHandler) as httpd:
-        print(f"Serving at port {port}")
-        httpd.serve_forever()
-
-
-if __name__ == "__main__":
-    run_server()
+if __name__ == '__main__':
+    app.run(port=8000)

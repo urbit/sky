@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useWindowStore from '../../state/useWindowStore';
-import { get, findShipDomain, findShipUrls } from '../../api/sky'
 
 interface FileSystemProps {
   id: number;
@@ -13,9 +12,9 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   const [uploading, setUploading] = useState(false);
 
   const handleUploadClick = () => {
-    const input = document.querySelector('input')
-    { input && input.click() }
-  }
+    const input = document.querySelector('input[type="file"]');
+    if (input) (input as HTMLInputElement).click();
+  };
 
   const handleClick = (index: number) => {
     const newPath = segments.slice(0, index + 1).join('/');
@@ -27,19 +26,22 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     if (!fileList) return;
 
     setUploading(true);
-    const shipDomain = await findShipDomain(path);
-    const endpoint = path.split('/').slice(1).join('/')
+
+    // Assuming your dev server is running on localhost:8000
+    const devServerDomain = 'http://localhost:8000';
+
+    // Construct the endpoint URL by combining the dev server domain with the path
+    const endpoint = path.startsWith('/') ? path : `/${path}`;
 
     for (let file of Array.from(fileList)) {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('endpoint', endpoint);
 
       try {
-        console.log(`Attempting to POST to ${path}`);
-        const response = await fetch(`${shipDomain}/upload`, {
+        console.log(`Attempting to POST to ${devServerDomain}${endpoint}`);
+        const response = await fetch(`${devServerDomain}${endpoint}`, {
           method: 'POST',
-          body: formData
+          body: formData,
         });
 
         if (!response.ok) {
@@ -75,7 +77,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
         ))}
       </div>
 
-      <div className="fc ac jc b1" style={{ flex: 1, padding: '20px', gap: '20px' }}>
+      <div className="fc ac jc b1">
         <div className="fc" style={{ gap: '10px' }}>
           <div className="fr ac" style={{ gap: '10px' }}>
             <button onClick={handleUploadClick}>Upload a file</button>
