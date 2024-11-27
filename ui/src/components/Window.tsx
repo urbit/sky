@@ -190,6 +190,9 @@ export default function Window({ id, path }: WindowProps) {
         return await renderResponse(res);
       }
 
+      // TODO nothing below this todo should be necessary;
+      // get() should account for all of this
+
       const urls = await findShipUrls(path);
       if (!urls) {
         console.error(`No URLs found for ${path.split('/').slice(0)}`);
