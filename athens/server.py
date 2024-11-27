@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, abort, Response
+from flask import Flask, request, send_file, abort
 from flask_cors import CORS  # Import flask_cors
 import os
 import mimetypes
