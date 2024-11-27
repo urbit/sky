@@ -78,20 +78,16 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
         ))}
       </div>
 
-      <div className="fc ac jc b1">
-        <div className="fc" style={{ gap: '10px' }}>
-          <div className="fr ac" style={{ gap: '10px' }}>
-            <button onClick={handleUploadClick}>Upload a file</button>
-            <input
-              type="file"
-              accept='image/png'
-              style={{ display: 'none' }}
-              onChange={uploadFiles}
-              disabled={uploading}
-            />
-            {uploading && <span>Uploading...</span>}
-          </div>
-        </div>
+      <div className="fc ac jc hf wf b1">
+        <button onClick={handleUploadClick}>Upload a file</button>
+        <input
+          type="file"
+          accept='image/png'
+          style={{ display: 'none' }}
+          onChange={uploadFiles}
+          disabled={uploading}
+        />
+        {uploading && <span>Uploading...</span>}
       </div>
     </div>
   )
