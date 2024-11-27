@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import useWindowStore from '../../state/useWindowStore';
+import { findShipDomain } from '../../api/sky';
 
 interface FileSystemProps {
   id: number;
@@ -27,19 +28,16 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
     setUploading(true);
 
-    // Assuming your dev server is running on localhost:8000
-    const devServerDomain = 'http://localhost:8000';
-
-    // Construct the endpoint URL by combining the dev server domain with the path
-    const endpoint = path.startsWith('/') ? path : `/${path}`;
+    const shipDomain = await findShipDomain(path)
+    const endpoint = path.split('/').slice(1).join('/')
 
     for (let file of Array.from(fileList)) {
       const formData = new FormData();
       formData.append('file', file);
 
       try {
-        console.log(`Attempting to POST to ${devServerDomain}${endpoint}`);
-        const response = await fetch(`${devServerDomain}${endpoint}`, {
+        console.log(`Attempting to POST to ${shipDomain}/${endpoint}`);
+        const response = await fetch(`${shipDomain}/${endpoint}`, {
           method: 'POST',
           body: formData,
         });
