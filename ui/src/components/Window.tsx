@@ -184,47 +184,30 @@ export default function Window({ id, path }: WindowProps) {
     console.log('render', path);
     try {
       const res = await get(path);
-
       console.log('Data in renderContent is', res);
 
       if (res) {
         return await renderResponse(res);
+      }
+
+      const urls = await findShipUrls(path);
+      if (!urls) {
+        console.error(`No URLs found for ${path.split('/').slice(0)}`);
+        return noURLcontent(path);
+      }
+
+      const url = urls.athens || urls.ship;
+
+      if (url) {
+        return (
+          <iframe
+            src={url}
+            className='hf wf'
+            style={{ border: 'none' }}
+          />
+        );
       } else {
-        const urls = await findShipUrls(path);
-
-        if (!urls) {
-          console.error(`No URLs found for ${path.split('/').slice(0)}`);
-          return noURLcontent(path);
-        }
-
-        console.log(urls);
-        console.log(urls.athens);
-        console.log(urls.ship);
-        if (urls.athens && !urls.ship) {
-          return (
-            <iframe
-              src={`${urls.athens}`}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-            />
-          );
-        } else if (urls.ship && !urls.athens) {
-          return (
-            <iframe
-              src={`${urls.ship}`}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-            />
-          );
-        } else if (!urls.ship && !urls.athens) {
-          console.log(`No URLs detected for ${path.split('/').slice(0)}`);
-        } else {
-          // TODO: Implement logic to choose between URLs
-          return (
-            <iframe
-              src={`${urls.ship}`}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-            />
-          );
-        }
+        console.log(`No URLs detected for ${path.split('/').slice(0)}`);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
