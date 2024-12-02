@@ -1,10 +1,44 @@
 import React, { useState } from 'react'
 import useWindowStore from '../../state/useWindowStore'
-import { findShipDomain } from '../../api/sky'
+import { get, findShipDomain } from '../../api/sky'
 
 interface FileSystemProps {
   id: number
   path: string
+}
+
+async function renderFile(res: Response): Promise<JSX.Element> {
+  const contentType = res.headers.get('content-type')
+
+  switch (contentType) {
+    case 'text/plain':
+      console.log('Rendering text/plain');
+      return <></>
+    case 'text/html':
+      console.log('Rendering text/html');
+      return <></>
+    case 'text/markdown':
+      console.log('Rendering text/markdown');
+      return <></>
+    case 'image/png':
+      console.log('Rendering image/png');
+      const blob = await res.blob();
+      const objectURL = URL.createObjectURL(blob);
+      return (
+        <div
+          className="hf wf p2 fc ac jc"
+        >
+          <img
+            src={objectURL}
+            alt="PNG Image"
+            style={{ maxWidth: '100%', maxHeight: '100%' }}
+          />
+        </div>
+      );
+    default:
+      console.log('Rendering default')
+      return <></>
+  }
 }
 
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
@@ -27,16 +61,22 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       try {
         // TODO should use put() from Sky API
         console.log(`Attempting to POST to ${shipDomain}/${endpoint}`)
-        const response = await fetch(`${shipDomain}/${endpoint}`, {
+        const res = await fetch(`${shipDomain}/${endpoint}`, {
           method: 'POST',
           body: formData,
         })
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
         }
 
-        console.log('Upload successful:', response)
+        console.log('Upload successful:', res)
+        const newResponse = await get(path)
+
+        if (newResponse) {
+          const newEndpointContent = await renderFile(newResponse)
+          setFileViewerContent(newEndpointContent)
+        }
       } catch (error) {
         console.error('Upload failed:', error)
       }
