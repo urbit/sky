@@ -12,7 +12,6 @@ export default function Window({
   handleDrop,
   handleDragStart,
 }: WindowProps) {
-  
   const defaultContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
       <PathBar id={id} path={path} />

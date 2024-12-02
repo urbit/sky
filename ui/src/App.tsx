@@ -42,40 +42,37 @@ function App() {
   function handleDragStart(event: React.DragEvent, id: number) {
     const container = document.getElementById(id.toString())
 
-    if (container) {
-      if (windowMap.size >= 2) {
-        holdingKey.current = false
+    if (container && windowMap.size >= 2) {
+      holdingKey.current = false
+      //  window styling
+      setDragWindow(id)
+      container.classList.add('o5')
+      container.classList.add('bd1')
 
-        //  window styling
-        setDragWindow(id)
-        container.classList.add('o5')
-        container.classList.add('bd1')
+      const iframe = container.querySelector('iframe') as HTMLIFrameElement
 
-        //  Capturing content of window for moving effect
-        const content = container.innerHTML
-        const iframe = container.querySelector('iframe') as HTMLIFrameElement
-        event.dataTransfer.effectAllowed = 'move'
-        event.dataTransfer.dropEffect = 'move'
-        if (iframe) {
-          //  setting up draggable data to url string
-          const dragImage = document.createElement('div')
-          dragImage.style.position = 'absolute'
-          dragImage.style.top = '-9999px'
-          dragImage.style.pointerEvents = 'none'
-          dragImage.style.zIndex = '-1'
-          dragImage.innerHTML = `<span style="width: 100%;"> ${windowMap.get(id) ?? ''}</span>`
-          document.body.appendChild(dragImage)
+      if (iframe) {
+        //  setting up draggable data to url string
+        const dragImage = document.createElement('div')
+        dragImage.style.position = 'absolute'
+        dragImage.style.top = '-9999px'
+        dragImage.style.pointerEvents = 'none'
+        dragImage.style.zIndex = '-1'
+        dragImage.innerHTML = `<span style="width: 100%;"> ${windowMap.get(id) ?? ''}</span>`
 
-          event.dataTransfer.setDragImage(dragImage, 0, 0)
+        container.appendChild(dragImage)
 
-          event.target.addEventListener('dragend', function () {
-            //  removing appended data after event is over
-            document.body.removeChild(dragImage)
-          })
-        } else {
-          event.dataTransfer.setData('text/plain', content)
-          console.log('content', event.dataTransfer.getData('text/plain'))
-        }
+        event.dataTransfer.setDragImage(dragImage, 0, 0)
+
+        event.target.addEventListener('dragend', function () {
+          const eventIframe = (event.target as Element).querySelector(
+            'iframe'
+          ) as HTMLIFrameElement
+          if (eventIframe) {
+            //  removing appended data after event
+            container.removeChild(dragImage)
+          }
+        })
       }
     }
   }
