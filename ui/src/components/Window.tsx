@@ -3,6 +3,7 @@ import { WindowProps } from '../types/windows';
 import { get, findShipUrls } from '../api/sky';
 import WebPage from './renderers/WebPage';
 import ImagePNG from './renderers/ImagePNG'
+import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar';
 import FileSystem from './renderers/FileSystem';
 import { useEffect, useState } from 'react';
@@ -84,6 +85,10 @@ export default function Window({ id, path }: WindowProps) {
               <p>Plain text content is not currently displayed.</p>
             </>
           );
+        case 'text/markdown':
+          console.log('Processing markdown file...')
+          const text = await res.text()
+          return <TextMarkdown md={text} />
         case 'text/html':
           console.log('Processing HTML document...');
           return <WebPage data={await res.text()} />;

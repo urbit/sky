@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
+import FileMarkdown from './FileMarkdown'
 
 interface FileSystemProps {
   id: number
@@ -20,7 +21,8 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       return <></>
     case 'text/markdown':
       console.log('Rendering text/markdown');
-      return <></>
+      const text = await res.text()
+      return <FileMarkdown md={text} />
     case 'image/png':
       console.log('Rendering image/png');
       const blob = await res.blob();
@@ -81,7 +83,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload a file</button>
       <input
         type="file"
-        accept='image/png'
+        accept='.png, .md'
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />
