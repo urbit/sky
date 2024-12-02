@@ -12,6 +12,7 @@ export default function Window({
   handleDrop,
   handleDragStart,
 }: WindowProps) {
+  
   const defaultContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
       <PathBar id={id} path={path} />
@@ -197,46 +198,6 @@ export default function Window({
     }
   }
 
-  //on hover of top 40px changes cursor to grab
-  function handleMouseMove(event: React.MouseEvent) {
-    const container = document.getElementById(id.toString())
-    if (container) {
-      const containerTop = container.getBoundingClientRect().top
-      if (event.clientY >= containerTop && event.clientY <= containerTop + 40) {
-        console.log('top')
-        const findOverlay = container.getElementsByClassName(
-          'overlay'
-        )[0] as HTMLElement
-        if (!findOverlay) {
-          const overlay = document.createElement('div')
-          Object.assign(overlay.style, {
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            width: '100%',
-            height: '40px',
-            backgroundColor: 'rgba(0, 0, 0, 0)',
-            zIndex: '5',
-          })
-          overlay.classList.add('overlay')
-          overlay.classList.add('grabber')
-          overlay.style.display = 'block'
-          container.appendChild(overlay)
-          console.log('append child')
-          container.classList.add('grabber')
-        }
-      } else {
-        const overlay = container.getElementsByClassName(
-          'overlay'
-        )[0] as HTMLElement
-        if (overlay) {
-          container.removeChild(overlay)
-        }
-        container.classList.remove('grabber')
-      }
-    }
-  }
-
   useEffect(() => {
     const fetchContent = async () => {
       if (path === '') {
@@ -260,7 +221,6 @@ export default function Window({
           className="fc ac jc"
           style={{ width: '100%', height: '100%', padding: '5px' }}
           onMouseEnter={handleMouseEnter}
-          onMouseMove={e => handleMouseMove(e)}
         >
           <div
             id={id.toString()}
@@ -269,6 +229,7 @@ export default function Window({
             onDragStart={e => handleDragStart(e, id)}
             onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
             onDragOver={e => {
+              e.dataTransfer.dropEffect = 'move'
               e.preventDefault()
             }}
             style={{
