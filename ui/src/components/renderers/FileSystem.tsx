@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
+import FilePNG from './FilePNG'
 
 interface FileSystemProps {
   id: number
@@ -24,17 +25,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       console.log('Rendering image/png');
       const blob = await res.blob();
       const objectURL = URL.createObjectURL(blob);
-      return (
-        <div
-          className="hf wf p2 fc ac jc"
-        >
-          <img
-            src={objectURL}
-            alt="PNG Image"
-            style={{ maxWidth: '100%', maxHeight: '100%' }}
-          />
-        </div>
-      );
+      return <FilePNG url={objectURL} />
     default:
       console.log('Rendering default')
       return <></>

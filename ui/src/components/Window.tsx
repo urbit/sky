@@ -2,6 +2,7 @@ import { Allotment } from 'allotment';
 import { WindowProps } from '../types/windows';
 import { get, findShipUrls } from '../api/sky';
 import WebPage from './renderers/WebPage';
+import ImagePNG from './renderers/ImagePNG'
 import PathBar from './PathBar';
 import FileSystem from './renderers/FileSystem';
 import { useEffect, useState } from 'react';
@@ -119,18 +120,7 @@ export default function Window({ id, path }: WindowProps) {
           // Process the PNG image and display it
           const blob = await res.blob();
           const objectURL = URL.createObjectURL(blob);
-          return (
-            <div
-              className="p2 fc ac jc"
-              style={{ width: '100%', height: '100%' }}
-            >
-              <img
-                src={objectURL}
-                alt="PNG Image"
-                style={{ maxWidth: '100%', maxHeight: '100%' }}
-              />
-            </div>
-          );
+          return <ImagePNG url={objectURL} />
         case 'image/gif':
           console.log('Processing GIF image...');
           return (
