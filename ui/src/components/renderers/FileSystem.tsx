@@ -98,14 +98,40 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   const segments = path.split('/')
   const { updateWindowPath } = useWindowStore()
   const [fileViewerContent, setFileViewerContent] = useState(createFileMenu)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [newSegment, setNewSegment] = useState('')
 
   function handlePathSegmentClick(index: number) {
     updateWindowPath(id, path.split('/').slice(index).join('/'))
   }
 
+  function handleAddSegment() {
+    if (newSegment.trim()) {
+      const newPath = `${path}/${newSegment.trim()}`
+      updateWindowPath(id, newPath)
+      setNewSegment('')
+      setIsEditing(false)
+    }
+  }
+
   return (
     <div className="fc hf wf p2">
-      <div className="fr ac b1" style={{ padding: '10px' }}>
+      <div
+        className="fr ac b1"
+        style={{
+          padding: '10px',
+          position: 'relative',
+          cursor: 'pointer'
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false)
+          setIsEditing(false)
+          setNewSegment('')
+        }}
+        onClick={() => setIsEditing(true)}
+      >
         {segments.map((segment, index) => (
           <React.Fragment key={index}>
             <span
@@ -122,6 +148,25 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
             )}
           </React.Fragment>
         ))}
+        {isHovered && !isEditing && (
+        <span className='f4' style={{ margin: '0 5px' }}>/</span>
+        )}
+        {isEditing && (
+        <input
+            type="text"
+            className='b1 wf'
+            value={newSegment}
+            onChange={(e) => setNewSegment(e.target.value)}
+            onBlur={handleAddSegment}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                handleAddSegment()
+              }
+            }}
+            autoFocus
+            style={{ marginLeft: '5px' }}
+        />
+        )}
       </div>
       <div className="hf wf b1 br1" style={{ overflow: 'scroll' }}>
         {fileViewerContent}
