@@ -12,7 +12,12 @@ interface FileSystemProps {
 async function renderFile(res: Response): Promise<JSX.Element> {
   const contentType = res.headers.get('content-type')
 
-  switch (contentType) {
+  if (!contentType) {
+    console.log('No content type found')
+    return <p>No content type found</p>
+  }
+
+  switch (contentType.split(';')[0]) {
     case 'text/plain':
       console.log('Rendering text/plain');
       return <></>
@@ -29,7 +34,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       const objectURL = URL.createObjectURL(blob);
       return <FilePNG url={objectURL} />
     default:
-      console.log('Rendering default')
+      console.log(`Rendering ${contentType} not supported`)
       return <></>
   }
 }

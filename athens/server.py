@@ -9,6 +9,22 @@ CORS(app)  # Enable CORS for all routes
 # Directory where files will be saved
 UPLOAD_FOLDER = './uploads'
 
+# Custom MIME types
+CUSTOM_MIME_TYPES = {
+    '.md': 'text/markdown',
+    '.txt': 'text/plain',
+    '.html': 'text/html',
+    '.json': 'application/json',
+    '.xml': 'application/xml',
+    '.pdf': 'application/pdf',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+    '.mp4': 'video/mp4',
+    '.mp3': 'audio/mpeg'
+}
+
 
 @app.route('/<path:url_path>', methods=['GET', 'POST'])
 def handle_file(url_path):
@@ -38,8 +54,11 @@ def handle_file(url_path):
         # Save the file
         file.save(filepath)
 
+        # Determine the MIME type based on the file extension
+        _, ext = os.path.splitext(file.filename)
+        mime_type = CUSTOM_MIME_TYPES.get(ext, 'application/octet-stream')
+
         # Save the MIME type
-        mime_type = file.mimetype or 'application/octet-stream'
         mime_file_path = filepath + '.mime'
         with open(mime_file_path, 'w') as mime_file:
             mime_file.write(mime_type)

@@ -74,10 +74,14 @@ export default function Window({ id, path }: WindowProps) {
     //}
 
     if (res.status >= 200 && res.status <= 300) {
-      const contentType = res.headers.get('Content-Type');
+      const contentType = res.headers.get('Content-Type')
       console.log(`Content-Type: ${contentType}`);
 
-      switch (contentType) {
+      if (!contentType) {
+        return notRecognizedContent
+      }
+
+      switch (contentType.split(';')[0]) {
         case 'text/plain':
           console.log('Processing plain text file...');
           return (
