@@ -10,7 +10,7 @@ export default function WindowContainer({
   isVertical,
   handleDrop,
   handleDragStart,
-  dragWindow
+  dragWindow,
 }: WindowContainerProps): JSX.Element {
   const { delWindow } = useWindowStore()
   const lastChange = useRef<number[]>([])

@@ -24,6 +24,7 @@ function App() {
   const holdingKey = useRef(false)
 
   function enableWindows() {
+    setDragWindow(0)
     const containers = document.querySelectorAll('.container')
     containers.forEach(container => {
       // enabling iframes
@@ -42,7 +43,7 @@ function App() {
   function handleDragStart(event: React.DragEvent, id: number) {
     const container = document.getElementById(id.toString())
 
-    if (container && windowMap.size >= 2) {
+    if (container && windowMap.size > 1) {
       holdingKey.current = false
       //  window styling
       container.classList.add('o5')
@@ -78,13 +79,6 @@ function App() {
 
   function handleDrop(event: React.DragEvent<HTMLDivElement>, id: number) {
     event.preventDefault()
-    enableWindows()
-
-    //  removing styling
-    const container = document.getElementById(dragWindow.toString())
-    container?.classList.remove('o5')
-    container?.classList.remove('bd1')
-    container?.classList.remove('grabber')
 
     if (dragWindow === null || dragWindow === id) return
 
@@ -93,35 +87,37 @@ function App() {
       const idPath = windowMap.get(id) ?? ''
       updateWindowPath(id, windowMap.get(dragWindow) ?? '')
       updateWindowPath(dragWindow, idPath)
-      setDragWindow(0)
     }
+    enableWindows()
   }
 
   function handleSwap() {
-    setDragWindow(active ?? 0)
-    const containers = document.querySelectorAll('.container')
-    containers.forEach(container => {
-      //  create overlay for each window
-      const overlay = document.createElement('div')
-      Object.assign(overlay.style, {
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0)',
-        zIndex: '5',
-        display: 'block',
-      })
-      overlay.classList.add('overlay', 'grabber')
-      container.appendChild(overlay)
+    if (windowMap.size > 1) {
+      setDragWindow(active ?? 0)
+      const containers = document.querySelectorAll('.container')
+      containers.forEach(container => {
+        //  create overlay for each window
+        const overlay = document.createElement('div')
+        Object.assign(overlay.style, {
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+          zIndex: '5',
+          display: 'block',
+        })
+        overlay.classList.add('overlay', 'grabber')
+        container.appendChild(overlay)
 
-      //  disabling iframe
-      const iframe = container.querySelector('iframe') as HTMLElement
-      if (iframe) {
-        iframe.style.pointerEvents = 'none'
-      }
-    })
+        //  disabling iframe
+        const iframe = container.querySelector('iframe') as HTMLElement
+        if (iframe) {
+          iframe.style.pointerEvents = 'none'
+        }
+      })
+    }
   }
 
   useEffect(() => {

@@ -11,7 +11,7 @@ export default function Window({
   path,
   handleDrop,
   handleDragStart,
-  dragWindow
+  dragWindow,
 }: WindowProps) {
   const defaultContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
@@ -198,6 +198,14 @@ export default function Window({
     }
   }
 
+  function handleDragEnd() {
+    const container = document.getElementById(id.toString())
+    //  removing styling
+    if (container) {
+      container.classList.remove('o5', 'bd1', 'grabber')
+    }
+  }
+
   useEffect(() => {
     const fetchContent = async () => {
       if (path === '') {
@@ -228,6 +236,7 @@ export default function Window({
             className="container fc as js b1 br1"
             onDragStart={e => handleDragStart(e, id)}
             onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
+            onDragEnd={handleDragEnd}
             onDragOver={e => {
               e.dataTransfer.dropEffect = 'move'
               e.preventDefault()
