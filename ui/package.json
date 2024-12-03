@@ -16,6 +16,8 @@
     "allotment": "^1.20.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0",
     "urbit-ob": "^5.0.1",
     "zustand": "^5.0.0"
   },
