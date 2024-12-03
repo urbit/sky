@@ -11,6 +11,7 @@ export default function Window({
   path,
   handleDrop,
   handleDragStart,
+  dragWindow
 }: WindowProps) {
   const defaultContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
@@ -223,7 +224,7 @@ export default function Window({
         >
           <div
             id={id.toString()}
-            draggable="true"
+            draggable={dragWindow === id ? true : false}
             className="container fc as js b1 br1"
             onDragStart={e => handleDragStart(e, id)}
             onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}

@@ -10,6 +10,7 @@ export default function WindowContainer({
   isVertical,
   handleDrop,
   handleDragStart,
+  dragWindow
 }: WindowContainerProps): JSX.Element {
   const { delWindow } = useWindowStore()
   const lastChange = useRef<number[]>([])
@@ -76,6 +77,7 @@ export default function WindowContainer({
           path={map.get(id) ?? null}
           handleDrop={handleDrop}
           handleDragStart={handleDragStart}
+          dragWindow={dragWindow}
         />
       ) : (
         // return a window container
@@ -98,6 +100,7 @@ export default function WindowContainer({
               isVertical={!isVertical}
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}
+              dragWindow={dragWindow}
             />
           )}
           {map.has(childId + 1) && (
@@ -107,6 +110,7 @@ export default function WindowContainer({
               isVertical={!isVertical}
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}
+              dragWindow={dragWindow}
             />
           )}
         </Allotment>

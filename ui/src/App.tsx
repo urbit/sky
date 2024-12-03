@@ -45,7 +45,6 @@ function App() {
     if (container && windowMap.size >= 2) {
       holdingKey.current = false
       //  window styling
-      setDragWindow(id)
       container.classList.add('o5')
       container.classList.add('bd1')
 
@@ -99,6 +98,7 @@ function App() {
   }
 
   function handleSwap() {
+    setDragWindow(active ?? 0)
     const containers = document.querySelectorAll('.container')
     containers.forEach(container => {
       //  create overlay for each window
@@ -182,6 +182,7 @@ function App() {
           isVertical={window.innerWidth > window.innerHeight}
           handleDrop={handleDrop}
           handleDragStart={handleDragStart}
+          dragWindow={dragWindow}
         />
       </div>
     </div>

@@ -3,6 +3,7 @@ export interface WindowProps {
   path: string | null
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
   handleDragStart: (event: React.DragEvent, id: number) => void
+  dragWindow: number
 }
 
 export interface WindowContainerProps {
@@ -11,4 +12,5 @@ export interface WindowContainerProps {
   isVertical: boolean
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
   handleDragStart: (event: React.DragEvent, id: number) => void
+  dragWindow: number
 }
