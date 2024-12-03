@@ -12,10 +12,17 @@ pnpm install
 pnpm run dev
 ```
 
-Run [json-server](https://github.com/typicode/json-server) on `localhost:3000` to run a mock backend and JSON API.
+Run [json-server](https://github.com/typicode/json-server) on `localhost:3000` to run a JSON API for resolving `@p`s to top-level domains.
 
 ```
 cd sky
 pnpm add -g json-server
 npx json-server dns.json --port 3000
+```
+
+Run `server.py` on `localhost:8000` to run the mock fileserver, which enables reading and writing to your (`~sampel`'s) namespace.
+
+```
+cd sky/athens
+python server.py
 ```
