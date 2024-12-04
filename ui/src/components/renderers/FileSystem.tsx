@@ -18,24 +18,29 @@ async function renderFile(res: Response): Promise<JSX.Element> {
   }
 
   switch (contentType.split(';')[0]) {
-    case 'text/plain':
-      console.log('Rendering text/plain');
+    case 'text/plain': {
+      console.log('Rendering text/plain')
       return <></>
-    case 'text/html':
-      console.log('Rendering text/html');
+    }
+    case 'text/html': {
+      console.log('Rendering text/html')
       return <></>
-    case 'text/markdown':
-      console.log('Rendering text/markdown');
+    }
+    case 'text/markdown': {
+      console.log('Rendering text/markdown')
       const text = await res.text()
       return <FileMarkdown md={text} />
-    case 'image/png':
-      console.log('Rendering image/png');
-      const blob = await res.blob();
-      const objectURL = URL.createObjectURL(blob);
+    }
+    case 'image/png': {
+      console.log('Rendering image/png')
+      const blob = await res.blob()
+      const objectURL = URL.createObjectURL(blob)
       return <FilePNG url={objectURL} />
-    default:
+    }
+    default: {
       console.log(`Rendering ${contentType} not supported`)
       return <></>
+    }
   }
 }
 
@@ -88,7 +93,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload a file</button>
       <input
         type="file"
-        accept='.png, .md'
+        accept=".png, .md"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />
@@ -122,7 +127,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
         style={{
           padding: '10px',
           position: 'relative',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
@@ -149,14 +154,16 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
           </React.Fragment>
         ))}
         {isHovered && !isEditing && (
-        <span className='f4' style={{ margin: '0 5px' }}>/</span>
+          <span className="f4" style={{ margin: '0 5px' }}>
+            /
+          </span>
         )}
         {isEditing && (
-        <input
+          <input
             type="text"
-            className='b1 wf'
+            className="b1 wf"
             value={newSegment}
-            onChange={(e) => setNewSegment(e.target.value)}
+            onChange={e => setNewSegment(e.target.value)}
             onBlur={handleAddSegment}
             onKeyDown={e => {
               if (e.key === 'Enter') {
@@ -165,7 +172,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
             }}
             autoFocus
             style={{ marginLeft: '5px' }}
-        />
+          />
         )}
       </div>
       <div className="hf wf b1 br1" style={{ overflow: 'scroll' }}>

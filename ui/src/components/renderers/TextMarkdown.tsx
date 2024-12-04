@@ -6,7 +6,7 @@ interface TextMarkdownProps {
 }
 export default function TextMarkdown({ md }: TextMarkdownProps) {
   return (
-    <div className='p2' style={{ overflow: 'scroll' }}>
+    <div className="p2" style={{ overflow: 'scroll' }}>
       <Markdown remarkPlugins={[remarkGfm]}>{md}</Markdown>
     </div>
   )
