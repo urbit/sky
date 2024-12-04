@@ -88,6 +88,34 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     event.target.value = ''
   }
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    if (value.startsWith('/')) {
+      const audioContext = new (window.AudioContext || window.AudioContext)()
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
+
+      oscillator.type = 'sine'
+      oscillator.frequency.setValueAtTime(440, audioContext.currentTime)
+
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+
+      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioContext.currentTime + 0.2
+      )
+
+      oscillator.start()
+      oscillator.stop(audioContext.currentTime + 0.2)
+
+      setNewSegment(value.slice(1))
+    } else {
+      setNewSegment(value)
+    }
+  }
+
   const createFileMenu = (
     <div className="fc ac jc hf wf b2">
       <button onClick={handleUploadClick}>Upload a file</button>
@@ -163,7 +191,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
             type="text"
             className="b1 wf"
             value={newSegment}
-            onChange={e => setNewSegment(e.target.value)}
+            onChange={handleInputChange}
             onBlur={handleAddSegment}
             onKeyDown={e => {
               if (e.key === 'Enter') {
