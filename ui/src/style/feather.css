@@ -1,5 +1,11 @@
 /*  feather.css  */
-
+@font-face {
+  font-family: 'Urbit Sans';
+  src: url('https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2')
+    format('woff2');
+  font-weight: 100 700;
+  font-style: normal;
+}
 :root {
   --sky-opacity: 1;
   --sky-outer-gap: 8px;
@@ -139,7 +145,9 @@
  *  part 4: utility classes
  *
  */
-
+body {
+  font-family: 'Urbit Sans';
+}
 .break {
   word-break: break-word;
 }

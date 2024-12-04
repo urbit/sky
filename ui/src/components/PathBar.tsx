@@ -84,7 +84,7 @@ export default function PathBar({
     <form style={{ width: '100%' }} onSubmit={handleSubmit}>
       <input
         type="text"
-        className="b3"
+        className="b3 br2 p1"
         value={inputValue}
         onChange={handleInputChange}
         placeholder="~sampel/home"

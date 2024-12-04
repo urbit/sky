@@ -9,7 +9,13 @@ import FileSystem from './renderers/FileSystem'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 
-export default function Window({ id, path }: WindowProps) {
+export default function Window({
+  id,
+  path,
+  handleDrop,
+  handleDragStart,
+  dragWindow,
+}: WindowProps) {
   const defaultContent = (
     <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
       <PathBar id={id} path={path} />
@@ -226,8 +232,19 @@ export default function Window({ id, path }: WindowProps) {
     }
   }
 
+  function handleDragEnd() {
+    const container = document.getElementById(id.toString())
+    //  removing styling
+    if (container) {
+      container.classList.remove('o5', 'bd1', 'grabber')
+    }
+  }
+
   useEffect(() => {
     const fetchContent = async () => {
+      if (path === '') {
+        setWindowContent(defaultContent)
+      }
       if (path) {
         const content = await renderContent(path)
         // TODO: Error message if content is null/undefined
@@ -248,7 +265,16 @@ export default function Window({ id, path }: WindowProps) {
           onMouseEnter={handleMouseEnter}
         >
           <div
-            className="fc as js b1 br1"
+            id={id.toString()}
+            draggable={dragWindow === id ? true : false}
+            className="container fc as js b1 br1"
+            onDragStart={e => handleDragStart(e, id)}
+            onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
+            onDragEnd={handleDragEnd}
+            onDragOver={e => {
+              e.dataTransfer.dropEffect = 'move'
+              e.preventDefault()
+            }}
             style={{
               width: '100%',
               height: '100%',
