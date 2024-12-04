@@ -164,6 +164,13 @@ function App() {
     }
   }, [active, delWindow, addWindow, updateWindowPath, isActive])
 
+  // TODO handle real window.urbitID, not suitable for production
+  useEffect(() => {
+    if (!window.urbitID) {
+      window.urbitID = '~sampel'
+    }
+  }, [])
+
   return (
     <div style={{ width: `calc(100vw - ${20}px)`, height: '100vh' }}>
       <StatusBar />
