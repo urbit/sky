@@ -23,9 +23,10 @@ export default function Window({
   )
 
   const [windowContent, setWindowContent] = useState(defaultContent)
-  const { isActive } = useWindowStore()
+  const [windowBarVisibility, setWindowBarVisibility] = useState(false)
+  const { isActive, delWindow } = useWindowStore()
 
-  function handleMouseEnter() {
+  function handleWindowMouseEnter() {
     isActive(id)
   }
 
@@ -240,6 +241,10 @@ export default function Window({
     }
   }
 
+  function handleXButtonClick(id: number) {
+    delWindow(id)
+  }
+
   useEffect(() => {
     const fetchContent = async () => {
       if (path === '') {
@@ -261,8 +266,8 @@ export default function Window({
       <Allotment.Pane visible key={id} className="wf hf fr">
         <div
           className="fc ac jc"
-          style={{ width: '100%', height: '100%', padding: '5px' }}
-          onMouseEnter={handleMouseEnter}
+          style={{ width: '100%', height: '100%', padding: '5px', position: 'relative' }}
+          onMouseEnter={handleWindowMouseEnter}
         >
           <div
             id={id.toString()}
@@ -282,10 +287,30 @@ export default function Window({
               position: 'relative',
             }}
           >
+            <div
+              className='wf'
+              style={{
+                height: '30px',
+                border: 'solid red 1px',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                pointerEvents: 'auto',
+              }}
+              onMouseEnter={() => setWindowBarVisibility(true)}
+              onMouseLeave={() => setWindowBarVisibility(false)}
+            >
+              {windowBarVisibility && (
+                <div className='fr ac je hf wf' >
+                  <button className='hf fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => alert('Button 1 clicked')}>...</button>
+                  <button className='hf fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleXButtonClick(id)}>x</button>
+                </div>
+              )}
+            </div>
             {windowContent}
           </div>
         </div>
       </Allotment.Pane>
     </Allotment>
-  )
+  );
 }
