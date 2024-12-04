@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
@@ -45,6 +45,23 @@ async function renderFile(res: Response): Promise<JSX.Element> {
 }
 
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await get(path);
+        if (res) {
+          const newEndpointContent = await renderFile(res);
+          setFileViewerContent(newEndpointContent);
+        }
+      } catch (error) {
+        console.error('Upload failed:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleUploadClick = () => {
     const input = document.querySelector('input[type="file"]')
     if (input) (input as HTMLInputElement).click()
@@ -153,6 +170,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <div
         className="fr ac b1"
         style={{
+          height: '50px',
           padding: '10px',
           position: 'relative',
           cursor: 'pointer',

@@ -22,8 +22,14 @@ export default function Window({
     </div>
   )
 
+  const fileSystemContent = (
+    // TODO not sure about this default behaviour
+    <FileSystem id={id} path={path || `${window.urbitID}/home`} />
+  )
+
   const [windowContent, setWindowContent] = useState(defaultContent)
   const [windowBarVisibility, setWindowBarVisibility] = useState(false)
+  const [fileSystemView, setFileSystemView] = useState(false)
   const { isActive, delWindow } = useWindowStore()
 
   function handleWindowMouseEnter() {
@@ -245,6 +251,10 @@ export default function Window({
     delWindow(id)
   }
 
+  function handleOptsButtonClick() {
+    setFileSystemView(!fileSystemView)
+  }
+
   useEffect(() => {
     const fetchContent = async () => {
       if (path === '') {
@@ -290,8 +300,8 @@ export default function Window({
             <div
               className='wf'
               style={{
-                height: '30px',
-                border: 'solid red 1px',
+                height: '50px',
+                zIndex: '1',
                 position: 'absolute',
                 top: 0,
                 left: 0,
@@ -302,12 +312,12 @@ export default function Window({
             >
               {windowBarVisibility && (
                 <div className='fr ac je hf wf' >
-                  <button className='hf fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => alert('Button 1 clicked')}>...</button>
+                  <button className='hf fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleOptsButtonClick()}>...</button>
                   <button className='hf fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleXButtonClick(id)}>x</button>
                 </div>
               )}
             </div>
-            {windowContent}
+            {!fileSystemView ? windowContent : fileSystemContent}
           </div>
         </div>
       </Allotment.Pane>
