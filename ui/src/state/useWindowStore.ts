@@ -83,17 +83,17 @@ const useWindowStore = create<WindowState>((set, get) => ({
     }
 
     //  decrements id of window to parent id, if sibling is being deleted
-    function validParent(map: Map<number, string | null>, id: number) {
-      //  saving path to set valid parent in map to that path
-      const path = map.get(id) ?? ''
-      const parentId = findValidParent(map, id)
-
-      if (parentId === 1) {
-        map.set(1, path)
-      } else {
-        map.set(parentId, path)
-      }
-    }
+    //function validParent(map: Map<number, string | null>, id: number) {
+    //  //  saving path to set valid parent in map to that path
+    //  const path = map.get(id) ?? ''
+    //  const parentId = findValidParent(map, id)
+    //
+    //  if (parentId === 1) {
+    //    map.set(1, path)
+    //  } else {
+    //    map.set(parentId, path)
+    //  }
+    //}
 
     function handleDelete(map: Map<number, string | null>, id: number) {
       const siblingId = isEven(id) ? id + 1 : id - 1
