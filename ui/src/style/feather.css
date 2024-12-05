@@ -622,6 +622,10 @@
   user-select: none;
 }
 
+.prose {
+  max-width: 650px;
+}
+
 .prose h1 {
   font-size: 1.5rem;
   margin: 1rem 0;
