@@ -1,8 +1,5 @@
 const CACHE_NAME = 'sky-cache-v1'
 const assetsToCache = [
-  '/index.html',
-  './src/main.tsx',
-  './src/App.tsx',
   './src/style/hollow.css',
   './src/style/spine.css',
   './src/style/feather.css',
