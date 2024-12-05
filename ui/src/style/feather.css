@@ -1,12 +1,3 @@
-/*  feather.css  */
-
-/*
- *  part 4: utility classes
- *
- */
-body {
-  font-family: 'Urbit Sans';
-}
 .break {
   word-break: break-word;
 }
