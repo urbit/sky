@@ -57,16 +57,16 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-  --b0: var(--light-b0);
-  --b1: var(--light-b1);
-  --b2: var(--light-b2);
-  --b3: var(--light-b3);
-  --b4: var(--light-b4);
-  --f0: var(--light-f0);
-  --f1: var(--light-f1);
-  --f2: var(--light-f2);
-  --f3: var(--light-f3);
-  --f4: var(--light-f4);
+    --b0: var(--light-b0);
+    --b1: var(--light-b1);
+    --b2: var(--light-b2);
+    --b3: var(--light-b3);
+    --b4: var(--light-b4);
+    --f0: var(--light-f0);
+    --f1: var(--light-f1);
+    --f2: var(--light-f2);
+    --f3: var(--light-f3);
+    --f4: var(--light-f4);
   }
 }
 
@@ -94,6 +94,7 @@ html {
   height: 100%;
   font-family: var(--font-head);
 }
+
 body {
   margin: 0;
   height: 100%;
@@ -146,9 +147,11 @@ input[type='range']::-moz-range-thumb {
 button:focus {
   filter: brightness(115%);
 }
+
 input:focus {
   filter: brightness(115%);
 }
+
 ::-webkit-scrollbar {
   width: 12px;
 }
