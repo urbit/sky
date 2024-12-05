@@ -530,19 +530,19 @@
 }
 
 .br0 {
-  border-radius: var(--br0, 0px);
+  border-radius: 0px;
 }
 
 .br1 {
-  border-radius: var(--br1, 3px);
+  border-radius: 3px;
 }
 
 .br2 {
-  border-radius: var(--br2, 6px);
+  border-radius: 6px;
 }
 
 .br3 {
-  border-radius: var(--br3, 12px);
+  border-radius: 12px;
 }
 
 .hover:hover {
