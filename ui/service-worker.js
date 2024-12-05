@@ -3,7 +3,6 @@ const assetsToCache = [
   '/index.html',
   './src/main.tsx',
   './src/App.tsx',
-  './src/App.css',
   './src/style/hollow.css',
   './src/style/spine.css',
   './src/style/feather.css',

@@ -1,5 +1,3 @@
-// TODO remove App.css
-import './App.css'
 import './style/hollow.css'
 import './style/spine.css'
 import './style/feather.css'
