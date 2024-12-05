@@ -4,6 +4,9 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
 }
 
 /* Prevent font size inflation */
@@ -11,9 +14,10 @@ html {
   -moz-text-size-adjust: none;
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
+  box-sizing: border-box;
 }
 
-/* Remove default margin in favour of better control in authored CSS */
+/* Remove default margin and padding in favour of better control in authored CSS */
 body,
 h1,
 h2,
@@ -25,6 +29,13 @@ blockquote,
 dl,
 dd {
   margin-block-end: 0;
+  padding: 0;
+}
+
+/* Set a consistent font size and family */
+body {
+  font-size: 100%;
+  font-family: sans-serif;
 }
 
 /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
@@ -44,9 +55,13 @@ label {
   line-height: 1.1;
 }
 
+/* Remove default button styles */
 button,
 summary {
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 /* Balance text wrapping on headings */
@@ -69,7 +84,7 @@ picture {
   display: block;
 }
 
-/* Inherit as much as possible*/
+/* Inherit as much as possible */
 input,
 button,
 textarea,
@@ -103,4 +118,19 @@ b {
 }
 i {
   font-style: italic;
+}
+
+/* Remove default table spacing */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Remove default fieldset and legend styles */
+fieldset {
+  border: 0;
+  padding: 0;
+}
+legend {
+  padding: 0;
 }
