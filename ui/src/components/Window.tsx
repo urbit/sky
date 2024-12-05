@@ -252,7 +252,9 @@ export default function Window({
   }
 
   function handleOptsButtonClick() {
-    setFileSystemView(!fileSystemView)
+    if (path && path.split('/')[0] === window.urbitID) {
+      setFileSystemView(!fileSystemView)
+    }
   }
 
   useEffect(() => {
