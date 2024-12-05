@@ -152,10 +152,6 @@ input:focus {
   filter: brightness(115%);
 }
 
-::-webkit-scrollbar {
-  width: 12px;
-}
-
 /* Scrollbars */
 
 * {
