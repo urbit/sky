@@ -157,3 +157,39 @@ input:focus {
 *::-webkit-scrollbar {
   display: none;
 }
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  text-align: left;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+th, td {
+  padding: 10px 15px;
+  border: 1px solid var(--b4);
+}
+
+th {
+  background-color: var(--b3);
+  font-weight: bold;
+}
+
+th code {
+  background-color: var(--b4);
+}
+
+tr:nth-child(odd) {
+  background-color: var(--b1);
+}
+
+tr:nth-child(even) {
+  background-color: var(--b2);
+}
+
+tr:nth-child(even) code {
+  background-color: var(--b3);
+}
