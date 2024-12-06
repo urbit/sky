@@ -126,7 +126,7 @@ h3 {
 }
 
 h4 {
-  font-size: 1.10rem;
+  font-size: 1.1rem;
   font-weight: 500;
   margin: 1rem 0;
 }
@@ -244,7 +244,9 @@ button {
   border-radius: 3px;
   padding: 4px 10px;
   cursor: pointer;
-  transition: background-color 0.1s ease-out, color 0.1s ease-out;
+  transition:
+    background-color 0.1s ease-out,
+    color 0.1s ease-out;
 }
 
 button:hover {
@@ -260,6 +262,77 @@ button:active {
 
 button:focus {
   background-color: var(--b4);
+}
+
+form {
+  padding: 8px;
+  border-radius: 3px;
+  background-color: var(--b2);
+}
+
+label {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+textarea {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid var(--b3);
+  border-radius: 4px;
+  background-color: var(--b0);
+  color: var(--f1);
+  transition:
+    border-color 0.3s,
+    background-color 0.3s;
+}
+
+input[type='text']:focus,
+input[type='email']:focus,
+input[type='password']:focus,
+textarea:focus {
+  border-color: var(--b4);
+  background-color: var(--b2);
+  outline: none;
+}
+
+textarea {
+  resize: both;
+}
+
+input[type='submit'] {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--f4);
+  background-color: var(--b3);
+  border: none;
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.1s ease-out,
+    color 0.1s ease-out;
+}
+
+input[type='submit']:hover {
+  background-color: var(--b4);
+  color: var(--f3);
+  transition: none;
+}
+
+input[type='submit']:active {
+  background-color: var(--b2);
+  color: var(--f2);
+}
+
+input[type='submit']:focus {
+  outline: 2px solid var(--f1);
+  outline-offset: 2px;
 }
 
 input[type='range'] {
@@ -317,11 +390,15 @@ table {
   margin: 20px 0;
   text-align: left;
   overflow: hidden;
+  border: 0px;
+  border-collapse: collapse;
   border-radius: 3px;
 }
 
-th, td {
+th,
+td {
   padding: 10px 15px;
+  border: none;
 }
 
 th {
