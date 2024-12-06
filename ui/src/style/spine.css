@@ -24,6 +24,7 @@
   --font-head: 'Urbit Sans', serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'Fira Code', monospace;
+  --font-size: 16px;
   --mono-scale: 0.9;
   --line-height: 1.4;
 
@@ -87,6 +88,7 @@
 
 html {
   height: 100%;
+  font-size: var(--font-size);
   font-family: var(--font-head);
 }
 
@@ -95,7 +97,6 @@ body {
   height: 100%;
   color: var(--f0);
   background: var(--b0);
-  font-size: 16px;
   font-family: var(--font-body);
   font-feature-settings: normal;
   font-variation-settings: normal;
