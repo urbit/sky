@@ -1,0 +1,323 @@
+/* Import default fonts */
+@font-face {
+  font-family: 'Urbit Sans';
+  src: url('../assets/fonts/UrbitSansVFWeb-Regular.woff2');
+  font-weight: 100 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-VariableFont_opsz,wght.ttf');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('../assets/fonts/GeistMono-VariableFont_wght.ttf');
+  font-weight: 300 700;
+  font-style: normal;
+}
+
+:root {
+  --font-head: 'Urbit Sans', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  --font-size: 16px;
+  --mono-scale: 0.9;
+  --line-height: 1.4;
+
+  --light-b0: #ffffff;
+  --light-b1: #f5f5f5;
+  --light-b2: #e6e3dc;
+  --light-b3: #d7d0c2;
+  --light-b4: #959189;
+  --light-f0: #525250;
+  --light-f1: #333330;
+  --light-f2: #14140f;
+  --light-f3: #0f0f0c;
+  --light-f4: #0a0a09;
+
+  --dark-b0: #0a0a09;
+  --dark-b1: #0f0f0c;
+  --dark-b2: #14140f;
+  --dark-b3: #333330;
+  --dark-b4: #525250;
+  --dark-f0: #959189;
+  --dark-f1: #d7d0c2;
+  --dark-f2: #e6e3dc;
+  --dark-f3: #f5f5f5;
+  --dark-f4: #ffffff;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --b0: var(--light-b0);
+    --b1: var(--light-b1);
+    --b2: var(--light-b2);
+    --b3: var(--light-b3);
+    --b4: var(--light-b4);
+    --f0: var(--light-f0);
+    --f1: var(--light-f1);
+    --f2: var(--light-f2);
+    --f3: var(--light-f3);
+    --f4: var(--light-f4);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --b0: var(--dark-b0);
+    --b1: var(--dark-b1);
+    --b2: var(--dark-b2);
+    --b3: var(--dark-b3);
+    --b4: var(--dark-b4);
+    --f0: var(--dark-f0);
+    --f1: var(--dark-f1);
+    --f2: var(--dark-f2);
+    --f3: var(--dark-f3);
+    --f4: var(--dark-f4);
+  }
+}
+
+/*
+ *  page styling
+ *
+ */
+
+html {
+  height: 100%;
+  font-size: var(--font-size);
+  font-family: var(--font-head);
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  color: var(--f0);
+  background: var(--b0);
+  font-family: var(--font-body);
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  min-height: 100%;
+  letter-spacing: var(--letter-spacing);
+  line-height: var(--line-height);
+}
+
+/* Text */
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 1rem 0;
+}
+
+h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 1rem 0;
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1rem 0;
+}
+
+h4 {
+  font-size: 1.10rem;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+h5 {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+p {
+  margin: 1rem 0;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+span {
+  margin: 1rem 0;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+a {
+  text-decoration: underline;
+}
+
+/*TODO add fallback colors*/
+blockquote {
+  margin: 1rem 0;
+  margin-left: 10px;
+  border-left: 2px solid var(--b3);
+  padding: 4px;
+  padding-left: 12px;
+  color: var(--f2);
+}
+
+/*TODO add fallback colors*/
+pre {
+  font-family: var(--font-mono, monospace);
+  font-size: calc(1em * var(--mono-scale, 0.8));
+  overflow-x: auto;
+  width: 100%;
+  display: block;
+  padding: 8px;
+  margin: 1rem 0;
+  background-color: var(--b2);
+}
+
+/*TODO add fallback colors*/
+code {
+  font-family: var(--font-mono, monospace);
+  font-size: calc(1em * var(--mono-scale, 0.9));
+  color: var(--f2);
+  background-color: var(--b2);
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
+ul,
+ol {
+  padding-left: 29px;
+  line-height: calc(calc(1 + var(--line-height, 1.4)) / 2);
+  margin: 1rem 0;
+}
+
+ul p,
+ol p {
+  margin: 0;
+  line-height: var(--line-height, 1.4);
+}
+
+ul ul,
+ol ul,
+ul ol,
+ol ol {
+  margin: 0;
+}
+
+details {
+  margin: 1rem 0;
+}
+
+/* TODO color horizontal rule */
+hr {
+  margin: 2rem 0;
+  border: none;
+  height: 1px;
+  background-color: var(--f0);
+}
+
+summary {
+  user-select: none;
+  cursor: pointer;
+}
+
+/*
+ *  styling for inputs and chrome
+ *
+ */
+
+input[type='range'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background: var(--f4);
+  outline: none;
+  border-radius: 5px;
+}
+
+/* Style the slider thumb */
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0.8em;
+  height: 0.8em;
+  background: var(--f0);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 0.8em;
+  height: 0.8em;
+  background: var(--f0);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+button:focus {
+  filter: brightness(115%);
+}
+
+input:focus {
+  filter: brightness(115%);
+}
+
+/* Scrollbars */
+
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  margin: 20px 0;
+  text-align: left;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+th, td {
+  padding: 10px 15px;
+}
+
+th {
+  background-color: var(--b3);
+  font-weight: bold;
+}
+
+th code {
+  background-color: var(--b4);
+}
+
+tr:nth-child(odd) {
+  background-color: var(--b1);
+}
+
+tr:nth-child(even) {
+  background-color: var(--b2);
+}
+
+tr:nth-child(odd) code {
+  color: var(--f0);
+  background-color: var(--b2);
+}
+
+tr:nth-child(even) code {
+  color: var(--f0);
+  background-color: var(--b3);
+}

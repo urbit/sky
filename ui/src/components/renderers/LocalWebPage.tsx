@@ -7,13 +7,17 @@ export default function LocalWebPage({ data }: LocalWebPageProps) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(data, 'text/html');
 
+    const hollowLink = doc.createElement('link');
+    hollowLink.rel = 'stylesheet';
+    hollowLink.href = 'hollow.css';
+
     const spineLink = doc.createElement('link');
     spineLink.rel = 'stylesheet';
-    spineLink.href = '../../style/spine.css';
+    spineLink.href = 'spine.css';
 
     const featherLink = doc.createElement('link');
     featherLink.rel = 'stylesheet';
-    featherLink.href = '../../style/feather.css';
+    featherLink.href = 'feather.css';
 
     doc.head.appendChild(spineLink);
     doc.head.appendChild(featherLink);
