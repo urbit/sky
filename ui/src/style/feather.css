@@ -628,45 +628,43 @@
 
 .prose h1 {
   font-size: 1.5rem;
+  font-weight: 800;
   margin: 1rem 0;
 }
 
 .prose h2 {
   font-size: 1.35rem;
+  font-weight: 700;
   margin: 1rem 0;
 }
 
 .prose h3 {
   font-size: 1.15rem;
+  font-weight: 600;
   margin: 1rem 0;
 }
 
 .prose h4 {
-  font-size: 1.1rem;
+  font-size: 1.10rem;
+  font-weight: 500;
   margin: 1rem 0;
 }
 
 .prose h5 {
   font-size: 1.05rem;
+  font-weight: 500;
   margin: 1rem 0;
 }
 
 .prose h6 {
   font-size: 1rem;
+  font-weight: 500;
   margin: 1rem 0;
-}
-
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5,
-.prose h6 {
-  font-weight: bold;
 }
 
 .prose p {
   margin: 1rem 0;
+  font-weight: 400;
   line-height: 1.4;
 }
 
