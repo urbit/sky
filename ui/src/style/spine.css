@@ -149,6 +149,12 @@ p {
   line-height: 1.4;
 }
 
+span {
+  margin: 1rem 0;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
 a {
   text-decoration: underline;
 }
