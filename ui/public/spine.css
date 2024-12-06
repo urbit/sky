@@ -234,6 +234,34 @@ summary {
  *
  */
 
+button {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--f4);
+  background-color: var(--b2);
+  border: none;
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background-color 0.1s ease-out, color 0.1s ease-out;
+}
+
+button:hover {
+  background-color: var(--b3);
+  color: var(--f3);
+  transition: none;
+}
+
+button:active {
+  background-color: var(--b4);
+  color: var(--f2);
+}
+
+button:focus {
+  background-color: var(--b4);
+}
+
 input[type='range'] {
   appearance: none;
   -webkit-appearance: none;
