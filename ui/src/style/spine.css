@@ -162,7 +162,6 @@ input:focus {
 /* Tables */
 table {
   width: 100%;
-  border-collapse: collapse;
   margin: 20px 0;
   text-align: left;
   overflow: hidden;
@@ -171,7 +170,6 @@ table {
 
 th, td {
   padding: 10px 15px;
-  border: 1px solid var(--b4);
 }
 
 th {
