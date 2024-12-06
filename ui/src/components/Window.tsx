@@ -8,6 +8,7 @@ import PathBar from './PathBar'
 import FileSystem from './renderers/FileSystem'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
+import LocalWebPage from './renderers/LocalWebPage'
 
 export default function Window({
   id,
@@ -110,6 +111,12 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
+          // TODO remove conditional logic; should be same
+          // renderer whether or not the page is in our
+          // namespace or not
+          if (path && path.split('/')[0] === window.urbitID) {
+            return <LocalWebPage data={await res.text()} />
+          }
           return <WebPage data={await res.text()} />
         }
         case 'application/json': {
@@ -183,6 +190,7 @@ export default function Window({
 
     if (res.status === 404) {
       if (path && path.split('/')[0] === window.urbitID) {
+        console.log('Rendering filesystem')
         return <FileSystem id={id} path={path} />
       } else if (path && path.split('/')[0] !== window.urbitID) {
         // Last-ditch attempt to load something

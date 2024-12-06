@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
+import FileHTML from './FileHTML'
 
 interface FileSystemProps {
   id: number
@@ -20,11 +21,12 @@ async function renderFile(res: Response): Promise<JSX.Element> {
   switch (contentType.split(';')[0]) {
     case 'text/plain': {
       console.log('Rendering text/plain')
-      return <></>
+      return <p>text/plain not supported</p>
     }
     case 'text/html': {
       console.log('Rendering text/html')
-      return <></>
+      const html = await res.text()
+      return <FileHTML html={html}/>
     }
     case 'text/markdown': {
       console.log('Rendering text/markdown')
@@ -39,28 +41,12 @@ async function renderFile(res: Response): Promise<JSX.Element> {
     }
     default: {
       console.log(`Rendering ${contentType} not supported`)
-      return <></>
+      return <p>{`${contentType} not supported`}</p>
     }
   }
 }
 
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await get(path);
-        if (res) {
-          const newEndpointContent = await renderFile(res);
-          setFileViewerContent(newEndpointContent);
-        }
-      } catch (error) {
-        console.error('Upload failed:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleUploadClick = () => {
     const input = document.querySelector('input[type="file"]')
@@ -138,7 +124,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload a file</button>
       <input
         type="file"
-        accept=".png, .md"
+        accept=".html, .md, .png"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />
@@ -147,7 +133,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const segments = path.split('/')
   const { updateWindowPath } = useWindowStore()
-  const [fileViewerContent, setFileViewerContent] = useState(createFileMenu)
+  const [fileViewerContent, setFileViewerContent] = useState<React.ReactElement>(createFileMenu)
   const [isHovered, setIsHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [newSegment, setNewSegment] = useState('')
