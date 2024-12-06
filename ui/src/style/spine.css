@@ -212,6 +212,9 @@ details {
 /* TODO color horizontal rule */
 hr {
   margin: 2rem 0;
+  border: none;
+  height: 1px;
+  background-color: var(--f0);
 }
 
 summary {
