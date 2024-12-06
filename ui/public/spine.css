@@ -156,6 +156,7 @@ span {
 }
 
 a {
+  color: var(--f0);
   text-decoration: underline;
 }
 
