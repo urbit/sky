@@ -191,6 +191,12 @@ tr:nth-child(even) {
   background-color: var(--b2);
 }
 
+tr:nth-child(odd) code {
+  color: var(--f0);
+  background-color: var(--b2);
+}
+
 tr:nth-child(even) code {
+  color: var(--f0);
   background-color: var(--b3);
 }
