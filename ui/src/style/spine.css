@@ -105,6 +105,120 @@ body {
   line-height: var(--line-height);
 }
 
+/* Text */
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 1rem 0;
+}
+
+h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 1rem 0;
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1rem 0;
+}
+
+h4 {
+  font-size: 1.10rem;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+h5 {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+p {
+  margin: 1rem 0;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+a {
+  text-decoration: underline;
+}
+
+/*TODO add fallback colors*/
+blockquote {
+  margin: 1rem 0;
+  margin-left: 10px;
+  border-left: 2px solid var(--b3);
+  padding: 4px;
+  padding-left: 12px;
+  color: var(--f2);
+}
+
+/*TODO add fallback colors*/
+pre {
+  font-family: var(--font-mono, monospace);
+  font-size: calc(1em * var(--mono-scale, 0.8));
+  overflow-x: auto;
+  width: 100%;
+  display: block;
+  padding: 8px;
+  margin: 1rem 0;
+  background-color: var(--b2);
+}
+
+/*TODO add fallback colors*/
+code {
+  font-family: var(--font-mono, monospace);
+  font-size: calc(1em * var(--mono-scale, 0.9));
+  color: var(--f2);
+  background-color: var(--b2);
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
+ul,
+ol {
+  padding-left: 29px;
+  line-height: calc(calc(1 + var(--line-height, 1.4)) / 2);
+  margin: 1rem 0;
+}
+
+ul p,
+ol p {
+  margin: 0;
+  line-height: var(--line-height, 1.4);
+}
+
+ul ul,
+ol ul,
+ul ol,
+ol ol {
+  margin: 0;
+}
+
+details {
+  margin: 1rem 0;
+}
+
+/* TODO color horizontal rule */
+hr {
+  margin: 2rem 0;
+}
+
+summary {
+  user-select: none;
+  cursor: pointer;
+}
+
 /*
  *  styling for inputs and chrome
  *
