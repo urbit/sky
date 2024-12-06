@@ -7,6 +7,8 @@ export default function LocalWebPage({ data }: LocalWebPageProps) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(data, 'text/html');
 
+    // TODO link to ../stlye/... files rather than public
+    // vite won't follow links to style dir in dev mode
     const hollowLink = doc.createElement('link');
     hollowLink.rel = 'stylesheet';
     hollowLink.href = 'hollow.css';
@@ -25,10 +27,13 @@ export default function LocalWebPage({ data }: LocalWebPageProps) {
     const updatedData = new XMLSerializer().serializeToString(doc);
 
     return (
-      <iframe
-        srcDoc={updatedData}
-        style={{ width: '100%', height: '100%', border: 'none' }}
-      />
+      <div className='hf wf fr as jc p2'>
+        <iframe
+          className='hf wf'
+          srcDoc={updatedData}
+          style={{ border: 'none' }}
+        />
+      </div>
     );
   }
 
