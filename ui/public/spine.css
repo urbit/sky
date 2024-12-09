@@ -395,6 +395,11 @@ table {
   border-radius: 3px;
 }
 
+caption {
+  text-align: left;
+  caption-side: top;
+}
+
 th,
 td {
   padding: 10px 15px;
