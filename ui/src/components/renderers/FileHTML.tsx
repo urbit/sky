@@ -1,4 +1,3 @@
-
 import Editor from '@monaco-editor/react'
 import * as monaco from 'monaco-editor'
 import { useEffect, useState } from 'react'
@@ -7,37 +6,25 @@ interface FileHTMLProps {
   html: string
 }
 
-//const markdownEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
-//  lineNumbers: 'off',
-//  minimap: { enabled: false },
-//  automaticLayout: true,
-//  wordWrap: 'on',
-//  wrappingIndent: 'same',
-//  scrollBeyondLastLine: false,
-//  renderWhitespace: 'boundary',
-//  renderLineHighlight: 'none',
-//  readOnly: false,
-//  links: true,
-//  folding: true,
-//  foldingStrategy: 'indentation',
-//  quickSuggestions: false,
-//  suggestOnTriggerCharacters: false,
-//  cursorBlinking: 'solid',
-//  cursorStyle: 'line',
-//  fontLigatures: true,
-//  formatOnPaste: true,
-//  formatOnType: true,
-//  renderFinalNewline: 'on',
-//  selectionHighlight: true,
-//  overviewRulerBorder: false,
-//  overviewRulerLanes: 0,
-//  scrollbar: {
-//    vertical: 'auto',
-//    horizontal: 'auto',
-//  },
-//  smoothScrolling: true,
-//  mouseWheelZoom: true,
-//}
+const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
+  minimap: { enabled: false },
+  automaticLayout: true,
+  wordWrap: 'off',
+  wrappingIndent: 'same',
+  scrollBeyondLastLine: false,
+  renderWhitespace: 'none',
+  renderLineHighlight: 'none',
+  readOnly: false,
+  links: true,
+  folding: true,
+  foldingStrategy: 'indentation',
+  quickSuggestions: true,
+  suggestOnTriggerCharacters: false,
+  renderFinalNewline: 'on',
+  selectionHighlight: true,
+  smoothScrolling: true,
+  mouseWheelZoom: true,
+}
 
 export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
@@ -64,7 +51,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
         height="100%"
         defaultLanguage="html"
         defaultValue={html}
-        //options={markdownEditorConfig}
+        options={htmlEditorConfig}
         theme={theme}
       />
     </div>
