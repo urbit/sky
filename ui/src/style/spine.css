@@ -14,7 +14,7 @@
 }
 
 @font-face {
-  font-family: 'Fira Code';
+  font-family: 'Geist Mono';
   src: url('../assets/fonts/GeistMono-VariableFont_wght.ttf');
   font-weight: 300 700;
   font-style: normal;
@@ -23,7 +23,7 @@
 :root {
   --font-head: 'Urbit Sans', serif;
   --font-body: 'Inter', sans-serif;
-  --font-mono: 'Fira Code', monospace;
+  --font-mono: 'Geist Mono', monospace;
   --font-size: 16px;
   --mono-scale: 0.9;
   --line-height: 1.4;
@@ -96,7 +96,7 @@ body {
   margin: 0;
   height: 100%;
   color: var(--f0);
-  background: var(--b0);
+  background: var(--b1);
   font-family: var(--font-body);
   font-feature-settings: normal;
   font-variation-settings: normal;
@@ -126,7 +126,7 @@ h3 {
 }
 
 h4 {
-  font-size: 1.10rem;
+  font-size: 1.1rem;
   font-weight: 500;
   margin: 1rem 0;
 }
@@ -156,6 +156,7 @@ span {
 }
 
 a {
+  color: var(--f0);
   text-decoration: underline;
 }
 
@@ -179,6 +180,7 @@ pre {
   padding: 8px;
   margin: 1rem 0;
   background-color: var(--b2);
+  border-radius: 3px;
 }
 
 /*TODO add fallback colors*/
@@ -232,6 +234,107 @@ summary {
  *  styling for inputs and chrome
  *
  */
+
+button {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--f4);
+  background-color: var(--b2);
+  border: none;
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.1s ease-out,
+    color 0.1s ease-out;
+}
+
+button:hover {
+  background-color: var(--b3);
+  color: var(--f3);
+  transition: none;
+}
+
+button:active {
+  background-color: var(--b4);
+  color: var(--f2);
+}
+
+button:focus {
+  background-color: var(--b4);
+}
+
+form {
+  padding: 8px;
+  border-radius: 3px;
+  background-color: var(--b2);
+}
+
+label {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+textarea {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid var(--b3);
+  border-radius: 4px;
+  background-color: var(--b0);
+  color: var(--f1);
+  transition:
+    border-color 0.3s,
+    background-color 0.3s;
+}
+
+input[type='text']:focus,
+input[type='email']:focus,
+input[type='password']:focus,
+textarea:focus {
+  border-color: var(--b4);
+  background-color: var(--b2);
+  outline: none;
+}
+
+textarea {
+  resize: both;
+}
+
+input[type='submit'] {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--f4);
+  background-color: var(--b3);
+  border: none;
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.1s ease-out,
+    color 0.1s ease-out;
+}
+
+input[type='submit']:hover {
+  background-color: var(--b4);
+  color: var(--f3);
+  transition: none;
+}
+
+input[type='submit']:active {
+  background-color: var(--b2);
+  color: var(--f2);
+}
+
+input[type='submit']:focus {
+  outline: 2px solid var(--f1);
+  outline-offset: 2px;
+}
 
 input[type='range'] {
   appearance: none;
@@ -288,11 +391,20 @@ table {
   margin: 20px 0;
   text-align: left;
   overflow: hidden;
+  border: 0px;
+  border-collapse: collapse;
   border-radius: 3px;
 }
 
-th, td {
+caption {
+  text-align: left;
+  caption-side: top;
+}
+
+th,
+td {
   padding: 10px 15px;
+  border: none;
 }
 
 th {
