@@ -322,8 +322,8 @@ export default function Window({
             >
               {windowBarVisibility && (
                 <div className='fr ac je hf wf' >
-                  <button className='hf fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleOptsButtonClick()}>...</button>
-                  <button className='hf fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleXButtonClick(id)}>x</button>
+                  <button className='fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleOptsButtonClick()}>...</button>
+                  <button className='fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleXButtonClick(id)}>x</button>
                 </div>
               )}
             </div>
