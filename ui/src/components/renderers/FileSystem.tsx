@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
@@ -137,6 +137,17 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   const [isHovered, setIsHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [newSegment, setNewSegment] = useState('')
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await get(path)
+      if (res) {
+        const content = await renderFile(res)
+        setFileViewerContent(content)
+      }
+    }
+    fetchData()
+  }, [path])
 
   function handlePathSegmentClick(index: number) {
     updateWindowPath(id, path.split('/').slice(index).join('/'))
