@@ -14,7 +14,7 @@
 }
 
 @font-face {
-  font-family: 'Fira Code';
+  font-family: 'Geist Mono';
   src: url('../assets/fonts/GeistMono-VariableFont_wght.ttf');
   font-weight: 300 700;
   font-style: normal;
@@ -23,7 +23,7 @@
 :root {
   --font-head: 'Urbit Sans', serif;
   --font-body: 'Inter', sans-serif;
-  --font-mono: 'Fira Code', monospace;
+  --font-mono: 'Geist Mono', monospace;
   --font-size: 16px;
   --mono-scale: 0.9;
   --line-height: 1.4;
