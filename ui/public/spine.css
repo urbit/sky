@@ -180,6 +180,7 @@ pre {
   padding: 8px;
   margin: 1rem 0;
   background-color: var(--b2);
+  border-radius: 3px;
 }
 
 /*TODO add fallback colors*/
