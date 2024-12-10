@@ -126,12 +126,14 @@ function App() {
         handleSwap()
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
+        console.log('Pressed CTRL+N')
         event.preventDefault()
         if (active !== null) {
           addWindow(active, '')
         }
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
+        console.log('Pressed CTRL+W')
         event.preventDefault()
         if (active !== null) {
           if (active === 1) {
