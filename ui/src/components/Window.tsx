@@ -18,7 +18,7 @@ export default function Window({
   dragWindow,
 }: WindowProps) {
   const defaultContent = (
-    <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
+    <div className="hf wf p2 fc ac jc">
       <PathBar id={id} path={path} />
     </div>
   )
@@ -38,7 +38,7 @@ export default function Window({
   }
 
   const notRecognizedContent = (
-    <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
+    <div className="hf wf p2 fc ac jc">
       <p>Unrecognized MIME type</p>
     </div>
   )
@@ -58,7 +58,7 @@ export default function Window({
   const noURLcontent = (path: string) => {
     console.log('nourl content for ', id, path)
     return (
-      <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
+      <div className="hf wf p2 fc ac jc">
         <p>No URL found for {path}</p>
       </div>
     )
@@ -66,7 +66,7 @@ export default function Window({
 
   const errorFetchingContent = (err: string) => {
     return (
-      <div className="p2" style={{ width: '100%', height: '100%' }}>
+      <div className="hf wf p2">
         <div>
           <p>Error fetching content:</p>
           <br />
@@ -285,14 +285,14 @@ export default function Window({
     <Allotment>
       <Allotment.Pane visible key={id} className="wf hf fr">
         <div
-          className="fc ac jc"
-          style={{ width: '100%', height: '100%', padding: '5px', position: 'relative' }}
+          className="hf wf fc ac jc"
+          style={{ padding: '5px', position: 'relative' }}
           onMouseEnter={handleWindowMouseEnter}
         >
           <div
             id={id.toString()}
             draggable={dragWindow === id ? true : false}
-            className="container fc as js b1 br1"
+            className="hf wf container fc as js b1 br1"
             onDragStart={e => handleDragStart(e, id)}
             onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
             onDragEnd={handleDragEnd}
@@ -301,8 +301,6 @@ export default function Window({
               e.preventDefault()
             }}
             style={{
-              width: '100%',
-              height: '100%',
               overflow: 'hidden',
               position: 'relative',
             }}

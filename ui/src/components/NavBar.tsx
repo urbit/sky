@@ -18,22 +18,20 @@ export default function NavBar({ id, path }: NavBarProps) {
 
   return (
     <div
-      className="fr ac jb b2"
+      className="wf fr ac jb b2"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100%',
         height: '30px',
         paddingRight: '10px',
         opacity: hovered ? 1.0 : 0.0,
       }}
     >
       <div
-        className="fr ac"
-        style={{ width: '100%', height: '100%' }}
+        className="hf wf fr ac"
         onClick={handlePathClick}
       >
         {isEditing ? <PathBar id={id} path={path} /> : <p>{path}</p>}

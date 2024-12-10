@@ -5,7 +5,8 @@ export default function WebPage({ data }: { data: string }): JSX.Element {
     return (
       <iframe
         srcDoc={data}
-        style={{ width: '100%', height: '100%', border: 'none' }}
+        className='hf wf'
+        style={{ border: 'none' }}
       />
     )
   }
