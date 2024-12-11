@@ -141,9 +141,14 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   useEffect(() => {
     const fetchData = async () => {
       const res = await get(path)
-      if (res) {
+
+      if (res && res.status >= 200 && res.status <= 300) {
         const content = await renderFile(res)
         setFileViewerContent(content)
+      }
+
+      if (res && res.status === 404) {
+        setFileViewerContent(createFileMenu)
       }
     }
     fetchData()
