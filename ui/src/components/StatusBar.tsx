@@ -10,7 +10,7 @@ const sigilConfig = {
   point: '~sampel-palnet',
   // TODO get colors from tlon/landscape user preferences
   foreground: '#FFF',
-  background: '#000',
+  background: '#c10c31',
   detail: 'none',
   space: 'default',
 }

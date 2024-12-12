@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
+import FileHTML from './FileHTML'
 
 interface FileSystemProps {
   id: number
@@ -20,11 +21,12 @@ async function renderFile(res: Response): Promise<JSX.Element> {
   switch (contentType.split(';')[0]) {
     case 'text/plain': {
       console.log('Rendering text/plain')
-      return <></>
+      return <p>text/plain not supported</p>
     }
     case 'text/html': {
       console.log('Rendering text/html')
-      return <></>
+      const html = await res.text()
+      return <FileHTML html={html} />
     }
     case 'text/markdown': {
       console.log('Rendering text/markdown')
@@ -39,7 +41,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
     }
     default: {
       console.log(`Rendering ${contentType} not supported`)
-      return <></>
+      return <p>{`${contentType} not supported`}</p>
     }
   }
 }
@@ -117,11 +119,11 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   }
 
   const createFileMenu = (
-    <div className="fc ac jc hf wf b2">
+    <div className="fc ac jc hf wf">
       <button onClick={handleUploadClick}>Upload a file</button>
       <input
         type="file"
-        accept=".png, .md"
+        accept=".html, .md, .png"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />
@@ -130,10 +132,27 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const segments = path.split('/')
   const { updateWindowPath } = useWindowStore()
-  const [fileViewerContent, setFileViewerContent] = useState(createFileMenu)
+  const [fileViewerContent, setFileViewerContent] =
+    useState<React.ReactElement>(createFileMenu)
   const [isHovered, setIsHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [newSegment, setNewSegment] = useState('')
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await get(path)
+
+      if (res && res.status >= 200 && res.status <= 300) {
+        const content = await renderFile(res)
+        setFileViewerContent(content)
+      }
+
+      if (res && res.status === 404) {
+        setFileViewerContent(createFileMenu)
+      }
+    }
+    fetchData()
+  }, [path])
 
   function handlePathSegmentClick(index: number) {
     updateWindowPath(id, path.split('/').slice(index).join('/'))
@@ -153,6 +172,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <div
         className="fr ac b1"
         style={{
+          height: '50px',
           padding: '10px',
           position: 'relative',
           cursor: 'pointer',

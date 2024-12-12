@@ -407,9 +407,6 @@ td {
 th {
   background-color: var(--b3);
   font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 1;
 }
 
 th code {

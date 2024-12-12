@@ -1,5 +1,3 @@
-// TODO remove App.css
-import './App.css'
 import './style/hollow.css'
 import './style/spine.css'
 import './style/feather.css'
@@ -128,12 +126,14 @@ function App() {
         handleSwap()
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
+        console.log('Pressed CTRL+N')
         event.preventDefault()
         if (active !== null) {
           addWindow(active, '')
         }
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
+        console.log('Pressed CTRL+W')
         event.preventDefault()
         if (active !== null) {
           if (active === 1) {
@@ -178,7 +178,7 @@ function App() {
         TODO this height calc is a kludge, fixes StatusBar
         shoving the WindowContainer off the bottom of the screen
       */}
-      <div style={{ width: '100%', height: `calc(100% - ${65}px)` }}>
+      <div className="wf" style={{ height: `calc(100% - ${65}px)` }}>
         <WindowContainer
           map={windowMap}
           id={1}

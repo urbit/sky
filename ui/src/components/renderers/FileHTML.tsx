@@ -1,0 +1,59 @@
+import Editor from '@monaco-editor/react'
+import * as monaco from 'monaco-editor'
+import { useEffect, useState } from 'react'
+
+interface FileHTMLProps {
+  html: string
+}
+
+const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
+  minimap: { enabled: false },
+  automaticLayout: true,
+  wordWrap: 'off',
+  wrappingIndent: 'same',
+  scrollBeyondLastLine: false,
+  renderWhitespace: 'none',
+  renderLineHighlight: 'none',
+  readOnly: false,
+  links: true,
+  folding: true,
+  foldingStrategy: 'indentation',
+  quickSuggestions: true,
+  suggestOnTriggerCharacters: false,
+  renderFinalNewline: 'on',
+  selectionHighlight: true,
+  smoothScrolling: true,
+  mouseWheelZoom: true,
+}
+
+export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
+  const [theme, setTheme] = useState('vs-light')
+
+  // TODO better integrate light/dark mode and color scheme
+  // into the Spine/Feather settings
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = (e: MediaQueryListEvent) => {
+      setTheme(e.matches ? 'vs-dark' : 'vs-light')
+    }
+
+    handleChange(mediaQuery as unknown as MediaQueryListEvent)
+    mediaQuery.addEventListener('change', handleChange)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange)
+    }
+  }, [])
+
+  return (
+    <div className="hf wf" style={{ overflow: 'scroll' }}>
+      <Editor
+        height="100%"
+        defaultLanguage="html"
+        defaultValue={html}
+        options={htmlEditorConfig}
+        theme={theme}
+      />
+    </div>
+  )
+}

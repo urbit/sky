@@ -1,13 +1,13 @@
 import { Allotment } from 'allotment'
 import { WindowProps } from '../types/windows'
 import { get, findShipUrls } from '../api/sky'
-import WebPage from './renderers/WebPage'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
 import FileSystem from './renderers/FileSystem'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
+import TextHTML from './renderers/TextHTML'
 
 export default function Window({
   id,
@@ -17,20 +17,27 @@ export default function Window({
   dragWindow,
 }: WindowProps) {
   const defaultContent = (
-    <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
+    <div className="hf wf p2 fc ac jc">
       <PathBar id={id} path={path} />
     </div>
   )
 
-  const [windowContent, setWindowContent] = useState(defaultContent)
-  const { isActive } = useWindowStore()
+  const fileSystemContent = (
+    // TODO not sure about this default behaviour
+    <FileSystem id={id} path={path || `${window.urbitID}/home`} />
+  )
 
-  function handleMouseEnter() {
+  const [windowContent, setWindowContent] = useState(defaultContent)
+  const [windowBarVisibility, setWindowBarVisibility] = useState(false)
+  const [fileSystemView, setFileSystemView] = useState(false)
+  const { isActive, delWindow } = useWindowStore()
+
+  function handleWindowMouseEnter() {
     isActive(id)
   }
 
   const notRecognizedContent = (
-    <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
+    <div className="hf wf p2 fc ac jc">
       <p>Unrecognized MIME type</p>
     </div>
   )
@@ -50,7 +57,7 @@ export default function Window({
   const noURLcontent = (path: string) => {
     console.log('nourl content for ', id, path)
     return (
-      <div className="p2 fc ac jc" style={{ width: '100%', height: '100%' }}>
+      <div className="hf wf p2 fc ac jc">
         <p>No URL found for {path}</p>
       </div>
     )
@@ -58,7 +65,7 @@ export default function Window({
 
   const errorFetchingContent = (err: string) => {
     return (
-      <div className="p2" style={{ width: '100%', height: '100%' }}>
+      <div className="hf wf p2">
         <div>
           <p>Error fetching content:</p>
           <br />
@@ -103,7 +110,12 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
-          return <WebPage data={await res.text()} />
+          return (
+            <TextHTML
+              content={await res.text()}
+              isLocal={path?.split('/')[0] === window.urbitID}
+            />
+          )
         }
         case 'application/json': {
           console.log('Processing JSON data...')
@@ -176,6 +188,7 @@ export default function Window({
 
     if (res.status === 404) {
       if (path && path.split('/')[0] === window.urbitID) {
+        console.log('Rendering filesystem')
         return <FileSystem id={id} path={path} />
       } else if (path && path.split('/')[0] !== window.urbitID) {
         // Last-ditch attempt to load something
@@ -240,6 +253,16 @@ export default function Window({
     }
   }
 
+  function handleXButtonClick(id: number) {
+    delWindow(id)
+  }
+
+  function handleOptsButtonClick() {
+    if (path && path.split('/')[0] === window.urbitID) {
+      setFileSystemView(!fileSystemView)
+    }
+  }
+
   useEffect(() => {
     const fetchContent = async () => {
       if (path === '') {
@@ -260,14 +283,14 @@ export default function Window({
     <Allotment>
       <Allotment.Pane visible key={id} className="wf hf fr">
         <div
-          className="fc ac jc"
-          style={{ width: '100%', height: '100%', padding: '5px' }}
-          onMouseEnter={handleMouseEnter}
+          className="hf wf fc ac jc"
+          style={{ padding: '5px', position: 'relative' }}
+          onMouseEnter={handleWindowMouseEnter}
         >
           <div
             id={id.toString()}
             draggable={dragWindow === id ? true : false}
-            className="container fc as js b1 br1"
+            className="hf wf container fc as js b1 br1 bd1"
             onDragStart={e => handleDragStart(e, id)}
             onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
             onDragEnd={handleDragEnd}
@@ -276,13 +299,43 @@ export default function Window({
               e.preventDefault()
             }}
             style={{
-              width: '100%',
-              height: '100%',
               overflow: 'hidden',
               position: 'relative',
             }}
           >
-            {windowContent}
+            <div
+              style={{
+                height: '55px',
+                width: '100px',
+                zIndex: '1',
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                pointerEvents: 'auto',
+              }}
+              onMouseEnter={() => setWindowBarVisibility(true)}
+              onMouseLeave={() => setWindowBarVisibility(false)}
+            >
+              {windowBarVisibility && (
+                <div className="fr ac ja hf wf">
+                  <button
+                    className="fr ac jc"
+                    style={{ pointerEvents: 'visible' }}
+                    onClick={() => handleOptsButtonClick()}
+                  >
+                    ...
+                  </button>
+                  <button
+                    className="fr ac jc"
+                    style={{ pointerEvents: 'visible' }}
+                    onClick={() => handleXButtonClick(id)}
+                  >
+                    x
+                  </button>
+                </div>
+              )}
+            </div>
+            {!fileSystemView ? windowContent : fileSystemContent}
           </div>
         </div>
       </Allotment.Pane>
