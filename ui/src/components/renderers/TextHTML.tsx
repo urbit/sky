@@ -6,7 +6,7 @@ interface TextHTMLProps {
 export default function TextHTML({ content, isLocal }: TextHTMLProps) {
   if (content) {
     const parser = new DOMParser()
-    let doc = parser.parseFromString(content, 'text/html')
+    const doc = parser.parseFromString(content, 'text/html')
 
     if (isLocal) {
       // TODO link to ../stlye/... files rather than public
