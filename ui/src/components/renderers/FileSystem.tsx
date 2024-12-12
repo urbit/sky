@@ -26,7 +26,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
     case 'text/html': {
       console.log('Rendering text/html')
       const html = await res.text()
-      return <FileHTML html={html}/>
+      return <FileHTML html={html} />
     }
     case 'text/markdown': {
       console.log('Rendering text/markdown')
@@ -47,7 +47,6 @@ async function renderFile(res: Response): Promise<JSX.Element> {
 }
 
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
-
   const handleUploadClick = () => {
     const input = document.querySelector('input[type="file"]')
     if (input) (input as HTMLInputElement).click()
@@ -133,7 +132,8 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const segments = path.split('/')
   const { updateWindowPath } = useWindowStore()
-  const [fileViewerContent, setFileViewerContent] = useState<React.ReactElement>(createFileMenu)
+  const [fileViewerContent, setFileViewerContent] =
+    useState<React.ReactElement>(createFileMenu)
   const [isHovered, setIsHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [newSegment, setNewSegment] = useState('')

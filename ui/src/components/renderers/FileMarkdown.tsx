@@ -6,37 +6,38 @@ interface FileMarkdownProps {
   md: string
 }
 
-const markdownEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
-  lineNumbers: 'off',
-  minimap: { enabled: false },
-  automaticLayout: true,
-  wordWrap: 'on',
-  wrappingIndent: 'same',
-  scrollBeyondLastLine: false,
-  renderWhitespace: 'boundary',
-  renderLineHighlight: 'none',
-  readOnly: false,
-  links: true,
-  folding: true,
-  foldingStrategy: 'indentation',
-  quickSuggestions: false,
-  suggestOnTriggerCharacters: false,
-  cursorBlinking: 'solid',
-  cursorStyle: 'line',
-  fontLigatures: true,
-  formatOnPaste: true,
-  formatOnType: true,
-  renderFinalNewline: 'on',
-  selectionHighlight: true,
-  overviewRulerBorder: false,
-  overviewRulerLanes: 0,
-  scrollbar: {
-    vertical: 'auto',
-    horizontal: 'auto',
-  },
-  smoothScrolling: true,
-  mouseWheelZoom: true,
-}
+const markdownEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions =
+  {
+    lineNumbers: 'off',
+    minimap: { enabled: false },
+    automaticLayout: true,
+    wordWrap: 'on',
+    wrappingIndent: 'same',
+    scrollBeyondLastLine: false,
+    renderWhitespace: 'boundary',
+    renderLineHighlight: 'none',
+    readOnly: false,
+    links: true,
+    folding: true,
+    foldingStrategy: 'indentation',
+    quickSuggestions: false,
+    suggestOnTriggerCharacters: false,
+    cursorBlinking: 'solid',
+    cursorStyle: 'line',
+    fontLigatures: true,
+    formatOnPaste: true,
+    formatOnType: true,
+    renderFinalNewline: 'on',
+    selectionHighlight: true,
+    overviewRulerBorder: false,
+    overviewRulerLanes: 0,
+    scrollbar: {
+      vertical: 'auto',
+      horizontal: 'auto',
+    },
+    smoothScrolling: true,
+    mouseWheelZoom: true,
+  }
 
 export default function FileMarkdown({ md }: FileMarkdownProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
@@ -49,7 +50,7 @@ export default function FileMarkdown({ md }: FileMarkdownProps): JSX.Element {
       setTheme(e.matches ? 'vs-dark' : 'vs-light')
     }
 
-    handleChange(mediaQuery)
+    handleChange(mediaQuery as unknown as MediaQueryListEvent)
     mediaQuery.addEventListener('change', handleChange)
 
     return () => {

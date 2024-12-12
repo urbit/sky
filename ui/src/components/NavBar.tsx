@@ -30,10 +30,7 @@ export default function NavBar({ id, path }: NavBarProps) {
         opacity: hovered ? 1.0 : 0.0,
       }}
     >
-      <div
-        className="hf wf fr ac"
-        onClick={handlePathClick}
-      >
+      <div className="hf wf fr ac" onClick={handlePathClick}>
         {isEditing ? <PathBar id={id} path={path} /> : <p>{path}</p>}
       </div>
       {/* TODO add real buttons */}

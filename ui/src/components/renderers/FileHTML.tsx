@@ -37,7 +37,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
       setTheme(e.matches ? 'vs-dark' : 'vs-light')
     }
 
-    handleChange(mediaQuery)
+    handleChange(mediaQuery as unknown as MediaQueryListEvent)
     mediaQuery.addEventListener('change', handleChange)
 
     return () => {

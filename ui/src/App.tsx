@@ -178,7 +178,7 @@ function App() {
         TODO this height calc is a kludge, fixes StatusBar
         shoving the WindowContainer off the bottom of the screen
       */}
-      <div className='wf' style={{ height: `calc(100% - ${65}px)` }}>
+      <div className="wf" style={{ height: `calc(100% - ${65}px)` }}>
         <WindowContainer
           map={windowMap}
           id={1}

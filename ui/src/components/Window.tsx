@@ -306,7 +306,7 @@ export default function Window({
             }}
           >
             <div
-              className='wf'
+              className="wf"
               style={{
                 height: '50px',
                 zIndex: '1',
@@ -319,9 +319,21 @@ export default function Window({
               onMouseLeave={() => setWindowBarVisibility(false)}
             >
               {windowBarVisibility && (
-                <div className='fr ac je hf wf' >
-                  <button className='fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleOptsButtonClick()}>...</button>
-                  <button className='fr ac jc' style={{ pointerEvents: 'visible' }} onClick={() => handleXButtonClick(id)}>x</button>
+                <div className="fr ac je hf wf">
+                  <button
+                    className="fr ac jc"
+                    style={{ pointerEvents: 'visible' }}
+                    onClick={() => handleOptsButtonClick()}
+                  >
+                    ...
+                  </button>
+                  <button
+                    className="fr ac jc"
+                    style={{ pointerEvents: 'visible' }}
+                    onClick={() => handleXButtonClick(id)}
+                  >
+                    x
+                  </button>
                 </div>
               )}
             </div>
@@ -330,5 +342,5 @@ export default function Window({
         </div>
       </Allotment.Pane>
     </Allotment>
-  );
+  )
 }

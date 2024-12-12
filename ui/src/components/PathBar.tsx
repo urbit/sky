@@ -81,7 +81,7 @@ export default function PathBar({
   }
 
   return (
-    <form className='wf' onSubmit={handleSubmit}>
+    <form className="wf" onSubmit={handleSubmit}>
       <input
         type="text"
         className="wf b3 br2 p1"
