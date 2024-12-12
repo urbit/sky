@@ -1,8 +1,8 @@
-interface LocalWebPageProps {
+interface LocalTextHTMLProps {
   data: string
 }
 
-export default function LocalWebPage({ data }: LocalWebPageProps) {
+export default function LocalTextHTML({ data }: LocalTextHTMLProps) {
   if (data) {
     const parser = new DOMParser()
     const doc = parser.parseFromString(data, 'text/html')
