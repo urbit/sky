@@ -1,15 +1,16 @@
-import React from 'react'
-
 interface TextHTMLProps {
   content: string
   isLocal: boolean
 }
 
 export default function TextHTML({ content, isLocal }: TextHTMLProps) {
-  React.useEffect(() => {
-    if (isLocal) {
-      const doc = document
+  if (content) {
+    const parser = new DOMParser()
+    let doc = parser.parseFromString(content, 'text/html')
 
+    if (isLocal) {
+      // TODO link to ../stlye/... files rather than public
+      // vite won't follow links to style dir in dev mode
       const hollowLink = doc.createElement('link')
       hollowLink.rel = 'stylesheet'
       hollowLink.href = 'hollow.css'
@@ -22,11 +23,20 @@ export default function TextHTML({ content, isLocal }: TextHTMLProps) {
       featherLink.rel = 'stylesheet'
       featherLink.href = 'feather.css'
 
-      doc.head.appendChild(hollowLink)
       doc.head.appendChild(spineLink)
       doc.head.appendChild(featherLink)
     }
-  }, [])
 
-  return <div dangerouslySetInnerHTML={{ __html: content }} />
+    return (
+      <div className="hf wf fr as jc">
+        <iframe
+          className="hf wf"
+          srcDoc={new XMLSerializer().serializeToString(doc)}
+          style={{ border: 'none' }}
+        />
+      </div>
+    )
+  }
+
+  return null
 }
