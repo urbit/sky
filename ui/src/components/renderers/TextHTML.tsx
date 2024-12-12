@@ -32,7 +32,7 @@ export default function TextHTML({ content, isLocal }: TextHTMLProps) {
         <iframe
           className="hf wf"
           srcDoc={new XMLSerializer().serializeToString(doc)}
-          style={{ border: 'none' }}
+          style={{ border: 'none', borderRadius: '2.5px' }}
         />
       </div>
     )
