@@ -8,7 +8,7 @@ interface TextMarkdownProps {
 export default function TextMarkdown({ md }: TextMarkdownProps) {
   return (
     <div
-      className="hf wf fr as jc p2"
+      className="hf wf fr as jc"
       style={{ overflowY: 'scroll', overflowX: 'hidden' }}
     >
       <div>
