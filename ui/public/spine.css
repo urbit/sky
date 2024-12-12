@@ -268,7 +268,7 @@ button:focus {
 form {
   padding: 8px;
   border-radius: 3px;
-  background-color: var(--b2);
+  background-color: var(--b1);
 }
 
 label {
@@ -283,13 +283,10 @@ textarea {
   font-family: var(--font-body);
   font-size: 1rem;
   padding: 0.5rem;
-  border: 1px solid var(--b3);
   border-radius: 4px;
-  background-color: var(--b0);
+  border: 0px;
   color: var(--f1);
-  transition:
-    border-color 0.3s,
-    background-color 0.3s;
+  background-color: var(--b0);
 }
 
 input[type='text']:focus,
