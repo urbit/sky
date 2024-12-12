@@ -304,20 +304,20 @@ export default function Window({
             }}
           >
             <div
-              className="wf"
               style={{
-                height: '50px',
+                height: '55px',
+                width: '100px',
                 zIndex: '1',
                 position: 'absolute',
                 top: 0,
-                left: 0,
+                right: 0,
                 pointerEvents: 'auto',
               }}
               onMouseEnter={() => setWindowBarVisibility(true)}
               onMouseLeave={() => setWindowBarVisibility(false)}
             >
               {windowBarVisibility && (
-                <div className="fr ac je hf wf">
+                <div className="fr ac ja hf wf">
                   <button
                     className="fr ac jc"
                     style={{ pointerEvents: 'visible' }}
