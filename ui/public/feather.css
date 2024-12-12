@@ -518,15 +518,19 @@
 
 /*TODO add fallback colors*/
 .bd1 {
-  border: 0.8px solid var(--b3);
+  border: 2.5px solid var(--b1);
 }
 
 .bd2 {
-  border: 0.8px solid var(--f3);
+  border: 2.5px solid var(--b2);
 }
 
 .bd3 {
-  border: 2px solid var(--f1);
+  border: 2.5px solid var(--b3);
+}
+
+.bd4 {
+  border: 2.5px solid var(--b4);
 }
 
 .br0 {

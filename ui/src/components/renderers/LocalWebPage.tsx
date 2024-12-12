@@ -27,11 +27,12 @@ export default function LocalWebPage({ data }: LocalWebPageProps) {
     const updatedData = new XMLSerializer().serializeToString(doc)
 
     return (
-      <div className="hf wf fr as jc p2">
+      <div className="hf wf fr as jc">
         <iframe
-          className="hf wf"
+          className="hf wf br1"
           srcDoc={updatedData}
-          style={{ border: 'none' }}
+          // TODO maybe change br in feather to remove this
+          style={{ border: 'none', borderRadius: '1.5px' }}
         />
       </div>
     )

@@ -292,7 +292,7 @@ export default function Window({
           <div
             id={id.toString()}
             draggable={dragWindow === id ? true : false}
-            className="hf wf container fc as js b1 br1"
+            className="hf wf container fc as js b1 br1 bd1"
             onDragStart={e => handleDragStart(e, id)}
             onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
             onDragEnd={handleDragEnd}
