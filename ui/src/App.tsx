@@ -15,7 +15,7 @@ function App() {
     addWindow,
     delWindow,
     updateWindowPath,
-    isActive,
+    setActiveWindowID,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
@@ -140,7 +140,7 @@ function App() {
             updateWindowPath(activeWindowID, '')
           } else {
             delWindow(activeWindowID)
-            isActive(null)
+            setActiveWindowID(null)
           }
         }
       }
@@ -162,7 +162,7 @@ function App() {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
       window.removeEventListener('keyup', handleKeyUp, { capture: true })
     }
-  }, [activeWindowID, delWindow, addWindow, updateWindowPath, isActive])
+  }, [activeWindowID, delWindow, addWindow, updateWindowPath, setActiveWindowID])
 
   // TODO handle real window.urbitID, not suitable for production
   useEffect(() => {
