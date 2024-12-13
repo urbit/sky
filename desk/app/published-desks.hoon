@@ -58,9 +58,11 @@
 =|  state-0
 =*  state  -
 ^-  agent:gall
+=<
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
+    hc    ~(. +> bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -84,50 +86,10 @@
     state  !<(state-0 old)
   ==
 ::
-++  on-poke
-  ::  XX bind a desk we've published, error if URL already taken
-  ::  XX bind a desk we've published, overwrite existing URL
-  |=  [=mark =vase]
-  ^-  (quip card _this)
-  ?+  mark
-    ~_  [%leaf "{<dap.bowl>}: unexpected mark {<mark>}"]
-    !!
-  ::
-      %handle-http-response
-    =/  req  !<([eyre-id=@ta =inbound-request:eyre] vase)
-    =/  ,request-line:server
-      (parse-request-line:server url.request.inbound-request.req)
-    ~&  >>  req
-    ?+  method.request.inbound-request.req
-      ~_  [%leaf "{<dap.bowl>}: unsupported method {<method.request.inbound-request.req>}"]
-      !!
-    ::
-        %'GET'
-      ?+  site
-        ~_  [%leaf "Unexpected site {<site>}"]
-        !!
-      ::
-          [@ ~]
-        ~&  inbound-request.req
-        `this
-      ==
-    ==
-  ==
-::
-++  on-peek   on-peek:def
-++  on-watch  on-watch:def
-++  on-arvo
-  |=  [=wire =sign-arvo]
-  ^-  (quip card _this)
-  ?.  ?=([%eyre %connect @tas ~] wire)
-    (on-arvo:def [wire sign-arvo])
-  ?>  ?=([%eyre %bound *] sign-arvo)
-  ?:  accepted.sign-arvo
-    %-  (slog leaf+"Bound successfully!" ~)
+++  on-watch  
+  |=  =path
+    ^-  (quip card _this)
     `this
-  %-  (slog leaf+"Binding failed!" ~)
-  `this
-++  on-leave  on-leave:def
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
@@ -156,32 +118,172 @@
       ?-  -.upd
           %ini
         :_  this
-        ::  XX check if URL exists, error if so
         %+  turn
-          ~(tap by +.upd)
+          %+  skim  ~(tap by +.upd)
+          binding-check:hc
         |=  [=desk =treaty]
-        ^-  card
-        :*  %pass  /eyre/connect/[desk]  %arvo  %e
-            %connect  [~ /[`@t`desk]]  dap.bowl
-        ==
+          ^-  card
+          ~&  >  "binding {</[desk]>}"
+          (set-response desk treaty)
       ::
           %add
         :_  this
-        ::  XX check if URL exists, error if so
-        :~  :*  %pass  /eyre/connect/[desk.upd]  %arvo  %e
-                %connect  [~ /[`@t`desk.upd]]  dap.bowl
-            ==
+        ?.  (binding-check:hc [desk.upd ~])  
+          ~&  >>  "Can't publish at {</[`@t`desk.upd]>} path, eyre alredy binded"
+          ~
+        ~&  >  "binding {</[desk]>}"
+        :~  (set-response desk.upd treaty.upd)
         ==
       ::
           %del
         :_  this
-        :~  :*  %pass  /eyre/connect/[desk.upd]  %arvo  %e
-                %disconnect  [~ /[`@t`desk.upd]]
-            ==
+        ?.  (binding-check:hc [desk.upd ~])  
+          ~&  >>  "Can't remove binding at {</[`@t`desk.upd]>} path, binding was set by different agent"
+          ~
+        :~  
+          :*  %pass  /eyre/response/[desk.upd]  %arvo  %e  %set-response  (spat /[`@t`desk.upd])  ~
+          ==
         ==
       ==
     ==
   ==
+++  on-arvo  on-arvo:def
+++  on-leave  on-leave:def
+++  on-poke  on-poke:def
+++  on-peek   on-peek:def
 ++  on-fail   on-fail:def
 --
-
+|_  =bowl:gall
+::
+::  gate, checks if published desks allowed to bind on path
+++  binding-check
+  |=  [=desk *]
+  ^-  ?
+  =/  binding  (~(get by bindings) `binding:eyre`[~ [[`@t`desk] ~]])
+  ::  has no binding, will bind to dap.bowl
+  ?:  =(binding ~)  &
+  =/  =action:eyre  +:(need binding)
+  ::  checking if correct type of binding
+  ?.  ?=([%app term] action)  
+    ~&  >>  ['incorrect type of action:eyre' action]
+    |
+  ::  has binding, checking if bounded by dap.bowl
+  =(app.action dap.bowl) 
+::
+++  bindings 
+  ^-  (map binding:eyre [duct action:eyre])
+  =/  bindings  .^((list [binding:eyre duct action:eyre]) %e /(scot %p our.bowl)/bindings/(scot %da now.bowl))
+  %-  malt
+  %+  turn
+    bindings
+  |=  [=binding:eyre =duct =action:eyre]
+  [binding [duct action]]
+::
+++  headers 
+  ^-  response-header:http
+  :-  200
+  :~  ['Access-Control-Allow-Origin' '*']
+      ['Content-Type' 'text/html; charset=utf-8']
+  ==
+::
+++  data 
+  |=  docket=docket-0
+  =/  color  
+    %+  oust  [1 2]
+    %+  oust  [4 1] 
+    %+  scow  %ux  color.docket
+  ^-  (unit octs)
+  %-  some
+  %-  as-octs:mimes:html 
+  %-  crip 
+  %-  en-xml:html 
+  ^-  manx
+  ;html
+    ;head
+      ;meta(charset "utf-8");
+      ;style: {style}
+    ==
+    ;body
+      ;div
+      =style  "display: flex; flex-direction: row; align-items: center; gap: 15px;"
+        ;div(class "grow")
+          ;+  ?:  =(`'' image.docket)  
+            ;div(class "w100 hf br", style "background:#{color};");
+          ;img(src (trip (need image.docket)), class "w100 hf br");
+        ==
+        ;div
+        =style  "display: flex; flex-direction: column;"
+          ;h2: {(trip title.docket)}
+          ;p: {(trip info.docket)}
+          ;a(href "{(trip website.docket)}")
+            ; {(trip website.docket)}
+          ==
+        ==
+      ==
+      ;a(class "btn br")
+        ;span: Install
+      ==
+    ==
+  ==
+::
+++  body 
+  |=  =docket-0
+  :-  %payload
+  ^-  simple-payload:http
+  :-  headers 
+  (data docket-0)
+::
+++  set-response 
+  |=  [=desk =treaty]
+  =/  bod  (body docket-0.treaty)
+  ^-  card
+  :*  %pass  /eyre/response/[desk]  %arvo  %e  %set-response  (spat /[desk])  `[| bod]
+  ==
+::
+++  style
+%-  trip
+'''
+@font-face {
+  font-family: "Urbit Sans";
+  src: url("https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2")
+       format("woff2");
+  font-weight: 100 700;
+  font-style: normal;
+}
+body{
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  justify-content: center; 
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Urbit Sans';
+  gap: 8px;
+}
+h2{
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+.w100{
+  width: 100px;
+}
+.hf{
+  height: 100%;
+}
+.br{
+  border-radius: 8px;
+}
+a{
+  text-decoration: none;
+  color: black;
+}
+.grow {
+  flex-grow: 1;
+}
+.btn{
+  background: black;
+  color: white;
+  padding: 8px;
+}
+'''
+--
