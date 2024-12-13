@@ -92,6 +92,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
     return;
   }
 
+  // TODO for development; remove
   if (window.urbitID === '~sampel') {
     return fetch(urls.ship, {
       method: 'PUT',
