@@ -264,6 +264,13 @@ h2{
   margin-top: 4px;
   margin-bottom: 4px;
 }
+a{
+  text-decoration: none;
+  color: black;
+}
+img{
+  object-fit: cover;
+}
 .w100{
   width: 100px;
 }
@@ -272,10 +279,6 @@ h2{
 }
 .br{
   border-radius: 8px;
-}
-a{
-  text-decoration: none;
-  color: black;
 }
 .grow {
   flex-grow: 1;
