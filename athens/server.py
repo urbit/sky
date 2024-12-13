@@ -26,10 +26,10 @@ CUSTOM_MIME_TYPES = {
 }
 
 
-@app.route('/<path:url_path>', methods=['GET', 'POST'])
+@app.route('/<path:url_path>', methods=['GET', 'PUT'])
 def handle_file(url_path):
-    if request.method == 'POST':
-        # Check if the POST request has the file part
+    if request.method == 'PUT':
+        # Check if the PUT request has the file part
         if 'file' not in request.files:
             return 'No file part in the request', 400
         file = request.files['file']
