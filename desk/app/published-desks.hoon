@@ -204,7 +204,7 @@
       =style  "display: flex; flex-direction: row; align-items: center; gap: 15px;"
         ;div(class "grow")
         ;+  ?:  |(=(~ image.docket) =(`'' image.docket))
-            ;div(class "w100 hf br", style "background:#{color};");
+            ;div(class "w100 h100 br", style "background:#{color};");
           ;img(src (trip (need image.docket)), class "w100 hf br");
         ==
         ;div
@@ -269,6 +269,9 @@ img{
 }
 .w100{
   width: 100px;
+}
+.h100 {
+  height: 100px;
 }
 .hf{
   height: 100%;
