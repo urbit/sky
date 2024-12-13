@@ -52,8 +52,7 @@
       [%del =desk =treaty]
   ==
 --
-::  XX turn verb off in production
-%+  verb  &
+%+  verb  |
 %-  agent:dbug
 =|  state-0
 =*  state  -
@@ -86,10 +85,6 @@
     state  !<(state-0 old)
   ==
 ::
-++  on-watch  
-  |=  =path
-    ^-  (quip card _this)
-    `this
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
@@ -147,9 +142,10 @@
       ==
     ==
   ==
-++  on-arvo  on-arvo:def
+++  on-watch  on-watch:def
+++  on-arvo   on-arvo:def
 ++  on-leave  on-leave:def
-++  on-poke  on-poke:def
+++  on-poke   on-poke:def
 ++  on-peek   on-peek:def
 ++  on-fail   on-fail:def
 --
