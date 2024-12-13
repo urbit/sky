@@ -92,6 +92,14 @@ async function put(path: string, data: FormData): Promise<Response | void> {
     return;
   }
 
+  if (window.urbitID === '~sampel') {
+    return fetch(urls.ship, {
+      method: 'PUT',
+      // TODO Authorization header
+      body: data
+    })
+  }
+
   if (window.ship) {
     return fetch(urls.ship, {
       method: 'PUT',

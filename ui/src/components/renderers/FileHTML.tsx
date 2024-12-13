@@ -1,6 +1,9 @@
 import Editor from '@monaco-editor/react'
 import * as monaco from 'monaco-editor'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import useWindowStore from '../../state/useWindowStore'
+import { debounce } from 'lodash'
+import { put } from '../../api/sky'
 
 interface FileHTMLProps {
   html: string
@@ -28,9 +31,26 @@ const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
 
 export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
+  const { activeWindowPath } = useWindowStore()
 
-  // TODO better integrate light/dark mode and color scheme
-  // into the Spine/Feather settings
+  const handleEditorChange = useCallback(
+    debounce(async (value: string | undefined) => {
+      if (value && activeWindowPath) {
+        const formData = new FormData()
+        const file = new File([value], 'file.html', { type: 'text/html' })
+        formData.append('file', file)
+
+        try {
+          await put(activeWindowPath, formData)
+          console.log('Upload successful')
+        } catch (error) {
+          console.error('Upload failed:', error)
+        }
+      }
+    }, 500),
+    [activeWindowPath]
+  )
+
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
     const handleChange = (e: MediaQueryListEvent) => {
@@ -53,6 +73,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
         defaultValue={html}
         options={htmlEditorConfig}
         theme={theme}
+        onChange={handleEditorChange}
       />
     </div>
   )
