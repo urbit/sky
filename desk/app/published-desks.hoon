@@ -203,7 +203,7 @@
       ;div
       =style  "display: flex; flex-direction: row; align-items: center; gap: 15px;"
         ;div(class "grow")
-          ;+  ?:  =(`'' image.docket)  
+        ;+  ?:  |(=(~ image.docket) =(`'' image.docket))
             ;div(class "w100 hf br", style "background:#{color};");
           ;img(src (trip (need image.docket)), class "w100 hf br");
         ==
