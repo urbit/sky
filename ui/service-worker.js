@@ -1,10 +1,5 @@
 const CACHE_NAME = 'sky-cache-v1'
-const assetsToCache = [
-  './src/style/hollow.css',
-  './src/style/spine.css',
-  './src/style/feather.css',
-  './src/style/wind.css',
-]
+const assetsToCache = []
 
 // Install the service worker
 self.addEventListener('install', event => {
