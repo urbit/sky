@@ -9,7 +9,7 @@ const defaultActive = 1
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
   windowMap: defaultMap,
-  active: defaultActive,
+  activeWindowID: defaultActive,
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
@@ -151,7 +151,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     }
   },
   // switchig active window id
-  isActive: (id: number | null) => set({ active: id }),
+  isActive: (id: number | null) => set({ activeWindowID: id }),
 }))
 
 export default useWindowStore
