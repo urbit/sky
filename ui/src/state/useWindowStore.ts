@@ -7,9 +7,9 @@ const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 const defaultActive = 1
 
 function setLocalStorage(key: number, val: string | null) {
-  if(val === null){
+  if (val === null) {
     localStorage.setItem(key.toString(), JSON.stringify(val))
-  }else{
+  } else {
     localStorage.setItem(key.toString(), val)
   }
 }
@@ -18,13 +18,13 @@ function getLocalStorage(): Map<number, string | null> {
   const windowMap = new Map<number, string | null>()
 
   for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if(key){
-      const value = localStorage.getItem(key);
-      if(value === 'null'){
-        windowMap.set(Number(key), null);
-      }else{
-        windowMap.set(Number(key), value);
+    const key = localStorage.key(i)
+    if (key) {
+      const value = localStorage.getItem(key)
+      if (value === 'null') {
+        windowMap.set(Number(key), null)
+      } else {
+        windowMap.set(Number(key), value)
       }
     }
   }
@@ -172,8 +172,8 @@ const useWindowStore = create<WindowState>((set, get) => ({
   },
   // remove all nodes, open the default window
   clearWindows: () => {
-    localStorage.clear();
-    localStorage.setItem('1', '~sampel/home');
+    localStorage.clear()
+    localStorage.setItem('1', '~sampel/home')
     set({ windowMap: defaultMap })
   },
   updateWindowPath: (id: number, path: string) => {

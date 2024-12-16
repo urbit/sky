@@ -18,7 +18,6 @@ function App() {
     isActive,
   } = useWindowStore()
 
-
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
 
