@@ -9,7 +9,6 @@ import useLocalStorage from './state/useLocalStorage.ts'
 import StatusBar from './components/StatusBar.tsx'
 import { useEffect, useState, useRef } from 'react'
 
-
 function App() {
   const {
     windowMap,
@@ -20,7 +19,7 @@ function App() {
     isActive,
   } = useWindowStore()
 
-  const {getLocalStorage} = useLocalStorage()
+  const { getLocalStorage } = useLocalStorage()
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
@@ -123,12 +122,11 @@ function App() {
   }
 
   useEffect(() => {
-    const storedWindowMap = getLocalStorage();
+    const storedWindowMap = getLocalStorage()
     if (storedWindowMap) {
-      useWindowStore.setState({ windowMap: storedWindowMap });
+      useWindowStore.setState({ windowMap: storedWindowMap })
     }
-  }, []);
-
+  }, [])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

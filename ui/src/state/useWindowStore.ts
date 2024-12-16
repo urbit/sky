@@ -6,13 +6,13 @@ const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 
 const defaultActive = 1
 
-function setLocalStorage(map: Map<number, string | null>){
-  const obj: {[key: number]: string | null} = {}
-  map.forEach((val, key)=>{
-      obj[key] = val
+function setLocalStorage(map: Map<number, string | null>) {
+  const obj: { [key: number]: string | null } = {}
+  map.forEach((val, key) => {
+    obj[key] = val
   })
-  localStorage.setItem("windowMap", JSON.stringify(obj));
-} 
+  localStorage.setItem('windowMap', JSON.stringify(obj))
+}
 
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage

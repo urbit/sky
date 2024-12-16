@@ -1,3 +1,3 @@
 export default interface LocalStorageState {
-    getLocalStorage: () => Map<number, string | null> | null
-  }
+  getLocalStorage: () => Map<number, string | null> | null
+}
