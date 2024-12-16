@@ -6,17 +6,34 @@ const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 
 const defaultActive = 1
 
-function setLocalStorage(map: Map<number, string | null>) {
-  const obj: { [key: number]: string | null } = {}
-  map.forEach((val, key) => {
-    obj[key] = val
-  })
-  localStorage.setItem('windowMap', JSON.stringify(obj))
+function setLocalStorage(key: number, val: string | null) {
+  if(val === null){
+    localStorage.setItem(key.toString(), JSON.stringify(val))
+  }else{
+    localStorage.setItem(key.toString(), val)
+  }
+}
+
+function getLocalStorage(): Map<number, string | null> {
+  const windowMap = new Map<number, string | null>()
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if(key){
+      const value = localStorage.getItem(key);
+      if(value === 'null'){
+        windowMap.set(Number(key), null);
+      }else{
+        windowMap.set(Number(key), value);
+      }
+    }
+  }
+  return windowMap
 }
 
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
-  windowMap: defaultMap,
+  windowMap: getLocalStorage().size > 0 ? getLocalStorage() : defaultMap,
   active: defaultActive,
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
@@ -27,7 +44,9 @@ const useWindowStore = create<WindowState>((set, get) => ({
     windowMap.set(parentId * 2 + 1, path)
     windowMap.set(parentId, null)
 
-    setLocalStorage(windowMap)
+    setLocalStorage(parentId * 2, parentPath)
+    setLocalStorage(parentId * 2 + 1, path)
+    setLocalStorage(parentId, null)
     set({ windowMap })
   },
 
@@ -35,6 +54,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
   delWindow: (id: number) => {
     const windowMap = get().windowMap
 
+    localStorage.removeItem(id.toString())
     windowMap.delete(id)
 
     function isEven(num: number): boolean {
@@ -69,6 +89,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
 
     function delKids(map: Map<number, string | null>, kids: Set<number>) {
       kids.forEach(key => {
+        localStorage.removeItem(key.toString())
         map.delete(key)
       })
     }
@@ -79,6 +100,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
       while (currentId !== 1) {
         const parentId = isEven(currentId) ? currentId / 2 : (currentId - 1) / 2
         const parentSiblingId = isEven(parentId) ? parentId + 1 : parentId - 1
+        localStorage.removeItem(currentId.toString())
         map.delete(currentId)
 
         //  if parent has sibling set parent to original path and return parent
@@ -122,6 +144,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
         const parentKids = new Set<number>()
         findKids(map, validParent, parentKids)
         delKids(windowMap, parentKids)
+        localStorage.removeItem(validParent.toString())
         windowMap.delete(validParent)
       } else if (idHasKids && siblingHasKids) {
         //  handles nested window delete case (when multiple window shrinked to 0)
@@ -138,12 +161,10 @@ const useWindowStore = create<WindowState>((set, get) => ({
       }
       //  otherwise keep sibling window state
       //console.log('map', new Map(map))
-      setLocalStorage(map)
       set({ windowMap: map })
     }
 
     if (id === 1) {
-      setLocalStorage(defaultMap)
       set({ windowMap: defaultMap })
     } else {
       handleDelete(windowMap, id)
@@ -151,7 +172,8 @@ const useWindowStore = create<WindowState>((set, get) => ({
   },
   // remove all nodes, open the default window
   clearWindows: () => {
-    setLocalStorage(defaultMap)
+    localStorage.clear();
+    localStorage.setItem('1', '~sampel/home');
     set({ windowMap: defaultMap })
   },
   updateWindowPath: (id: number, path: string) => {
@@ -159,10 +181,9 @@ const useWindowStore = create<WindowState>((set, get) => ({
 
     if (windowMap.has(id)) {
       windowMap.set(id, path)
-      setLocalStorage(windowMap)
+      setLocalStorage(id, path)
       set({ windowMap: windowMap })
     } else {
-      setLocalStorage(windowMap)
       set({ windowMap: windowMap })
     }
   },
