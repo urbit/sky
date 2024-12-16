@@ -52,6 +52,10 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     if (input) (input as HTMLInputElement).click()
   }
 
+  function handleHTMLClick() {
+    setFileViewerContent(<FileHTML html='' />)
+  }
+
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
     if (!fileList) return
@@ -120,7 +124,8 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const createFileMenu = (
     <div className="fc ac jc hf wf">
-      <button onClick={handleUploadClick}>Upload a file</button>
+      <button onClick={handleHTMLClick}>Write HTML</button>
+      <button onClick={handleUploadClick}>Upload file</button>
       <input
         type="file"
         accept=".html, .md, .png"
