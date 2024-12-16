@@ -5,8 +5,10 @@ import 'allotment/dist/style.css'
 import './style/wind.css'
 import WindowContainer from './components/WindowContainer.tsx'
 import useWindowStore from './state/useWindowStore.ts'
+import useLocalStorage from './state/useLocalStorage.ts'
 import StatusBar from './components/StatusBar.tsx'
 import { useEffect, useState, useRef } from 'react'
+
 
 function App() {
   const {
@@ -17,6 +19,8 @@ function App() {
     updateWindowPath,
     isActive,
   } = useWindowStore()
+
+  const {getLocalStorage} = useLocalStorage()
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
@@ -117,6 +121,14 @@ function App() {
       })
     }
   }
+
+  useEffect(() => {
+    const storedWindowMap = getLocalStorage();
+    if (storedWindowMap) {
+      useWindowStore.setState({ windowMap: storedWindowMap });
+    }
+  }, []);
+
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

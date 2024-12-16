@@ -6,6 +6,14 @@ const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
 
 const defaultActive = 1
 
+function setLocalStorage(map: Map<number, string | null>){
+  const obj: {[key: number]: string | null} = {}
+  map.forEach((val, key)=>{
+      obj[key] = val
+  })
+  localStorage.setItem("windowMap", JSON.stringify(obj));
+} 
+
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
   windowMap: defaultMap,
@@ -19,6 +27,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     windowMap.set(parentId * 2 + 1, path)
     windowMap.set(parentId, null)
 
+    setLocalStorage(windowMap)
     set({ windowMap })
   },
 
@@ -129,24 +138,31 @@ const useWindowStore = create<WindowState>((set, get) => ({
       }
       //  otherwise keep sibling window state
       //console.log('map', new Map(map))
+      setLocalStorage(map)
       set({ windowMap: map })
     }
 
     if (id === 1) {
+      setLocalStorage(defaultMap)
       set({ windowMap: defaultMap })
     } else {
       handleDelete(windowMap, id)
     }
   },
   // remove all nodes, open the default window
-  clearWindows: () => set({ windowMap: defaultMap }),
+  clearWindows: () => {
+    setLocalStorage(defaultMap)
+    set({ windowMap: defaultMap })
+  },
   updateWindowPath: (id: number, path: string) => {
     const windowMap = get().windowMap
 
     if (windowMap.has(id)) {
       windowMap.set(id, path)
+      setLocalStorage(windowMap)
       set({ windowMap: windowMap })
     } else {
+      setLocalStorage(windowMap)
       set({ windowMap: windowMap })
     }
   },
