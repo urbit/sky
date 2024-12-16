@@ -8,6 +8,7 @@ import FileSystem from './renderers/FileSystem'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
+import ApplicationPDF from './renderers/ApplicationPDF'
 
 export default function Window({
   id,
@@ -135,10 +136,10 @@ export default function Window({
         }
         case 'application/pdf': {
           console.log('Processing PDF document...')
+          const blob = await res.blob();
+          const pdfURL = URL.createObjectURL(blob);
           return (
-            <>
-              <p>PDF content is not currently displayed.</p>
-            </>
+            <ApplicationPDF pdf={pdfURL} />
           )
         }
         case 'image/jpeg': {

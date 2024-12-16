@@ -4,6 +4,7 @@ import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
 import FileHTML from './FileHTML'
+import FilePDF from './FilePDF'
 
 interface FileSystemProps {
   id: number
@@ -38,6 +39,12 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       const blob = await res.blob()
       const objectURL = URL.createObjectURL(blob)
       return <FilePNG url={objectURL} />
+    }
+    case 'application/pdf': {
+      console.log('Rendering application/pdf')
+      const arrayBuffer = await res.arrayBuffer();
+      const pdfData = new Uint8Array(arrayBuffer);
+      return <FilePDF pdfData={pdfData} />
     }
     default: {
       console.log(`Rendering ${contentType} not supported`)
@@ -123,7 +130,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload a file</button>
       <input
         type="file"
-        accept=".html, .md, .png"
+        accept=".html, .md, .png, .pdf"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />
