@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
 import { put } from '../../api/sky'
+import TextHTML from '../renderers/TextHTML'
 
 interface FileHTMLProps {
   html: string
@@ -31,11 +32,14 @@ const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
 
 export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
+  const [showPreview, setShowPreview] = useState(false)
+  const [editorContent, setEditorContent] = useState(html)
   const { activeWindowPath } = useWindowStore()
 
   const handleEditorChange = useCallback(
     debounce(async (value: string | undefined) => {
       if (value && activeWindowPath) {
+        setEditorContent(value)
         const formData = new FormData()
         const file = new File([value], 'file.html', { type: 'text/html' })
         formData.append('file', file)
@@ -66,15 +70,33 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   }, [])
 
   return (
-    <div className="hf wf" style={{ overflow: 'scroll' }}>
-      <Editor
-        height="100%"
-        defaultLanguage="html"
-        defaultValue={html}
-        options={htmlEditorConfig}
-        theme={theme}
-        onChange={handleEditorChange}
-      />
+    <div className="hf wf">
+      <div className='fc as js hf wf'>
+        <div className="wf p2">
+          <button
+            onClick={() => setShowPreview(!showPreview)}
+          >
+            {showPreview ? 'Hide Preview' : 'Show Preview'}
+          </button>
+        </div>
+        <div className="hf wf fr">
+          <div className='hf p2' style={{ width: showPreview ? '50%' : '100%' }}>
+            <Editor
+              height="100%"
+              defaultLanguage="html"
+              defaultValue={editorContent}
+              options={htmlEditorConfig}
+              theme={theme}
+              onChange={handleEditorChange}
+            />
+          </div>
+          {showPreview &&
+            <div className='hf wf p2'>
+              <TextHTML content={editorContent} isLocal={true} />
+            </div>
+          }
+        </div>
+      </div>
     </div>
   )
 }
