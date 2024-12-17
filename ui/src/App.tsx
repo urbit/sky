@@ -192,9 +192,12 @@ function App() {
         TODO this height calc is a kludge, fixes StatusBar
         shoving the WindowContainer off the bottom of the screen
       */}
-      <div className="wf" style={{ height: `calc(100% - ${65}px)` }}>
+      <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
         {maxWindow > 1 && (
-          <div className="wf hf absolute" style={{ zIndex: 100 }}>
+          <div
+            className="wf hf absolute p3"
+            style={{ zIndex: 100, opacity: '95%' }}
+          >
             <Window
               id={maxWindow}
               path={windowMap.get(maxWindow) ?? ''}
