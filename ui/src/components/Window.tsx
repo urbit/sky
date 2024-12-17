@@ -12,6 +12,7 @@ import TextHTML from './renderers/TextHTML'
 export default function Window({
   id,
   path,
+  setMaxWindow,
   handleDrop,
   handleDragStart,
   dragWindow,
@@ -254,7 +255,11 @@ export default function Window({
   }
 
   function handleXButtonClick(id: number) {
-    delWindow(id)
+    if (setMaxWindow) {
+      setMaxWindow(0)
+    } else {
+      delWindow(id)
+    }
   }
 
   function handleOptsButtonClick() {

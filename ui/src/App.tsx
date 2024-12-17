@@ -6,6 +6,7 @@ import './style/wind.css'
 import WindowContainer from './components/WindowContainer.tsx'
 import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
+import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
+  const [maxWindow, setMaxWindow] = useState(0)
   const holdingKey = useRef(false)
 
   function enableWindows() {
@@ -90,7 +92,7 @@ function App() {
   }
 
   function handleSwap() {
-    if (windowMap.size > 1) {
+    if (windowMap.size > 1 && maxWindow === 0) {
       setDragWindow(active ?? 0)
       const containers = document.querySelectorAll('.container')
       containers.forEach(container => {
@@ -128,20 +130,32 @@ function App() {
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
         console.log('Pressed CTRL+N')
         event.preventDefault()
-        if (active !== null) {
+        if (active !== null && maxWindow === 0) {
           addWindow(active, '')
         }
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
         console.log('Pressed CTRL+W')
         event.preventDefault()
-        if (active !== null) {
+        if (active !== null && maxWindow === 0) {
           if (active === 1) {
             updateWindowPath(active, '')
           } else {
             delWindow(active)
             isActive(null)
           }
+        }
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
+        console.log('Pressed CTRL+M')
+        event.preventDefault()
+        if (active !== null && active > 1 && maxWindow === 0) {
+          const path = windowMap.get(active) ?? null
+          if (path !== null) {
+            setMaxWindow(active)
+          }
+        } else if (maxWindow > 1) {
+          setMaxWindow(0)
         }
       }
     }
@@ -162,7 +176,7 @@ function App() {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
       window.removeEventListener('keyup', handleKeyUp, { capture: true })
     }
-  }, [active, delWindow, addWindow, updateWindowPath, isActive])
+  }, [active, delWindow, addWindow, updateWindowPath, isActive, maxWindow])
 
   // TODO handle real window.urbitID, not suitable for production
   useEffect(() => {
@@ -179,6 +193,18 @@ function App() {
         shoving the WindowContainer off the bottom of the screen
       */}
       <div className="wf" style={{ height: `calc(100% - ${65}px)` }}>
+        {maxWindow > 1 && (
+          <div className="wf hf absolute" style={{ zIndex: 100 }}>
+            <Window
+              id={maxWindow}
+              path={windowMap.get(maxWindow) ?? ''}
+              setMaxWindow={setMaxWindow}
+              handleDrop={handleDrop}
+              handleDragStart={handleDragStart}
+              dragWindow={dragWindow}
+            />
+          </div>
+        )}
         <WindowContainer
           map={windowMap}
           id={1}
