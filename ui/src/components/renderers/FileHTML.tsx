@@ -5,6 +5,7 @@ import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
 import { put } from '../../api/sky'
 import TextHTML from '../renderers/TextHTML'
+import { emmetHTML } from 'emmet-monaco-es'
 
 interface FileHTMLProps {
   html: string
@@ -88,6 +89,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
               options={htmlEditorConfig}
               theme={theme}
               onChange={handleEditorChange}
+              beforeMount={emmetHTML}
             />
           </div>
           {showPreview &&
