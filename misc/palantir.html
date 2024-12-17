@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Data Viewer</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; 
+    font-family: sans-serif;
+    background: #fafafa;
+    height: 100%;
+    width: 100%;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .input-section, .chart-section {
+    width: 90%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .input-section {
+    margin: 50px 0;
+  }
+
+  .input-field {
+    width: 100%;
+    font-size: 2em;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background: #fff;
+  }
+
+  .source-selector {
+    width: 100%;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .source-selector label {
+    display: block;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .source-selector select {
+    width: 100%;
+    font-size: 1.2em;
+    padding: 12px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .go-button {
+    font-size: 2em;
+    padding: 20px;
+    width: 100%;
+    background: #fc4c02;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .go-button:hover {
+    background: #e14302;
+  }
+
+  .chart-section {
+    display: none;
+    margin-top: 50px;
+  }
+
+  .chart-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    margin-bottom: 40px;
+    color: #fc4c02;
+  }
+
+  .chart-container {
+    width: 100%;
+  }
+
+  @media (max-width: 600px) {
+    .input-field, .go-button, .source-selector select {
+      font-size: 1.5em;
+      padding: 15px;
+    }
+
+    .chart-title {
+      font-size: 2em;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="input-section" id="inputSection">
+  <input type="text" class="input-field" id="apiKey" placeholder="API Key"/>
+  <div class="source-selector">
+    <select id="dataSource">
+      <option value="strava">Strava</option>
+      <option value="garmin">Garmin</option>
+      <option value="apple-health">Apple Health</option>
+      <option value="fitbit">Fitbit</option>
+      <option value="google-fit">Google Fit</option>
+      <option value="nike-run">Nike Run Club</option>
+    </select>
+  </div>
+  <button class="go-button" id="goBtn">SHOW DATA</button>
+</div>
+
+<div class="chart-section" id="chartSection">
+  <div class="chart-title">Miles Run Each Day</div>
+  <div class="chart-container">
+    <canvas id="chartCanvas"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+  const goBtn = document.getElementById('goBtn');
+  const inputSection = document.getElementById('inputSection');
+  const chartSection = document.getElementById('chartSection');
+  const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+  // Generate increasing miles over 30 days
+  const days = Array.from({length: 30}, (_, i) => i + 1);
+  const distances = days.map((day) => (3 + 0.2 * day + Math.sin(day / 3) * 0.5).toFixed(1));
+
+  let chartInstance;
+
+  goBtn.addEventListener('click', () => {
+    document.getElementById('apiKey').value = '';
+    inputSection.style.display = 'none';
+    chartSection.style.display = 'flex';
+    drawChart();
+  });
+
+  function drawChart() {
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [{
+          label: 'Miles',
+          data: distances,
+          borderColor: '#fc4c02',
+          backgroundColor: 'rgba(252,76,2,0.15)',
+          borderWidth: 3,
+          pointRadius: 5,
+          pointBackgroundColor: '#fc4c02',
+          tension: 0.3,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 3,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Day',
+              font: { size: 18, weight: 'bold' },
+              color: '#fc4c02'
+            },
+            ticks: {
+              font: { size: 14 },
+              color: '#333'
+            },
+            grid: { display: false }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Miles',
+              font: { size: 18, weight: 'bold' },
+              color: '#fc4c02'
+            },
+            ticks: {
+              font: { size: 14 },
+              color: '#333'
+            },
+            beginAtZero: true,
+            grid: { color: 'rgba(252,76,2,0.1)' }
+          }
+        },
+        plugins: {
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: '#fc4c02',
+            titleFont: { size: 16, weight: 'bold' },
+            bodyFont: { size: 14 },
+            padding: 10,
+            callbacks: {
+              label: function(context) {
+                return `${context.parsed.y} miles`;
+              }
+            }
+          },
+          legend: { display: false }
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>
