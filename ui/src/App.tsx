@@ -11,11 +11,11 @@ import { useEffect, useState, useRef } from 'react'
 function App() {
   const {
     windowMap,
-    active,
+    activeWindowID,
     addWindow,
     delWindow,
     updateWindowPath,
-    isActive,
+    setActiveWindowID,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
@@ -91,7 +91,7 @@ function App() {
 
   function handleSwap() {
     if (windowMap.size > 1) {
-      setDragWindow(active ?? 0)
+      setDragWindow(activeWindowID ?? 0)
       const containers = document.querySelectorAll('.container')
       containers.forEach(container => {
         //  create overlay for each window
@@ -128,19 +128,19 @@ function App() {
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
         console.log('Pressed CTRL+N')
         event.preventDefault()
-        if (active !== null) {
-          addWindow(active, '')
+        if (activeWindowID !== null) {
+          addWindow(activeWindowID, '')
         }
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
         console.log('Pressed CTRL+W')
         event.preventDefault()
-        if (active !== null) {
-          if (active === 1) {
-            updateWindowPath(active, '')
+        if (activeWindowID !== null) {
+          if (activeWindowID === 1) {
+            updateWindowPath(activeWindowID, '')
           } else {
-            delWindow(active)
-            isActive(null)
+            delWindow(activeWindowID)
+            setActiveWindowID(null)
           }
         }
       }
@@ -153,7 +153,7 @@ function App() {
       }
     }
 
-    if (active !== null) {
+    if (activeWindowID !== null) {
       window.addEventListener('keydown', handleKeyDown, { capture: true })
       window.addEventListener('keyup', handleKeyUp, { capture: true })
     }
@@ -162,7 +162,7 @@ function App() {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
       window.removeEventListener('keyup', handleKeyUp, { capture: true })
     }
-  }, [active, delWindow, addWindow, updateWindowPath, isActive])
+  }, [activeWindowID, delWindow, addWindow, updateWindowPath, setActiveWindowID])
 
   // TODO handle real window.urbitID, not suitable for production
   useEffect(() => {

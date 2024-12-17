@@ -31,10 +31,11 @@ export default function Window({
   const [windowContent, setWindowContent] = useState(defaultContent)
   const [windowBarVisibility, setWindowBarVisibility] = useState(false)
   const [fileSystemView, setFileSystemView] = useState(false)
-  const { isActive, delWindow } = useWindowStore()
+  const { setActiveWindowID, setActiveWindowPath, delWindow } = useWindowStore()
 
   function handleWindowMouseEnter() {
-    isActive(id)
+    setActiveWindowID(id)
+    setActiveWindowPath(path)
   }
 
   const notRecognizedContent = (
