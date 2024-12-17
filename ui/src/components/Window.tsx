@@ -8,6 +8,7 @@ import FileSystem from './renderers/FileSystem'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
+import ReactDOMServer from 'react-dom/server'
 
 export default function Window({
   id,
@@ -269,15 +270,36 @@ export default function Window({
   }
 
   useEffect(() => {
+    const idString = id.toString()
     const fetchContent = async () => {
-      if (path === '') {
-        setWindowContent(defaultContent)
-      }
-      if (path) {
-        const content = await renderContent(path)
-        // TODO: Error message if content is null/undefined
+      if (setMaxWindow !== null) {
+        const content = sessionStorage.getItem(idString)
         if (content) {
-          setWindowContent(content)
+          setWindowContent(
+            <div
+              className="hf wf"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
+          )
+        }
+      } else {
+        if (path === '') {
+          sessionStorage.setItem(
+            idString,
+            ReactDOMServer.renderToString(defaultContent)
+          )
+          setWindowContent(defaultContent)
+        }
+        if (path) {
+          const content = await renderContent(path)
+          // TODO: Error message if content is null/undefined
+          if (content) {
+            sessionStorage.setItem(
+              idString,
+              ReactDOMServer.renderToString(content)
+            )
+            setWindowContent(content)
+          }
         }
       }
     }
