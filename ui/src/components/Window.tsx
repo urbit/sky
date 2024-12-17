@@ -276,10 +276,8 @@ export default function Window({
         const content = sessionStorage.getItem(idString)
         if (content) {
           setWindowContent(
-            <div
-              className="hf wf"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
+            <TextHTML content={content}
+            isLocal={path?.split('/')[0] === window.urbitID}/>
           )
         }
       } else {
