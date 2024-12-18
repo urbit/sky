@@ -10,12 +10,10 @@ import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import ReactDOMServer from 'react-dom/server'
-import ReactDOMServer from 'react-dom/server'
 
 export default function Window({
   id,
   path,
-  setMaxWindow,
   setMaxWindow,
   handleDrop,
   handleDragStart,
@@ -141,9 +139,6 @@ export default function Window({
         }
         case 'application/pdf': {
           console.log('Processing PDF document...')
-          const blob = await res.blob()
-          const pdfURL = URL.createObjectURL(blob)
-          return <ApplicationPDF pdf={pdfURL} />
           const blob = await res.blob()
           const pdfURL = URL.createObjectURL(blob)
           return <ApplicationPDF pdf={pdfURL} />
@@ -280,7 +275,6 @@ export default function Window({
   }
 
   useEffect(() => {
-    const idString = id.toString()
     const idString = id.toString()
     const fetchContent = async () => {
       if (setMaxWindow !== null) {
