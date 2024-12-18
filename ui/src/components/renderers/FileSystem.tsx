@@ -5,6 +5,7 @@ import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
 import FileHTML from './FileHTML'
 import FilePDF from './FilePDF'
+import FilePlain from './FilePlain'
 
 interface FileSystemProps {
   id: number
@@ -22,7 +23,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
   switch (contentType.split(';')[0]) {
     case 'text/plain': {
       console.log('Rendering text/plain')
-      return <p>text/plain not supported</p>
+      return <FilePlain text={await res.text()} />
     }
     case 'text/html': {
       console.log('Rendering text/html')
@@ -135,7 +136,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload file</button>
       <input
         type="file"
-        accept=".html, .css, .js, .md, .png, .pdf"
+        accept='.css, .html, .js, .md, .pdf, .png, .txt'
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />

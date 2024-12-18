@@ -10,6 +10,7 @@ import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import ReactDOMServer from 'react-dom/server'
+import TextPlain from './renderers/TextPlain'
 
 export default function Window({
   id,
@@ -101,10 +102,18 @@ export default function Window({
       switch (contentType.split(';')[0]) {
         case 'text/plain': {
           console.log('Processing plain text file...')
+          const txt = await res.text()
           return (
-            <>
-              <p>Plain text content is not currently displayed.</p>
-            </>
+            <TextPlain text={txt} />
+          )
+        }
+        case 'text/html': {
+          console.log('Processing HTML document...')
+          return (
+            <TextHTML
+              content={await res.text()}
+              isLocal={path?.split('/')[0] === window.urbitID}
+            />
           )
         }
         case 'text/markdown': {
