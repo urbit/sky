@@ -92,7 +92,7 @@ function App() {
   }
 
   function handleSwap() {
-    if (windowMap.size > 1) {
+    if (windowMap.size > 1 && maxWindow === 0) {
       setDragWindow(activeWindowID ?? 0)
       const containers = document.querySelectorAll('.container')
       containers.forEach(container => {
