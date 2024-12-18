@@ -1,6 +1,9 @@
 import Editor from '@monaco-editor/react'
 import * as monaco from 'monaco-editor'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { debounce } from 'lodash'
+import { put } from '../../api/sky'
+import useWindowStore from '../../state/useWindowStore'
 
 interface TextPlainProps {
     text: string
@@ -43,6 +46,27 @@ const plaintextEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions 
 
 export default function FilePlain({ text }: TextPlainProps): JSX.Element {
     const [theme, setTheme] = useState('vs-light')
+    const [editorContent, setEditorContent] = useState(text)
+    const { activeWindowPath } = useWindowStore()
+
+    const handleEditorChange = useCallback(
+        debounce(async (value: string | undefined) => {
+            if (value && activeWindowPath) {
+                setEditorContent(value)
+                const formData = new FormData()
+                const file = new File([value], 'file.txt', { type: 'text/plain' })
+                formData.append('file', file)
+
+                try {
+                    await put(activeWindowPath, formData)
+                    console.log('Upload successful')
+                } catch (error) {
+                    console.error('Upload failed:', error)
+                }
+            }
+        }, 500),
+        [activeWindowPath]
+    )
 
     // TODO better integrate light/dark mode and color scheme
     // into the Spine/Feather settings
@@ -64,9 +88,10 @@ export default function FilePlain({ text }: TextPlainProps): JSX.Element {
         <div className="hf wf" style={{ overflow: 'scroll' }}>
             <Editor
                 height="100%"
-                defaultLanguage="markdown"
-                defaultValue={text}
+                defaultLanguage="plaintext"
+                defaultValue={editorContent}
                 options={plaintextEditorConfig}
+                onChange={handleEditorChange}
                 theme={theme}
             />
         </div>

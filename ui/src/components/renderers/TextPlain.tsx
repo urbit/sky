@@ -5,7 +5,7 @@ interface TextPlainProps {
 export default function TextPlain({ text }: TextPlainProps) {
     if (!text) {
         return (
-            <div className="hf wf fr as jc">
+            <div className="hf wf fr as js">
                 <p>No text to display</p>
             </div>
 
@@ -14,7 +14,7 @@ export default function TextPlain({ text }: TextPlainProps) {
 
     return (
         <div
-            className="hf wf fr as js"
+            className="hf wf fr as js mono"
             style={{ whiteSpace: 'pre-wrap', overflowY: 'scroll' }}
         >
             <p>{text}</p>
