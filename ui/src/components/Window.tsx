@@ -261,11 +261,6 @@ export default function Window({
     } else {
       delWindow(id)
     }
-    if (setMaxWindow) {
-      setMaxWindow(0)
-    } else {
-      delWindow(id)
-    }
   }
 
   function handleOptsButtonClick() {
