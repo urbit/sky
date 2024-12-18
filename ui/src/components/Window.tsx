@@ -278,21 +278,39 @@ export default function Window({
           const parser = new DOMParser()
           const doc = parser.parseFromString(content, 'text/html')
           const iframe = doc.querySelector('iframe')
-          if (iframe) {
-            setWindowContent(
-              <iframe
-                src={iframe.src}
-                className="hf wf"
-                style={{ border: 'none' }}
-              />
-            )
+          if (path === '') {
+            setWindowContent(defaultContent)
+          } else if (iframe) {
+            if (iframe.src) {
+              setWindowContent(
+                <iframe
+                  src={iframe.src}
+                  className="hf wf"
+                  style={{ border: 'none' }}
+                />
+              )
+            } else if (iframe.srcdoc) {
+              setWindowContent(
+                <TextHTML
+                  content={iframe.srcdoc}
+                  isLocal={
+                    path?.split('/')[0] === window.urbitID || path === ''
+                  }
+                />
+              )
+            }
           } else {
-            setWindowContent(
-              <TextHTML
-                content={content}
-                isLocal={path?.split('/')[0] === window.urbitID}
-              />
-            )
+            if (path) {
+              const newContent = await renderContent(path)
+              if (newContent) {
+                // TODO: Error message if content is null/undefined
+                sessionStorage.setItem(
+                  idString,
+                  ReactDOMServer.renderToString(content)
+                )
+                setWindowContent(newContent)
+              }
+            }
           }
         }
       } else {

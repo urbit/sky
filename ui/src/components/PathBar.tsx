@@ -47,6 +47,7 @@ export default function PathBar({
   // TODO if first path segment is azimuth point, convert to @p
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    console.log('updateWindowPath(id, inputValue)', id, inputValue)
 
     if (isValidPath(inputValue)) {
       updateWindowPath(id, inputValue)
