@@ -22,7 +22,9 @@ CUSTOM_MIME_TYPES = {
     '.png': 'image/png',
     '.gif': 'image/gif',
     '.mp4': 'video/mp4',
-    '.mp3': 'audio/mpeg'
+    '.mp3': 'audio/mpeg',
+    '.css': 'text/css',
+    '.js': 'application/javascript',
 }
 
 

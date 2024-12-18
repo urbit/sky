@@ -112,13 +112,20 @@ export default function Window({
           const text = await res.text()
           return <TextMarkdown md={text} />
         }
-        case 'text/html': {
-          console.log('Processing HTML document...')
+        case 'text/css': {
+          console.log('Processing CSS document...')
           return (
-            <TextHTML
-              content={await res.text()}
-              isLocal={path?.split('/')[0] === window.urbitID}
-            />
+            <>
+              <p>CSS content is not currently displayed.</p>
+            </>
+          )
+        }
+        case 'application/javascript': {
+          console.log('Processing JavaScript data...')
+          return (
+            <>
+              <p>JavaScript content is not currently displayed.</p>
+            </>
           )
         }
         case 'application/json': {

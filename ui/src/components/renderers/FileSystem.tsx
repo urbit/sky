@@ -47,8 +47,8 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       return <FilePDF pdfData={pdfData} />
     }
     default: {
-      console.log(`Rendering ${contentType} not supported`)
-      return <p>{`${contentType} not supported`}</p>
+      console.log(`Rendering ${contentType.split(';')[0]} not supported by filesystem`)
+      return <p>{`${contentType.split(';')[0]} not supported by filesystem`}</p>
     }
   }
 }
@@ -135,7 +135,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload file</button>
       <input
         type="file"
-        accept=".html, .md, .png, .pdf"
+        accept=".html, .css, .js, .md, .png, .pdf"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />
