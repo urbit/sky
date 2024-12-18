@@ -299,13 +299,22 @@ export default function Window({
                 />
               )
             }
-          } else {
-            if (path) {
-              const newContent = await renderContent(path)
-              if (newContent) {
-                setWindowContent(newContent)
-              }
+          } else if (
+            path &&
+            path !== '' &&
+            content === ReactDOMServer.renderToString(defaultContent)
+          ) {
+            const newContent = await renderContent(path)
+            if (newContent) {
+              setWindowContent(newContent)
             }
+          } else {
+            setWindowContent(
+              <TextHTML
+                content={content}
+                isLocal={path?.split('/')[0] === window.urbitID || path === ''}
+              />
+            )
           }
         }
       } else {
