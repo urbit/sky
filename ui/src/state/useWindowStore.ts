@@ -153,7 +153,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
   },
   // switchig active window id
   setActiveWindowID: (id: number | null) => set({ activeWindowID: id }),
-  setActiveWindowPath: (path: string | null) => set({ activeWindowPath: path })
+  setActiveWindowPath: (path: string | null) => set({ activeWindowPath: path }),
 }))
 
 export default useWindowStore

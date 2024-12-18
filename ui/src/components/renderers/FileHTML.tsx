@@ -72,16 +72,17 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
 
   return (
     <div className="hf wf">
-      <div className='fc as js hf wf'>
+      <div className="fc as js hf wf">
         <div className="wf p2">
-          <button
-            onClick={() => setShowPreview(!showPreview)}
-          >
+          <button onClick={() => setShowPreview(!showPreview)}>
             {showPreview ? 'Hide Preview' : 'Show Preview'}
           </button>
         </div>
         <div className="hf wf fr">
-          <div className='hf p2' style={{ width: showPreview ? '50%' : '100%' }}>
+          <div
+            className="hf p2"
+            style={{ width: showPreview ? '50%' : '100%' }}
+          >
             <Editor
               height="100%"
               defaultLanguage="html"
@@ -92,11 +93,11 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
               beforeMount={emmetHTML}
             />
           </div>
-          {showPreview &&
-            <div className='hf wf p2'>
+          {showPreview && (
+            <div className="hf wf p2">
               <TextHTML content={editorContent} isLocal={true} />
             </div>
-          }
+          )}
         </div>
       </div>
     </div>

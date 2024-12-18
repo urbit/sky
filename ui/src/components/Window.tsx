@@ -9,10 +9,12 @@ import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
+import ReactDOMServer from 'react-dom/server'
 
 export default function Window({
   id,
   path,
+  setMaxWindow,
   handleDrop,
   handleDragStart,
   dragWindow,
@@ -137,11 +139,9 @@ export default function Window({
         }
         case 'application/pdf': {
           console.log('Processing PDF document...')
-          const blob = await res.blob();
-          const pdfURL = URL.createObjectURL(blob);
-          return (
-            <ApplicationPDF pdf={pdfURL} />
-          )
+          const blob = await res.blob()
+          const pdfURL = URL.createObjectURL(blob)
+          return <ApplicationPDF pdf={pdfURL} />
         }
         case 'image/jpeg': {
           console.log('Processing JPEG image...')
@@ -256,7 +256,11 @@ export default function Window({
   }
 
   function handleXButtonClick(id: number) {
-    delWindow(id)
+    if (setMaxWindow) {
+      setMaxWindow(0)
+    } else {
+      delWindow(id)
+    }
   }
 
   function handleOptsButtonClick() {
@@ -266,15 +270,62 @@ export default function Window({
   }
 
   useEffect(() => {
+    const idString = id.toString()
     const fetchContent = async () => {
-      if (path === '') {
-        setWindowContent(defaultContent)
-      }
-      if (path) {
-        const content = await renderContent(path)
-        // TODO: Error message if content is null/undefined
+      if (setMaxWindow !== null) {
+        const content = sessionStorage.getItem(idString)
         if (content) {
-          setWindowContent(content)
+          const parser = new DOMParser()
+          const doc = parser.parseFromString(content, 'text/html')
+          const iframe = doc.querySelector('iframe')
+          if (path === '') {
+            setWindowContent(defaultContent)
+          } else if (iframe) {
+            if (iframe.src) {
+              setWindowContent(
+                <iframe
+                  src={iframe.src}
+                  className="hf wf"
+                  style={{ border: 'none' }}
+                />
+              )
+            } else if (iframe.srcdoc) {
+              setWindowContent(
+                <TextHTML
+                  content={iframe.srcdoc}
+                  isLocal={
+                    path?.split('/')[0] === window.urbitID || path === ''
+                  }
+                />
+              )
+            }
+          } else {
+            if (path) {
+              const newContent = await renderContent(path)
+              if (newContent) {
+                setWindowContent(newContent)
+              }
+            }
+          }
+        }
+      } else {
+        if (path === '') {
+          sessionStorage.setItem(
+            idString,
+            ReactDOMServer.renderToString(defaultContent)
+          )
+          setWindowContent(defaultContent)
+        }
+        if (path) {
+          const content = await renderContent(path)
+          if (content) {
+            // TODO: Error message if content is null/undefined
+            sessionStorage.setItem(
+              idString,
+              ReactDOMServer.renderToString(content)
+            )
+            setWindowContent(content)
+          }
         }
       }
     }
