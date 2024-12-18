@@ -10,10 +10,12 @@ import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import ReactDOMServer from 'react-dom/server'
+import ReactDOMServer from 'react-dom/server'
 
 export default function Window({
   id,
   path,
+  setMaxWindow,
   setMaxWindow,
   handleDrop,
   handleDragStart,
@@ -142,6 +144,9 @@ export default function Window({
           const blob = await res.blob()
           const pdfURL = URL.createObjectURL(blob)
           return <ApplicationPDF pdf={pdfURL} />
+          const blob = await res.blob()
+          const pdfURL = URL.createObjectURL(blob)
+          return <ApplicationPDF pdf={pdfURL} />
         }
         case 'image/jpeg': {
           console.log('Processing JPEG image...')
@@ -261,6 +266,11 @@ export default function Window({
     } else {
       delWindow(id)
     }
+    if (setMaxWindow) {
+      setMaxWindow(0)
+    } else {
+      delWindow(id)
+    }
   }
 
   function handleOptsButtonClick() {
@@ -270,6 +280,7 @@ export default function Window({
   }
 
   useEffect(() => {
+    const idString = id.toString()
     const idString = id.toString()
     const fetchContent = async () => {
       if (setMaxWindow !== null) {
