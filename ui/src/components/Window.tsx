@@ -139,11 +139,9 @@ export default function Window({
         }
         case 'application/pdf': {
           console.log('Processing PDF document...')
-          const blob = await res.blob();
-          const pdfURL = URL.createObjectURL(blob);
-          return (
-            <ApplicationPDF pdf={pdfURL} />
-          )
+          const blob = await res.blob()
+          const pdfURL = URL.createObjectURL(blob)
+          return <ApplicationPDF pdf={pdfURL} />
         }
         case 'image/jpeg': {
           console.log('Processing JPEG image...')

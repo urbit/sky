@@ -130,21 +130,16 @@ function App() {
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
         console.log('Pressed CTRL+N')
         event.preventDefault()
-        if (activeWindowID !== null) {
+        if (activeWindowID !== null && maxWindow === 0) {
           addWindow(activeWindowID, '')
-        if (active !== null && maxWindow === 0) {
-          addWindow(active, '')
         }
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
         console.log('Pressed CTRL+W')
         event.preventDefault()
-        if (activeWindowID !== null) {
+        if (activeWindowID !== null && maxWindow === 0) {
           if (activeWindowID === 1) {
             updateWindowPath(activeWindowID, '')
-        if (active !== null && maxWindow === 0) {
-          if (active === 1) {
-            updateWindowPath(active, '')
           } else {
             delWindow(activeWindowID)
             setActiveWindowID(null)
@@ -158,18 +153,6 @@ function App() {
           const path = windowMap.get(activeWindowID) ?? null
           if (path !== null) {
             setMaxWindow(activeWindowID)
-          }
-        } else if (maxWindow > 1) {
-          setMaxWindow(0)
-        }
-      }
-      if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
-        console.log('Pressed CTRL+M')
-        event.preventDefault()
-        if (active !== null && active > 1 && maxWindow === 0) {
-          const path = windowMap.get(active) ?? null
-          if (path !== null) {
-            setMaxWindow(active)
           }
         } else if (maxWindow > 1) {
           setMaxWindow(0)
@@ -193,8 +176,14 @@ function App() {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
       window.removeEventListener('keyup', handleKeyUp, { capture: true })
     }
-  }, [activeWindowID, delWindow, addWindow, updateWindowPath, setActiveWindowID])
-  }, [active, delWindow, addWindow, updateWindowPath, isActive, maxWindow])
+  }, [
+    activeWindowID,
+    delWindow,
+    addWindow,
+    updateWindowPath,
+    setActiveWindowID,
+    maxWindow,
+  ])
 
   // TODO handle real window.urbitID, not suitable for production
   useEffect(() => {

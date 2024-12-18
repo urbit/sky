@@ -89,7 +89,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
 
   if (!urls) {
     console.error(`No URLs found for ${path.split('/').slice(0)}`)
-    return;
+    return
   }
 
   // TODO for development; remove
@@ -97,7 +97,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
     return fetch(urls.ship, {
       method: 'PUT',
       // TODO Authorization header
-      body: data
+      body: data,
     })
   }
 
@@ -105,7 +105,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
     return fetch(urls.ship, {
       method: 'PUT',
       // TODO Authorization header
-      body: data
+      body: data,
     })
   }
 
@@ -113,7 +113,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
     return fetch(urls.athens, {
       method: 'PUT',
       // TODO Authorization header
-      body: data
+      body: data,
     })
   }
 }

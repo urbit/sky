@@ -42,8 +42,8 @@ async function renderFile(res: Response): Promise<JSX.Element> {
     }
     case 'application/pdf': {
       console.log('Rendering application/pdf')
-      const arrayBuffer = await res.arrayBuffer();
-      const pdfData = new Uint8Array(arrayBuffer);
+      const arrayBuffer = await res.arrayBuffer()
+      const pdfData = new Uint8Array(arrayBuffer)
       return <FilePDF pdfData={pdfData} />
     }
     default: {
@@ -60,7 +60,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   }
 
   function handleHTMLClick() {
-    setFileViewerContent(<FileHTML html='' />)
+    setFileViewerContent(<FileHTML html="" />)
   }
 
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
