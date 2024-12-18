@@ -303,11 +303,6 @@ export default function Window({
             if (path) {
               const newContent = await renderContent(path)
               if (newContent) {
-                // TODO: Error message if content is null/undefined
-                sessionStorage.setItem(
-                  idString,
-                  ReactDOMServer.renderToString(content)
-                )
                 setWindowContent(newContent)
               }
             }
