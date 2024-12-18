@@ -275,10 +275,25 @@ export default function Window({
       if (setMaxWindow !== null) {
         const content = sessionStorage.getItem(idString)
         if (content) {
-          setWindowContent(
-            <TextHTML content={content}
-            isLocal={path?.split('/')[0] === window.urbitID}/>
-          )
+          const parser = new DOMParser()
+          const doc = parser.parseFromString(content, 'text/html')
+          const iframe = doc.querySelector('iframe')
+          if (iframe) {
+            setWindowContent(
+              <iframe
+                src={iframe.src}
+                className="hf wf"
+                style={{ border: 'none' }}
+              />
+            )
+          } else {
+            setWindowContent(
+              <TextHTML
+                content={content}
+                isLocal={path?.split('/')[0] === window.urbitID}
+              />
+            )
+          }
         }
       } else {
         if (path === '') {
@@ -290,8 +305,8 @@ export default function Window({
         }
         if (path) {
           const content = await renderContent(path)
-          // TODO: Error message if content is null/undefined
           if (content) {
+            // TODO: Error message if content is null/undefined
             sessionStorage.setItem(
               idString,
               ReactDOMServer.renderToString(content)
