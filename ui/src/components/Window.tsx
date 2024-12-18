@@ -137,10 +137,9 @@ export default function Window({
         }
         case 'application/json': {
           console.log('Processing JSON data...')
+          const txt = await res.text()
           return (
-            <>
-              <p>JSON content is not currently displayed.</p>
-            </>
+            <TextPlain text={txt} />
           )
         }
         case 'application/xml': {
