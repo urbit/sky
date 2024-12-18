@@ -12,11 +12,11 @@ import { useEffect, useState, useRef } from 'react'
 function App() {
   const {
     windowMap,
-    active,
+    activeWindowID,
     addWindow,
     delWindow,
     updateWindowPath,
-    isActive,
+    setActiveWindowID,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
@@ -92,8 +92,8 @@ function App() {
   }
 
   function handleSwap() {
-    if (windowMap.size > 1 && maxWindow === 0) {
-      setDragWindow(active ?? 0)
+    if (windowMap.size > 1) {
+      setDragWindow(activeWindowID ?? 0)
       const containers = document.querySelectorAll('.container')
       containers.forEach(container => {
         //  create overlay for each window
@@ -130,6 +130,8 @@ function App() {
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
         console.log('Pressed CTRL+N')
         event.preventDefault()
+        if (activeWindowID !== null) {
+          addWindow(activeWindowID, '')
         if (active !== null && maxWindow === 0) {
           addWindow(active, '')
         }
@@ -137,13 +139,28 @@ function App() {
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
         console.log('Pressed CTRL+W')
         event.preventDefault()
+        if (activeWindowID !== null) {
+          if (activeWindowID === 1) {
+            updateWindowPath(activeWindowID, '')
         if (active !== null && maxWindow === 0) {
           if (active === 1) {
             updateWindowPath(active, '')
           } else {
-            delWindow(active)
-            isActive(null)
+            delWindow(activeWindowID)
+            setActiveWindowID(null)
           }
+        }
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
+        console.log('Pressed CTRL+M')
+        event.preventDefault()
+        if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
+          const path = windowMap.get(activeWindowID) ?? null
+          if (path !== null) {
+            setMaxWindow(activeWindowID)
+          }
+        } else if (maxWindow > 1) {
+          setMaxWindow(0)
         }
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
@@ -167,7 +184,7 @@ function App() {
       }
     }
 
-    if (active !== null) {
+    if (activeWindowID !== null) {
       window.addEventListener('keydown', handleKeyDown, { capture: true })
       window.addEventListener('keyup', handleKeyUp, { capture: true })
     }
@@ -176,6 +193,7 @@ function App() {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
       window.removeEventListener('keyup', handleKeyUp, { capture: true })
     }
+  }, [activeWindowID, delWindow, addWindow, updateWindowPath, setActiveWindowID])
   }, [active, delWindow, addWindow, updateWindowPath, isActive, maxWindow])
 
   // TODO handle real window.urbitID, not suitable for production

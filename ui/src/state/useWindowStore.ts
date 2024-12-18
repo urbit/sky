@@ -2,14 +2,15 @@ import { create } from 'zustand'
 import WindowState from './windowState'
 
 // homepage
-const defaultMap = new Map<number, string | null>([[1, '~sampel/home']])
-
 const defaultActive = 1
+const defaultPath = '~sampel/home'
+const defaultMap = new Map<number, string | null>([[1, defaultPath]])
 
 const useWindowStore = create<WindowState>((set, get) => ({
   // init homepage
   windowMap: defaultMap,
-  active: defaultActive,
+  activeWindowID: defaultActive,
+  activeWindowPath: defaultPath,
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
@@ -151,7 +152,8 @@ const useWindowStore = create<WindowState>((set, get) => ({
     }
   },
   // switchig active window id
-  isActive: (id: number | null) => set({ active: id }),
+  setActiveWindowID: (id: number | null) => set({ activeWindowID: id }),
+  setActiveWindowPath: (path: string | null) => set({ activeWindowPath: path })
 }))
 
 export default useWindowStore

@@ -84,24 +84,36 @@ async function get(path: string): Promise<Response | void> {
   }
 }
 
-async function put(path: string, json: JSON): Promise<Response | void> {
-  if (window.ship) {
-    //pokeSky({
-    //  method: "PUT",
-    //  body: {
-    //    path: path,
-    //    json: json,
-    //  },
-    //})
-  } else {
-    const ship = path.split('/')[0].slice(1)
-    const endpoint = path.split('/').slice(1).join('/')
-    const url = `https://${ship}.urbit.org/${endpoint}`
+async function put(path: string, data: FormData): Promise<Response | void> {
+  const urls = await findShipUrls(path)
 
-    return fetch(url, {
+  if (!urls) {
+    console.error(`No URLs found for ${path.split('/').slice(0)}`)
+    return;
+  }
+
+  // TODO for development; remove
+  if (window.urbitID === '~sampel') {
+    return fetch(urls.ship, {
       method: 'PUT',
       // TODO Authorization header
-      body: JSON.stringify(json),
+      body: data
+    })
+  }
+
+  if (window.ship) {
+    return fetch(urls.ship, {
+      method: 'PUT',
+      // TODO Authorization header
+      body: data
+    })
+  }
+
+  if (window.urbitID) {
+    return fetch(urls.athens, {
+      method: 'PUT',
+      // TODO Authorization header
+      body: data
     })
   }
 }

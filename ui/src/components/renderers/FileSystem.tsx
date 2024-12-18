@@ -4,6 +4,7 @@ import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
 import FileHTML from './FileHTML'
+import FilePDF from './FilePDF'
 
 interface FileSystemProps {
   id: number
@@ -39,6 +40,12 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       const objectURL = URL.createObjectURL(blob)
       return <FilePNG url={objectURL} />
     }
+    case 'application/pdf': {
+      console.log('Rendering application/pdf')
+      const arrayBuffer = await res.arrayBuffer();
+      const pdfData = new Uint8Array(arrayBuffer);
+      return <FilePDF pdfData={pdfData} />
+    }
     default: {
       console.log(`Rendering ${contentType} not supported`)
       return <p>{`${contentType} not supported`}</p>
@@ -50,6 +57,10 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   const handleUploadClick = () => {
     const input = document.querySelector('input[type="file"]')
     if (input) (input as HTMLInputElement).click()
+  }
+
+  function handleHTMLClick() {
+    setFileViewerContent(<FileHTML html='' />)
   }
 
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,9 +76,9 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
       try {
         // TODO should use put() from Sky API
-        console.log(`Attempting to POST to ${shipDomain}/${endpoint}`)
+        console.log(`Attempting to PUT to ${shipDomain}/${endpoint}`)
         const res = await fetch(`${shipDomain}/${endpoint}`, {
-          method: 'POST',
+          method: 'PUT',
           body: formData,
         })
 
@@ -120,10 +131,11 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const createFileMenu = (
     <div className="fc ac jc hf wf">
-      <button onClick={handleUploadClick}>Upload a file</button>
+      <button onClick={handleHTMLClick}>Write HTML</button>
+      <button onClick={handleUploadClick}>Upload file</button>
       <input
         type="file"
-        accept=".html, .md, .png"
+        accept=".html, .md, .png, .pdf"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />
