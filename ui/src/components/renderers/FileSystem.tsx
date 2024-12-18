@@ -30,6 +30,14 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       const html = await res.text()
       return <FileHTML html={html} />
     }
+    case 'text/css': {
+      console.log('Rendering text/plain')
+      return <FilePlain text={await res.text()} />
+    }
+    case 'text/javascript': {
+      console.log('Rendering text/plain')
+      return <FilePlain text={await res.text()} />
+    }
     case 'text/markdown': {
       console.log('Rendering text/markdown')
       const text = await res.text()

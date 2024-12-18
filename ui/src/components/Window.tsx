@@ -123,18 +123,16 @@ export default function Window({
         }
         case 'text/css': {
           console.log('Processing CSS document...')
+          const txt = await res.text()
           return (
-            <>
-              <p>CSS content is not currently displayed.</p>
-            </>
+            <TextPlain text={txt} />
           )
         }
         case 'application/javascript': {
           console.log('Processing JavaScript data...')
+          const txt = await res.text()
           return (
-            <>
-              <p>JavaScript content is not currently displayed.</p>
-            </>
+            <TextPlain text={txt} />
           )
         }
         case 'application/json': {
