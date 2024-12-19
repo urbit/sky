@@ -9,23 +9,12 @@ CORS(app)  # Enable CORS for all routes
 # Directory where files will be saved
 UPLOAD_FOLDER = './uploads'
 
-# Custom MIME types
-CUSTOM_MIME_TYPES = {
-    '.md': 'text/markdown',
-    '.txt': 'text/plain',
-    '.html': 'text/html',
-    '.json': 'application/json',
-    '.xml': 'application/xml',
-    '.pdf': 'application/pdf',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.png': 'image/png',
-    '.gif': 'image/gif',
-    '.mp4': 'video/mp4',
-    '.mp3': 'audio/mpeg',
-    '.css': 'text/css',
-    '.js': 'application/javascript',
-}
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
+# Directory where files will be saved
+UPLOAD_FOLDER = './uploads'
 
 
 @app.route('/<path:url_path>', methods=['GET', 'PUT'])
@@ -38,8 +27,8 @@ def handle_file(url_path):
         if file.filename == '':
             return 'No selected file', 400
 
-        # Build the file path
-        filename = url_path
+        # Use the original filename
+        filename = file.filename
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         filepath = os.path.normpath(filepath)  # Normalize path
 
@@ -56,17 +45,8 @@ def handle_file(url_path):
         # Save the file
         file.save(filepath)
 
-        # Determine the MIME type based on the file extension
-        _, ext = os.path.splitext(file.filename)
-        mime_type = CUSTOM_MIME_TYPES.get(ext, 'application/octet-stream')
-
-        # Save the MIME type
-        mime_file_path = filepath + '.mime'
-        with open(mime_file_path, 'w') as mime_file:
-            mime_file.write(mime_type)
-
         return 'File uploaded successfully', 201
-    else:
+    elif request.method == 'GET':
         # Serve the file corresponding to the URL path
         filepath = os.path.join(UPLOAD_FOLDER, url_path)
         filepath = os.path.normpath(filepath)  # Normalize path
@@ -79,15 +59,9 @@ def handle_file(url_path):
 
         if os.path.isfile(filepath):
             # Try to read the stored MIME type
-            mime_file_path = filepath + '.mime'
-            if os.path.isfile(mime_file_path):
-                with open(mime_file_path, 'r') as mime_file:
-                    mime_type = mime_file.read().strip()
-            else:
-                # Fallback to guessing the MIME type
-                mime_type, _ = mimetypes.guess_type(filepath)
-                if mime_type is None:
-                    mime_type = 'application/octet-stream'
+            mime_type, _ = mimetypes.guess_type(filepath)
+            if mime_type is None:
+                mime_type = 'application/octet-stream'
 
             # Serve the file with the correct MIME type
             return send_file(filepath, mimetype=mime_type)
