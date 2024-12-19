@@ -47,6 +47,15 @@ async function get(path: string): Promise<Response | void> {
     })
   }
 
+  // TODO remove this for production
+  if (path.split('/')[0] === '~sampel') {
+    if (urls) {
+      return fetch(urls.ship, {
+        method: 'GET',
+      })
+    }
+  }
+
   try {
     const res = await fetch(urls.athens, {
       method: 'GET',
