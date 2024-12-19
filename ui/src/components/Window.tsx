@@ -33,6 +33,8 @@ export default function Window({
   const [windowContent, setWindowContent] = useState(defaultContent)
   const [windowBarVisibility, setWindowBarVisibility] = useState(false)
   const [fileSystemView, setFileSystemView] = useState(false)
+  const [openMenu, setOpenMenu] = useState(false)
+  const [published, setPublished] = useState(false)
   const { setActiveWindowID, setActiveWindowPath, delWindow } = useWindowStore()
 
   function handleWindowMouseEnter() {
@@ -263,7 +265,7 @@ export default function Window({
     }
   }
 
-  function handleOptsButtonClick() {
+  function handleFileView(){
     if (path && path.split('/')[0] === window.urbitID) {
       setFileSystemView(!fileSystemView)
     }
@@ -366,34 +368,43 @@ export default function Window({
             }}
           >
             <div
+              className="absolute fc ac"
               style={{
-                height: '55px',
+                height: '90px',
+                maxWidth: 'calc(100% - 20px)',
                 width: '100px',
                 zIndex: '1',
-                position: 'absolute',
                 top: 0,
                 right: 0,
                 pointerEvents: 'auto',
               }}
               onMouseEnter={() => setWindowBarVisibility(true)}
-              onMouseLeave={() => setWindowBarVisibility(false)}
+              onMouseLeave={() => {setWindowBarVisibility(false), setOpenMenu(false)}}
             >
               {windowBarVisibility && (
-                <div className="fr ac ja hf wf">
-                  <button
-                    className="fr ac jc"
-                    style={{ pointerEvents: 'visible' }}
-                    onClick={() => handleOptsButtonClick()}
-                  >
-                    ...
-                  </button>
-                  <button
-                    className="fr ac jc"
-                    style={{ pointerEvents: 'visible' }}
-                    onClick={() => handleXButtonClick(id)}
-                  >
-                    x
-                  </button>
+                <div className="fc hf wf js grow p2 g1" style={{ alignContent:'baseline' }}>
+                  <div className="fr as hf jc g2">
+                    <button
+                      className="fr ac jc"
+                      style={{ pointerEvents: 'visible'}}
+                      onClick={() => setOpenMenu(!openMenu)}
+                    >
+                      ...
+                    </button>
+                    <button
+                      className="fr ac jc"
+                      style={{ pointerEvents: 'visible' }}
+                      onClick={() => handleXButtonClick(id)}
+                    >
+                      x
+                    </button>
+                  </div>
+                  {openMenu && (
+                    <div className="fc ac ja hf wf p1 b2 br2">
+                      <button className="wf" onClick={() => setPublished(!published)}>{published ? 'Private' : 'Publish'}</button>
+                      <button  className="wf" onClick={() => {handleFileView()}}>{fileSystemView ? 'File' : 'Editor'}</button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
