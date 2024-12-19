@@ -265,7 +265,7 @@ export default function Window({
     }
   }
 
-  function handleFileView(){
+  function handleFileView() {
     if (path && path.split('/')[0] === window.urbitID) {
       setFileSystemView(!fileSystemView)
     }
@@ -379,14 +379,20 @@ export default function Window({
                 pointerEvents: 'auto',
               }}
               onMouseEnter={() => setWindowBarVisibility(true)}
-              onMouseLeave={() => {setWindowBarVisibility(false), setOpenMenu(false)}}
+              onMouseLeave={() => {
+                setWindowBarVisibility(false)
+                setOpenMenu(false)
+              }}
             >
               {windowBarVisibility && (
-                <div className="fc hf wf js grow p2 g1" style={{ alignContent:'baseline' }}>
+                <div
+                  className="fc hf wf js grow p2 g1"
+                  style={{ alignContent: 'baseline' }}
+                >
                   <div className="fr as hf jc g2">
                     <button
                       className="fr ac jc"
-                      style={{ pointerEvents: 'visible'}}
+                      style={{ pointerEvents: 'visible' }}
                       onClick={() => setOpenMenu(!openMenu)}
                     >
                       ...
@@ -401,8 +407,20 @@ export default function Window({
                   </div>
                   {openMenu && (
                     <div className="fc ac ja hf wf p1 b2 br2">
-                      <button className="wf" onClick={() => setPublished(!published)}>{published ? 'Private' : 'Publish'}</button>
-                      <button  className="wf" onClick={() => {handleFileView()}}>{fileSystemView ? 'File' : 'Editor'}</button>
+                      <button
+                        className="wf"
+                        onClick={() => setPublished(!published)}
+                      >
+                        {published ? 'Private' : 'Publish'}
+                      </button>
+                      <button
+                        className="wf"
+                        onClick={() => {
+                          handleFileView()
+                        }}
+                      >
+                        {fileSystemView ? 'File' : 'Editor'}
+                      </button>
                     </div>
                   )}
                 </div>
