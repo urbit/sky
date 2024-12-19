@@ -15,11 +15,6 @@ CORS(app)
 # Define the directory where uploaded files will be saved
 UPLOAD_FOLDER = './namespace'
 
-# Create an instance of the Flask application (duplicate instance creation)
-app = Flask(__name__)
-# Enable Cross-Origin Resource Sharing (CORS) for all routes (duplicate setup)
-CORS(app)
-
 # Define a route to handle file operations based on the HTTP method
 
 
@@ -55,15 +50,21 @@ def handle_file(url_path):
         # Log the filename
         # print(f"filename: {filename}")
 
-        # Construct the file path for saving the file
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        # Log the file path
-        # print(f"filepath: {filepath}")
+        # Construct the directory path from the URL path
+        dirpath = os.path.join(UPLOAD_FOLDER, url_path)
+        # Log the directory path
+        # print(f"dirpath: {dirpath}")
 
-        # Normalize the file path to ensure consistency
-        filepath = os.path.normpath(filepath)
-        # Log the normalized file path
-        # print(f"normalized filepath: {filepath}")
+        # Ensure the directory for the URL path exists
+        dirpath = os.path.normpath(dirpath)  # Normalize the directory path
+        # Log the normalized directory path
+        # print(f"normalized dirpath: {dirpath}")
+        os.makedirs(dirpath, exist_ok=True)
+
+        # Construct the full file path
+        filepath = os.path.join(dirpath, filename)
+        # Log the full file path
+        # print(f"filepath: {filepath}")
 
         # Perform a security check to ensure the file path is within the upload folder
         upload_folder_abs = os.path.abspath(UPLOAD_FOLDER)
@@ -77,12 +78,6 @@ def handle_file(url_path):
             # print(f"Invalid file path detected: {filepath_abs}")
             return 'Invalid path', 400
 
-        # Ensure the directory for the file path exists
-        dirname = os.path.dirname(filepath)
-        # Log the directory name
-        # print(f"dirname: {dirname}")
-        os.makedirs(dirname, exist_ok=True)
-
         # Save the uploaded file to the specified path
         file.save(filepath)
         # Log the successful file save
@@ -95,7 +90,7 @@ def handle_file(url_path):
         # Log the request method
         # print(f"request.method: {request.method}")
 
-        # Construct the file path for the requested file
+        # Construct the file path from the URL path
         filepath = os.path.join(UPLOAD_FOLDER, url_path)
         # Log the file path
         # print(f"filepath: {filepath}")
