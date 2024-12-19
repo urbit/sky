@@ -123,7 +123,6 @@ function App() {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey) {
-        event.preventDefault()
         holdingKey.current = true
         handleSwap()
       }
@@ -203,7 +202,7 @@ function App() {
         {maxWindow > 1 && (
           <div
             className="wf hf absolute p3"
-            style={{ zIndex: 100, opacity: '95%' }}
+            style={{ zIndex: 100, opacity: '98%' }}
           >
             <Window
               id={maxWindow}
