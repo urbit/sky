@@ -13,15 +13,12 @@ app = Flask(__name__)
 CORS(app)
 
 # Define the directory where uploaded files will be saved
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = './namespace'
 
 # Create an instance of the Flask application (duplicate instance creation)
 app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) for all routes (duplicate setup)
 CORS(app)
-
-# Define the directory where uploaded files will be saved (duplicate definition)
-UPLOAD_FOLDER = './uploads'
 
 # Define a route to handle file operations based on the HTTP method
 
