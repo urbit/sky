@@ -103,9 +103,7 @@ export default function Window({
         case 'text/plain': {
           console.log('Processing plain text file...')
           const txt = await res.text()
-          return (
-            <TextPlain text={txt} />
-          )
+          return <TextPlain text={txt} />
         }
         case 'text/html': {
           console.log('Processing HTML document...')
@@ -124,23 +122,17 @@ export default function Window({
         case 'text/css': {
           console.log('Processing CSS document...')
           const txt = await res.text()
-          return (
-            <TextPlain text={txt} />
-          )
+          return <TextPlain text={txt} />
         }
         case 'application/javascript': {
           console.log('Processing JavaScript data...')
           const txt = await res.text()
-          return (
-            <TextPlain text={txt} />
-          )
+          return <TextPlain text={txt} />
         }
         case 'application/json': {
           console.log('Processing JSON data...')
           const txt = await res.text()
-          return (
-            <TextPlain text={txt} />
-          )
+          return <TextPlain text={txt} />
         }
         case 'application/xml': {
           console.log('Processing XML file...')

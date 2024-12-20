@@ -1,23 +1,22 @@
 interface TextPlainProps {
-    text: string
+  text: string
 }
 
 export default function TextPlain({ text }: TextPlainProps) {
-    if (!text) {
-        return (
-            <div className="hf wf fr as js">
-                <p>No text to display</p>
-            </div>
-
-        )
-    }
-
+  if (!text) {
     return (
-        <div
-            className="hf wf fr as js mono"
-            style={{ whiteSpace: 'pre-wrap', overflowY: 'scroll' }}
-        >
-            <p>{text}</p>
-        </div>
+      <div className="hf wf fr as js">
+        <p>No text to display</p>
+      </div>
     )
+  }
+
+  return (
+    <div
+      className="hf wf fr as js mono"
+      style={{ whiteSpace: 'pre-wrap', overflowY: 'scroll' }}
+    >
+      <p>{text}</p>
+    </div>
+  )
 }
