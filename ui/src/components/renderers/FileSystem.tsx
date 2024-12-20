@@ -5,6 +5,7 @@ import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
 import FileHTML from './FileHTML'
 import FilePDF from './FilePDF'
+import FilePlain from './FilePlain'
 
 interface FileSystemProps {
   id: number
@@ -22,12 +23,24 @@ async function renderFile(res: Response): Promise<JSX.Element> {
   switch (contentType.split(';')[0]) {
     case 'text/plain': {
       console.log('Rendering text/plain')
-      return <p>text/plain not supported</p>
+      return <FilePlain text={await res.text()} />
     }
     case 'text/html': {
       console.log('Rendering text/html')
       const html = await res.text()
       return <FileHTML html={html} />
+    }
+    case 'text/css': {
+      console.log('Rendering text/plain')
+      return <FilePlain text={await res.text()} />
+    }
+    case 'text/javascript': {
+      console.log('Rendering text/plain')
+      return <FilePlain text={await res.text()} />
+    }
+    case 'application/json': {
+      console.log('Rendering application/json')
+      return <FilePlain text={await res.text()} />
     }
     case 'text/markdown': {
       console.log('Rendering text/markdown')
@@ -47,8 +60,10 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       return <FilePDF pdfData={pdfData} />
     }
     default: {
-      console.log(`Rendering ${contentType} not supported`)
-      return <p>{`${contentType} not supported`}</p>
+      console.log(
+        `Rendering ${contentType.split(';')[0]} not supported by filesystem`
+      )
+      return <p>{`${contentType.split(';')[0]} not supported by filesystem`}</p>
     }
   }
 }
@@ -135,7 +150,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload file</button>
       <input
         type="file"
-        accept=".html, .md, .png, .pdf"
+        accept=".css, .html, .js, .json, .md, .pdf, .png, .txt"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />

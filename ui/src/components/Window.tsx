@@ -10,6 +10,7 @@ import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import ReactDOMServer from 'react-dom/server'
+import TextPlain from './renderers/TextPlain'
 
 export default function Window({
   id,
@@ -109,16 +110,8 @@ export default function Window({
       switch (contentType.split(';')[0]) {
         case 'text/plain': {
           console.log('Processing plain text file...')
-          return (
-            <>
-              <p>Plain text content is not currently displayed.</p>
-            </>
-          )
-        }
-        case 'text/markdown': {
-          console.log('Processing markdown file...')
-          const text = await res.text()
-          return <TextMarkdown md={text} />
+          const txt = await res.text()
+          return <TextPlain text={txt} />
         }
         case 'text/html': {
           console.log('Processing HTML document...')
@@ -129,13 +122,25 @@ export default function Window({
             />
           )
         }
+        case 'text/markdown': {
+          console.log('Processing markdown file...')
+          const text = await res.text()
+          return <TextMarkdown md={text} />
+        }
+        case 'text/css': {
+          console.log('Processing CSS document...')
+          const txt = await res.text()
+          return <TextPlain text={txt} />
+        }
+        case 'application/javascript': {
+          console.log('Processing JavaScript data...')
+          const txt = await res.text()
+          return <TextPlain text={txt} />
+        }
         case 'application/json': {
           console.log('Processing JSON data...')
-          return (
-            <>
-              <p>JSON content is not currently displayed.</p>
-            </>
-          )
+          const txt = await res.text()
+          return <TextPlain text={txt} />
         }
         case 'application/xml': {
           console.log('Processing XML file...')
