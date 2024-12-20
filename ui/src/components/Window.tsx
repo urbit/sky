@@ -31,10 +31,16 @@ export default function Window({
   )
 
   const [windowContent, setWindowContent] = useState(defaultContent)
-  const [windowBarVisibility, setWindowBarVisibility] = useState(false)
+  const [windowBarOpen, setWindowBarOpen] = useState(false)
   const [fileSystemView, setFileSystemView] = useState(false)
-  const [openMenu, setOpenMenu] = useState(false)
-  const [published, setPublished] = useState(false)
+  const [openOptionsMenu, setOpenOptionsMenu] = useState(false)
+  const [openVisibilityMenu, setOpenVisibilityMenu] = useState(false)
+  const [published, setPublished] = useState('Personal')
+  const [visibilityOptions, setVisibilityOptions] = useState([
+    'Private',
+    'Urbit',
+    'Public',
+  ])
   const { setActiveWindowID, setActiveWindowPath, delWindow } = useWindowStore()
 
   function handleWindowMouseEnter() {
@@ -341,7 +347,14 @@ export default function Window({
       }
     }
     fetchContent()
+    console.log('local?', path?.split('/')[0], window.urbitID)
   }, [path])
+
+  useEffect(() => {
+    const options = ['Personal', 'Private', 'Urbit', 'Public']
+    const filteredOptions = options.filter(item => item !== published)
+    setVisibilityOptions(filteredOptions)
+  }, [published])
 
   return (
     <Allotment>
@@ -370,48 +383,52 @@ export default function Window({
             <div
               className="absolute fc ac"
               style={{
-                height: '90px',
+                height: '55px',
                 maxWidth: 'calc(100% - 20px)',
-                width: '100px',
+                width: '200px',
                 zIndex: '1',
                 top: 0,
                 right: 0,
                 pointerEvents: 'auto',
               }}
-              onMouseEnter={() => setWindowBarVisibility(true)}
+              onMouseEnter={() => setWindowBarOpen(true)}
               onMouseLeave={() => {
-                setWindowBarVisibility(false)
-                setOpenMenu(false)
+                setWindowBarOpen(false)
+                setOpenOptionsMenu(false)
+                setOpenVisibilityMenu(false)
               }}
             >
-              {windowBarVisibility && (
-                <div
-                  className="fc hf wf js grow p2 g1"
-                  style={{ alignContent: 'baseline' }}
-                >
-                  <div className="fr as hf jc g2">
-                    <button
-                      className="fr ac jc"
-                      style={{ pointerEvents: 'visible' }}
-                      onClick={() => setOpenMenu(!openMenu)}
+              {windowBarOpen && (
+                <div className="fr hf wf as je p2 g2">
+                  {openVisibilityMenu && (
+                    <div
+                      className="fc ac wf ja p1 b2 br2"
+                      onMouseLeave={() => {
+                        setOpenVisibilityMenu(false)
+                      }}
                     >
-                      ...
-                    </button>
-                    <button
-                      className="fr ac jc"
-                      style={{ pointerEvents: 'visible' }}
-                      onClick={() => handleXButtonClick(id)}
-                    >
-                      x
-                    </button>
-                  </div>
-                  {openMenu && (
-                    <div className="fc ac ja hf wf p1 b2 br2">
+                      <p className="wf m0 tc" style={{ padding: '4px 10px' }}>
+                        {published}
+                      </p>
+                      {visibilityOptions.map((option, index) => (
+                        <button
+                          id={index.toString()}
+                          className="wf"
+                          onClick={() => setPublished(option)}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {openOptionsMenu && (
+                    <div className="fc ac ja p1 b2 br2">
                       <button
                         className="wf"
-                        onClick={() => setPublished(!published)}
+                        onMouseEnter={() => setOpenVisibilityMenu(true)}
+                        disabled={path?.split('/')[0] !== window.urbitID}
                       >
-                        {published ? 'Private' : 'Publish'}
+                        Visibility
                       </button>
                       <button
                         className="wf"
@@ -419,10 +436,33 @@ export default function Window({
                           handleFileView()
                         }}
                       >
-                        {fileSystemView ? 'File' : 'Editor'}
+                        {fileSystemView ? 'View' : 'Edit'}
                       </button>
                     </div>
                   )}
+                  {!(path === '' || path?.split('/')[0] !== window.urbitID) && (
+                    <button
+                      className="fr ac jc"
+                      style={{ pointerEvents: 'visible' }}
+                      onMouseEnter={() => {
+                        setOpenOptionsMenu(true)
+                        setOpenVisibilityMenu(false)
+                      }}
+                    >
+                      ...
+                    </button>
+                  )}
+                  <button
+                    className="fr ac jc"
+                    style={{ pointerEvents: 'visible' }}
+                    onClick={() => handleXButtonClick(id)}
+                    onMouseEnter={() => {
+                      setOpenOptionsMenu(false)
+                      setOpenVisibilityMenu(false)
+                    }}
+                  >
+                    x
+                  </button>
                 </div>
               )}
             </div>

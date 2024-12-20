@@ -264,6 +264,16 @@ button:focus {
   background-color: var(--b4);
 }
 
+button:disabled {
+  color: var(--b4);
+}
+
+button:disabled:hover {
+  background-color: var(--b2);
+  color: var(--b4);
+  transition: none;
+}
+
 form {
   padding: 8px;
   border-radius: 3px;
