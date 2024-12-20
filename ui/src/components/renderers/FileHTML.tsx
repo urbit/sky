@@ -95,7 +95,12 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
           </div>
           {showPreview && (
             <div className="hf wf p2">
-              <TextHTML content={editorContent} isLocal={true} />
+              <iframe
+                className="hf wf"
+                srcDoc={editorContent}
+                style={{ border: 'none', borderRadius: '2.5px' }}
+                sandbox="allow-scripts"
+              ></iframe>
             </div>
           )}
         </div>

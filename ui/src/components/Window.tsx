@@ -120,11 +120,17 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
+          const urls = await findShipUrls(path || '~sampel/home')
+          if (urls) {
+            return (
+              <TextHTML
+                url={urls.ship}
+              />
+            )
+          }
+
           return (
-            <TextHTML
-              content={await res.text()}
-              isLocal={path?.split('/')[0] === window.urbitID}
-            />
+            <div>{`No URLs found for ${path}`}</div>
           )
         }
         case 'text/markdown': {
