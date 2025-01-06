@@ -1,5 +1,4 @@
 import { Allotment } from 'allotment'
-import { WindowProps } from '../types/windows'
 import { get, findShipUrls } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
@@ -11,6 +10,15 @@ import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import ReactDOMServer from 'react-dom/server'
 import TextPlain from './renderers/TextPlain'
+
+export interface WindowProps {
+  id: number
+  path: string | null
+  setMaxWindow: React.Dispatch<React.SetStateAction<number>> | null
+  handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
+  handleDragStart: (event: React.DragEvent, id: number) => void
+  dragWindow: number
+}
 
 export default function Window({
   id,

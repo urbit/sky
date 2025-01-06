@@ -1,3 +1,10 @@
+export interface HTTPRequest {
+  url: string
+  method: string
+  headers: Record<string, string>
+  body: string
+}
+
 //
 // TODO authentication for urbit.org / Athens
 //
