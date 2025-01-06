@@ -12,15 +12,16 @@ import { useEffect, useState, useRef } from 'react'
 function App() {
   const {
     windowMap,
+    maxWindow,
     activeWindowID,
     addWindow,
     delWindow,
+    setMaxWindow,
     updateWindowPath,
     setActiveWindowID,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
-  const [maxWindow, setMaxWindow] = useState(0)
   const holdingKey = useRef(false)
 
   function enableWindows() {
@@ -207,7 +208,6 @@ function App() {
             <Window
               id={maxWindow}
               path={windowMap.get(maxWindow) ?? ''}
-              setMaxWindow={setMaxWindow}
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}
               dragWindow={dragWindow}
