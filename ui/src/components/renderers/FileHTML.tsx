@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
 import { put } from '../../api/sky'
-import TextHTML from '../renderers/TextHTML'
 import { emmetHTML } from 'emmet-monaco-es'
 
 interface FileHTMLProps {
@@ -31,18 +30,34 @@ const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   mouseWheelZoom: true,
 }
 
+const defaultHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foobar</title>
+  <link rel="stylesheet" href="http://localhost:8000/sys/css/hollow">
+  <link rel="stylesheet" href="http://localhost:8000/sys/css/spine">
+  <link rel="stylesheet" href="http://localhost:8000/sys/css/feather">
+</head>
+<body>
+    <p>Hello world</p>
+</body>
+</html>`
+
 export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
   const [showPreview, setShowPreview] = useState(false)
-  const [editorContent, setEditorContent] = useState(html)
+  const [editorContent, setEditorContent] = useState(html || defaultHTML)
   const { activeWindowPath } = useWindowStore()
 
   const handleEditorChange = useCallback(
     debounce(async (value: string | undefined) => {
       if (value && activeWindowPath) {
-        setEditorContent(value)
+        const content = value.trim() === '' ? defaultHTML : value
+        setEditorContent(content)
         const formData = new FormData()
-        const file = new File([value], 'file.html', { type: 'text/html' })
+        const file = new File([content], 'file.html', { type: 'text/html' })
         formData.append('file', file)
 
         try {
