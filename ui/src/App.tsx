@@ -163,7 +163,7 @@ function App() {
           if (path !== null) {
             setMaxWindow(activeWindowID)
           }
-        } else if (maxWindow > 1) {
+        } else if (maxWindow !== 0) {
           setMaxWindow(0)
         }
       }
@@ -210,7 +210,7 @@ function App() {
         shoving the WindowContainer off the bottom of the screen
       */}
       <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
-        {maxWindow > 1 && (
+        {maxWindow !== 0 && (
           <div
             className="wf hf absolute p3"
             style={{ zIndex: 100, opacity: '98%' }}
