@@ -40,7 +40,7 @@ const defaultHTML = `<!DOCTYPE html>
   <link rel="stylesheet" href="http://localhost:8000/sys/css/spine">
   <link rel="stylesheet" href="http://localhost:8000/sys/css/feather">
 </head>
-<body>
+<body class='p2 b0'>
     <p>Hello world</p>
 </body>
 </html>`
