@@ -65,7 +65,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function () {
+        event.target.addEventListener('dragend', function() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -122,21 +122,28 @@ function App() {
   }
 
   useEffect(() => {
+    console.log(`path: ${activeWindowID ? windowMap.get(activeWindowID) : 'null'}`)
+    console.log(`activeWindowID: ${activeWindowID}`)
+    console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey) {
         holdingKey.current = true
         handleSwap()
       }
+
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
         console.log('Pressed CTRL+N')
         event.preventDefault()
+
         if (activeWindowID !== null && maxWindow === 0) {
           addWindow(activeWindowID, '')
         }
       }
+
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
         console.log('Pressed CTRL+W')
         event.preventDefault()
+
         if (activeWindowID !== null && maxWindow === 0) {
           if (activeWindowID === 1) {
             updateWindowPath(activeWindowID, '')
@@ -146,9 +153,11 @@ function App() {
           }
         }
       }
+
       if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
         console.log('Pressed CTRL+M')
         event.preventDefault()
+
         if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
           const path = windowMap.get(activeWindowID) ?? null
           if (path !== null) {
@@ -171,18 +180,19 @@ function App() {
       window.addEventListener('keydown', handleKeyDown, { capture: true })
       window.addEventListener('keyup', handleKeyUp, { capture: true })
     }
+
     // Cleanup event listener when the component is unmounted
     return () => {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
       window.removeEventListener('keyup', handleKeyUp, { capture: true })
     }
   }, [
+    maxWindow,
     activeWindowID,
     delWindow,
     addWindow,
     updateWindowPath,
     setActiveWindowID,
-    maxWindow,
   ])
 
   // TODO handle real window.urbitID, not suitable for production

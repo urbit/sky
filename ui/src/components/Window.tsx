@@ -290,7 +290,7 @@ export default function Window({
   useEffect(() => {
     const idString = id.toString()
     const fetchContent = async () => {
-      if (setMaxWindow !== null) {
+      if (maxWindow !== 0) {
         const content = sessionStorage.getItem(idString)
         if (content) {
           const parser = new DOMParser()
