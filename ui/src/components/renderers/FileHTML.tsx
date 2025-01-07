@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
-import { put } from '../../api/sky'
+import { get, put } from '../../api/sky'
 import { emmetHTML } from 'emmet-monaco-es'
 
 interface FileHTMLProps {
@@ -60,6 +60,28 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [editorContent, setEditorContent] = useState(html || defaultHTML)
   const { activeWindowPath } = useWindowStore()
 
+  const pathArray = activeWindowPath
+    ? activeWindowPath.split('/')
+    : `${window.ship || window.urbitID}/home`.split('/')
+  const ship = pathArray[0]
+  const endpoint = pathArray.slice(1)
+  const tempPath = `${ship}/sys/tmp/${endpoint}`
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await get(tempPath)
+        const content = typeof response === 'string' ? response : defaultHTML
+        setEditorContent(content)
+      } catch (error) {
+        console.error('Failed to fetch content:', error)
+        setEditorContent(defaultHTML)
+      }
+    }
+
+    fetchContent()
+  }, [])
+
   const handleEditorChange = useCallback(
     debounce(async (value: string | undefined) => {
       if (value && activeWindowPath) {
@@ -70,7 +92,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
         formData.append('file', file)
 
         try {
-          await put(activeWindowPath, formData)
+          await put(tempPath, formData)
           console.log('Upload successful')
         } catch (error) {
           console.error('Upload failed:', error)
@@ -110,7 +132,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
             <Editor
               height="100%"
               defaultLanguage="html"
-              defaultValue={editorContent}
+              value={editorContent}
               options={htmlEditorConfig}
               theme={theme}
               onChange={handleEditorChange}
