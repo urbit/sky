@@ -58,6 +58,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
   const [showPreview, setShowPreview] = useState(false)
   const [editorContent, setEditorContent] = useState(html || defaultHTML)
+  const [isEdited, setIsEdited] = useState(false)
   const { activeWindowPath } = useWindowStore()
 
   const pathArray = activeWindowPath
@@ -87,6 +88,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
       if (value && activeWindowPath) {
         const content = value.trim() === '' ? defaultHTML : value
         setEditorContent(content)
+        setIsEdited(true)
         const formData = new FormData()
         const file = new File([content], 'file.html', { type: 'text/html' })
         formData.append('file', file)
@@ -101,6 +103,22 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
     }, 500),
     [activeWindowPath]
   )
+
+  const handlePublish = async () => {
+    if (activeWindowPath) {
+      const formData = new FormData()
+      const file = new File([editorContent], 'file.html', { type: 'text/html' })
+      formData.append('file', file)
+
+      try {
+        await put(activeWindowPath, formData)
+        console.log('Publish successful')
+        setIsEdited(false)
+      } catch (error) {
+        console.error('Publish failed:', error)
+      }
+    }
+  }
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -119,9 +137,12 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   return (
     <div className="hf wf">
       <div className="fc as js hf wf">
-        <div className="wf p2">
+        <div className="p2 fr ac jb">
           <button onClick={() => setShowPreview(!showPreview)}>
             {showPreview ? 'Hide Preview' : 'Show Preview'}
+          </button>
+          <button onClick={handlePublish} disabled={!isEdited} style={{ marginLeft: '10px' }}>
+            Publish
           </button>
         </div>
         <div className="hf wf fr">
@@ -143,6 +164,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
             <div className="hf wf p2">
               <iframe
                 className="hf wf"
+                // TODO add src to tempPath
                 srcDoc={editorContent}
                 style={{ border: 'none', borderRadius: '2.5px' }}
                 sandbox="allow-scripts"
