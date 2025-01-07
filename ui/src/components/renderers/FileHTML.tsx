@@ -30,20 +30,29 @@ const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   mouseWheelZoom: true,
 }
 
-const defaultHTML = `<!DOCTYPE html>
+const defaultHTML = `
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Foobar</title>
-  <link rel="stylesheet" href="http://localhost:8000/sys/css/hollow">
-  <link rel="stylesheet" href="http://localhost:8000/sys/css/spine">
-  <link rel="stylesheet" href="http://localhost:8000/sys/css/feather">
+  <link rel="stylesheet" href="sys/css/hollow">
+  <link rel="stylesheet" href="sys/css/spine">
+  <link rel="stylesheet" href="sys/css/feather">
 </head>
 <body class='p2 b0'>
     <p>Hello world</p>
 </body>
-</html>`
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const base = document.createElement('base')
+      base.href = window.location.origin + window.location.pathname.replace(/[^/]+$/, '')
+      document.head.prepend(base)
+    })
+  </script>
+</html>
+`
 
 export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
