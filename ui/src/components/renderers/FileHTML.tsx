@@ -37,20 +37,13 @@ const defaultHTML = `
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Foobar</title>
-  <link rel="stylesheet" href="sys/css/hollow">
-  <link rel="stylesheet" href="sys/css/spine">
-  <link rel="stylesheet" href="sys/css/feather">
+  <link rel="stylesheet" href="/sys/css/hollow">
+  <link rel="stylesheet" href="/sys/css/spine">
+  <link rel="stylesheet" href="/sys/css/feather">
 </head>
 <body class='p2 b0'>
     <p>Hello world</p>
 </body>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const base = document.createElement('base')
-      base.href = window.location.origin + window.location.pathname.replace(/[^/]+$/, '')
-      document.head.prepend(base)
-    })
-  </script>
 </html>
 `
 
