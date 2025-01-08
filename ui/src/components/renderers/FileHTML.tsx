@@ -56,7 +56,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>/${endpoint}</title>
+  <title>${ship}/${endpoint}</title>
   <link rel="stylesheet" href="/sys/css/hollow">
   <link rel="stylesheet" href="/sys/css/spine">
   <link rel="stylesheet" href="/sys/css/feather">
