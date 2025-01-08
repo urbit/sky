@@ -294,76 +294,19 @@ export default function Window({
   }
 
   useEffect(() => {
-    const idString = id.toString()
     const fetchContent = async () => {
-      if (maxWindow !== 0) {
-        const content = sessionStorage.getItem(idString)
+      if (path === '') {
+        setWindowContent(defaultContent)
+      }
+      if (path) {
+        const content = await renderContent(path)
+        // TODO: Error message if content is null/undefined
         if (content) {
-          const parser = new DOMParser()
-          const doc = parser.parseFromString(content, 'text/html')
-          const iframe = doc.querySelector('iframe')
-          if (path === '') {
-            setWindowContent(defaultContent)
-          } else if (iframe) {
-            if (iframe.src) {
-              setWindowContent(
-                <iframe
-                  src={iframe.src}
-                  className="hf wf"
-                  style={{ border: 'none' }}
-                />
-              )
-            } else if (iframe.srcdoc) {
-              setWindowContent(
-                <TextHTML
-                  content={iframe.srcdoc}
-                  isLocal={
-                    path?.split('/')[0] === window.urbitID || path === ''
-                  }
-                />
-              )
-            }
-          } else if (
-            path &&
-            path !== '' &&
-            content === ReactDOMServer.renderToString(defaultContent)
-          ) {
-            const newContent = await renderContent(path)
-            if (newContent) {
-              setWindowContent(newContent)
-            }
-          } else {
-            setWindowContent(
-              <TextHTML
-                content={content}
-                isLocal={path?.split('/')[0] === window.urbitID || path === ''}
-              />
-            )
-          }
-        }
-      } else {
-        if (path === '') {
-          sessionStorage.setItem(
-            idString,
-            ReactDOMServer.renderToString(defaultContent)
-          )
-          setWindowContent(defaultContent)
-        }
-        if (path) {
-          const content = await renderContent(path)
-          if (content) {
-            // TODO: Error message if content is null/undefined
-            sessionStorage.setItem(
-              idString,
-              ReactDOMServer.renderToString(content)
-            )
-            setWindowContent(content)
-          }
+          setWindowContent(content)
         }
       }
     }
     fetchContent()
-    console.log('local?', path?.split('/')[0], window.urbitID)
   }, [path])
 
   useEffect(() => {
