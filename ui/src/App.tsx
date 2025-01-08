@@ -122,7 +122,9 @@ function App() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      console.log('got key down event', event)
       if (event.metaKey || event.ctrlKey) {
+        console.log('Pressed CTRL')
         holdingKey.current = true
         handleSwap()
       }
