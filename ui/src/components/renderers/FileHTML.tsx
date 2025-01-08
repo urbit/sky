@@ -163,6 +163,8 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
       <iframe
         className="hf wf"
         // TODO don't hard-code URL
+        // should be window.location.origin; all user
+        // action to a /tmp should be to our own /tmp
         src={`http://localhost:8000/sys/tmp/${endpoint}`}
         style={{ border: 'none', borderRadius: '2.5px' }}
         sandbox="allow-scripts"
