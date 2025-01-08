@@ -121,6 +121,7 @@ function App() {
     }
   }
 
+  // listen for keydown events
   useEffect(() => {
     console.log(`path: ${activeWindowID ? windowMap.get(activeWindowID) : 'null'}`)
     console.log(`activeWindowID: ${activeWindowID}`)
@@ -145,6 +146,7 @@ function App() {
         event.preventDefault()
 
         if (activeWindowID !== null && maxWindow === 0) {
+
           if (activeWindowID === 1) {
             updateWindowPath(activeWindowID, '')
           } else {
@@ -160,6 +162,7 @@ function App() {
 
         if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
           const path = windowMap.get(activeWindowID) ?? null
+
           if (path !== null) {
             setMaxWindow(activeWindowID)
           }

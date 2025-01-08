@@ -293,6 +293,7 @@ export default function Window({
     }
   }
 
+  // when this window's path changes, fetch from path
   useEffect(() => {
     const fetchContent = async () => {
       if (path === '') {
@@ -306,9 +307,11 @@ export default function Window({
         }
       }
     }
+
     fetchContent()
   }, [path])
 
+  // update visibility options based on published state
   useEffect(() => {
     const options = ['Personal', 'Private', 'Urbit', 'Public']
     const filteredOptions = options.filter(item => item !== published)

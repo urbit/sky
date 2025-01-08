@@ -165,6 +165,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   const [isEditing, setIsEditing] = useState(false)
   const [newSegment, setNewSegment] = useState('')
 
+  // update content when path changes; route on res.status
   useEffect(() => {
     const fetchData = async () => {
       const res = await get(path)
