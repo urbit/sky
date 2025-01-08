@@ -70,7 +70,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
 
   async function fetchPreview() {
     try {
-      const res = await get(`/sys/tmp/${endpoint}`)
+      const res = await get(`${window.ship || window.urbitID}/sys/tmp/${endpoint}`)
 
       if (res) {
         setPreviewContent(livePreviewContent)
@@ -91,10 +91,12 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
     const fetchContent = async () => {
       try {
         const res = await get(tempPath)
-        const content = typeof res === 'string' ? res : defaultHTML
-        setEditorContent(content)
+        if (res) {
+          const content = await res.text()
+          setEditorContent(content)
+        }
       } catch (err) {
-        console.error('Failed to fetch content:', err)
+        console.error('Failed to fetch HTML:', err)
         setEditorContent(defaultHTML)
       }
     }
