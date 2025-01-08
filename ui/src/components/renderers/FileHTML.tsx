@@ -30,22 +30,6 @@ const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   mouseWheelZoom: true,
 }
 
-const defaultHTML = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Foobar</title>
-  <link rel="stylesheet" href="/sys/css/hollow">
-  <link rel="stylesheet" href="/sys/css/spine">
-  <link rel="stylesheet" href="/sys/css/feather">
-</head>
-<body class='p2 b0'>
-    <p>Hello world</p>
-</body>
-</html>
-`
-
 const placeholderPreviewContent = (
   <div className="hf wf p2 fc ac jc">
     <p>Nothing to preview</p>
@@ -55,7 +39,6 @@ const placeholderPreviewContent = (
 export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
   const [showPreview, setShowPreview] = useState(false)
-  const [editorContent, setEditorContent] = useState(html || defaultHTML)
   const [isEdited, setIsEdited] = useState(false)
   const [previewContent, setPreviewContent] = useState(placeholderPreviewContent)
   const { activeWindowPath } = useWindowStore()
@@ -67,6 +50,25 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const ship = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
   const tempPath = `${ship}/sys/tmp/${endpoint}`
+
+  const defaultHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/${endpoint}</title>
+  <link rel="stylesheet" href="/sys/css/hollow">
+  <link rel="stylesheet" href="/sys/css/spine">
+  <link rel="stylesheet" href="/sys/css/feather">
+</head>
+<body class='p2 b0'>
+    <p>Hello world, this is ${ship}/${endpoint}</p>
+</body>
+</html>
+`
+
+  const [editorContent, setEditorContent] = useState(html || defaultHTML)
+
 
   async function fetchPreview() {
     try {
@@ -92,8 +94,12 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
       try {
         const res = await get(tempPath)
         if (res) {
-          const content = await res.text()
-          setEditorContent(content)
+          if (res.status !== 404) {
+            const content = await res.text()
+            setEditorContent(content)
+          } else {
+            setEditorContent(defaultHTML)
+          }
         }
       } catch (err) {
         console.error('Failed to fetch HTML:', err)
