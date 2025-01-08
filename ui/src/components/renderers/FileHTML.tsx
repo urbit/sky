@@ -30,8 +30,7 @@ const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   mouseWheelZoom: true,
 }
 
-const defaultHTML = `
-<!DOCTYPE html>
+const defaultHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -47,28 +46,55 @@ const defaultHTML = `
 </html>
 `
 
+const placeholderPreviewContent = (
+  <div className="hf wf p2 fc ac jc">
+    <p>Nothing to preview</p>
+  </div>
+)
+
 export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
   const [showPreview, setShowPreview] = useState(false)
   const [editorContent, setEditorContent] = useState(html || defaultHTML)
   const [isEdited, setIsEdited] = useState(false)
+  const [previewContent, setPreviewContent] = useState(placeholderPreviewContent)
   const { activeWindowPath } = useWindowStore()
 
+  // TODO path should never be null
   const pathArray = activeWindowPath
     ? activeWindowPath.split('/')
     : `${window.ship || window.urbitID}/home`.split('/')
   const ship = pathArray[0]
-  const endpoint = pathArray.slice(1)
+  const endpoint = pathArray.slice(1).join('/')
   const tempPath = `${ship}/sys/tmp/${endpoint}`
 
+  async function fetchPreview() {
+    try {
+      const res = await get(`/sys/tmp/${endpoint}`)
+
+      if (res) {
+        setPreviewContent(livePreviewContent)
+      }
+    } catch (err) {
+      console.error('Failed to fetch preview:', err)
+      setPreviewContent(placeholderPreviewContent)
+    }
+  }
+
+  // on mount, fetch preview from /tmp on mount
+  useEffect(() => {
+    fetchPreview()
+  }, [])
+
+  // on mount, fetch HTML for editor
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await get(tempPath)
-        const content = typeof response === 'string' ? response : defaultHTML
+        const res = await get(tempPath)
+        const content = typeof res === 'string' ? res : defaultHTML
         setEditorContent(content)
-      } catch (error) {
-        console.error('Failed to fetch content:', error)
+      } catch (err) {
+        console.error('Failed to fetch content:', err)
         setEditorContent(defaultHTML)
       }
     }
@@ -76,6 +102,22 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
     fetchContent()
   }, [])
 
+  // on mount, set dark / light mode in editor
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = (e: MediaQueryListEvent) => {
+      setTheme(e.matches ? 'vs-dark' : 'vs-light')
+    }
+
+    handleChange(mediaQuery as unknown as MediaQueryListEvent)
+    mediaQuery.addEventListener('change', handleChange)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange)
+    }
+  }, [])
+
+  // autosave editor content to /tmp
   const handleEditorChange = useCallback(
     debounce(async (value: string | undefined) => {
       if (value && activeWindowPath) {
@@ -89,8 +131,11 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
         try {
           await put(tempPath, formData)
           console.log('Upload successful')
-        } catch (error) {
-          console.error('Upload failed:', error)
+          // update preview
+          setPreviewContent(placeholderPreviewContent)
+          fetchPreview()
+        } catch (err) {
+          console.error('Upload failed:', err)
         }
       }
     }, 500),
@@ -107,25 +152,23 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
         await put(activeWindowPath, formData)
         console.log('Publish successful')
         setIsEdited(false)
-      } catch (error) {
-        console.error('Publish failed:', error)
+      } catch (err) {
+        console.error('Publish failed:', err)
       }
     }
   }
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const handleChange = (e: MediaQueryListEvent) => {
-      setTheme(e.matches ? 'vs-dark' : 'vs-light')
-    }
-
-    handleChange(mediaQuery as unknown as MediaQueryListEvent)
-    mediaQuery.addEventListener('change', handleChange)
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange)
-    }
-  }, [])
+  const livePreviewContent = (
+    <div className="hf wf p2" >
+      <iframe
+        className="hf wf"
+        // TODO don't hard-code URL
+        src={`http://localhost:8000/sys/tmp/${endpoint}`}
+        style={{ border: 'none', borderRadius: '2.5px' }}
+        sandbox="allow-scripts"
+      ></iframe>
+    </div>
+  )
 
   return (
     <div className="hf wf">
@@ -153,17 +196,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
               beforeMount={emmetHTML}
             />
           </div>
-          {showPreview && (
-            <div className="hf wf p2">
-              <iframe
-                className="hf wf"
-                // TODO add src to tempPath
-                srcDoc={editorContent}
-                style={{ border: 'none', borderRadius: '2.5px' }}
-                sandbox="allow-scripts"
-              ></iframe>
-            </div>
-          )}
+          {showPreview && previewContent}
         </div>
       </div>
     </div>
