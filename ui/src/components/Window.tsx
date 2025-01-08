@@ -15,7 +15,6 @@ import TextPlain from './renderers/TextPlain'
 export default function Window({
   id,
   path,
-  setMaxWindow,
   handleDrop,
   handleDragStart,
   dragWindow,
@@ -42,7 +41,13 @@ export default function Window({
     'Urbit',
     'Public',
   ])
-  const { setActiveWindowID, setActiveWindowPath, delWindow } = useWindowStore()
+  const {
+    maxWindow,
+    setMaxWindow,
+    setActiveWindowID,
+    setActiveWindowPath,
+    delWindow,
+  } = useWindowStore()
 
   function handleWindowMouseEnter() {
     setActiveWindowID(id)
@@ -269,7 +274,7 @@ export default function Window({
   }
 
   function handleXButtonClick(id: number) {
-    if (setMaxWindow) {
+    if (id === maxWindow) {
       setMaxWindow(0)
     } else {
       delWindow(id)
@@ -285,7 +290,7 @@ export default function Window({
   useEffect(() => {
     const idString = id.toString()
     const fetchContent = async () => {
-      if (setMaxWindow !== null) {
+      if (maxWindow !== 0) {
         const content = sessionStorage.getItem(idString)
         if (content) {
           const parser = new DOMParser()

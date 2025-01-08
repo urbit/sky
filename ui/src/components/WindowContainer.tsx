@@ -75,7 +75,6 @@ export default function WindowContainer({
         <Window
           id={id}
           path={map.get(id) ?? null}
-          setMaxWindow={null}
           handleDrop={handleDrop}
           handleDragStart={handleDragStart}
           dragWindow={dragWindow}

@@ -1,16 +1,16 @@
 import { create } from 'zustand'
 import WindowState from './windowState'
 
-// homepage
-const defaultActive = 1
 const defaultPath = '~sampel/home'
 const defaultMap = new Map<number, string | null>([[1, defaultPath]])
 
 const useWindowStore = create<WindowState>((set, get) => ({
-  // init homepage
+  // init default state values
   windowMap: defaultMap,
-  activeWindowID: defaultActive,
+  maxWindow: 0,
+  activeWindowID: 1,
   activeWindowPath: defaultPath,
+
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
@@ -139,8 +139,11 @@ const useWindowStore = create<WindowState>((set, get) => ({
       handleDelete(windowMap, id)
     }
   },
+
   // remove all nodes, open the default window
   clearWindows: () => set({ windowMap: defaultMap }),
+
+  // update a window's path
   updateWindowPath: (id: number, path: string) => {
     const windowMap = get().windowMap
 
@@ -151,8 +154,14 @@ const useWindowStore = create<WindowState>((set, get) => ({
       set({ windowMap: windowMap })
     }
   },
-  // switchig active window id
+
+  // maximise a window
+  setMaxWindow: (id: number) => set({ maxWindow: id }),
+
+  // track active window
   setActiveWindowID: (id: number | null) => set({ activeWindowID: id }),
+
+  // track active window's path
   setActiveWindowPath: (path: string | null) => set({ activeWindowPath: path }),
 }))
 
