@@ -122,9 +122,7 @@ function App() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      console.log('got key down event', event)
       if (event.metaKey || event.ctrlKey) {
-        console.log('Pressed CTRL')
         holdingKey.current = true
         handleSwap()
       }
@@ -168,14 +166,23 @@ function App() {
       }
     }
 
+    const handleIframeMessage = (event: MessageEvent) => {
+      if (event.data.eventType === 'keydown') {
+        console.log(event.data)
+        handleKeyDown(event.data)
+      }
+    }
+
     if (activeWindowID !== null) {
       window.addEventListener('keydown', handleKeyDown, { capture: true })
       window.addEventListener('keyup', handleKeyUp, { capture: true })
+      window.addEventListener('message', handleIframeMessage)
     }
     // Cleanup event listener when the component is unmounted
     return () => {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
       window.removeEventListener('keyup', handleKeyUp, { capture: true })
+      window.removeEventListener('message', handleIframeMessage)
     }
   }, [
     activeWindowID,
