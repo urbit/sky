@@ -146,7 +146,6 @@ function App() {
         event.preventDefault()
 
         if (activeWindowID !== null && maxWindow === 0) {
-
           if (activeWindowID === 1) {
             updateWindowPath(activeWindowID, '')
           } else {

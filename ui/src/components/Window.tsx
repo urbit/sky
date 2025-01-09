@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
-import ReactDOMServer from 'react-dom/server'
 import TextPlain from './renderers/TextPlain'
 
 export default function Window({
@@ -122,16 +121,10 @@ export default function Window({
           console.log('Processing HTML document...')
           const urls = await findShipUrls(path || '~sampel/home')
           if (urls) {
-            return (
-              <TextHTML
-                url={urls.ship}
-              />
-            )
+            return <TextHTML url={urls.ship} />
           }
 
-          return (
-            <div>{`No URLs found for ${path}`}</div>
-          )
+          return <div>{`No URLs found for ${path}`}</div>
         }
         case 'text/markdown': {
           console.log('Processing markdown file...')

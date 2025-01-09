@@ -40,7 +40,9 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
   const [showPreview, setShowPreview] = useState(false)
   const [isEdited, setIsEdited] = useState(false)
-  const [previewContent, setPreviewContent] = useState(placeholderPreviewContent)
+  const [previewContent, setPreviewContent] = useState(
+    placeholderPreviewContent
+  )
   const { activeWindowPath } = useWindowStore()
 
   // TODO path should never be null
@@ -69,10 +71,11 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
 
   const [editorContent, setEditorContent] = useState(html || defaultHTML)
 
-
   async function fetchPreview() {
     try {
-      const res = await get(`${window.ship || window.urbitID}/sys/tmp/${endpoint}`)
+      const res = await get(
+        `${window.ship || window.urbitID}/sys/tmp/${endpoint}`
+      )
 
       if (res) {
         setPreviewContent(livePreviewContent)
@@ -167,7 +170,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   }
 
   const livePreviewContent = (
-    <div className="hf wf p2" >
+    <div className="hf wf p2">
       <iframe
         className="hf wf"
         // TODO don't hard-code URL
@@ -187,7 +190,11 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
           <button onClick={() => setShowPreview(!showPreview)}>
             {showPreview ? 'Hide Preview' : 'Show Preview'}
           </button>
-          <button onClick={handlePublish} disabled={!isEdited} style={{ marginLeft: '10px' }}>
+          <button
+            onClick={handlePublish}
+            disabled={!isEdited}
+            style={{ marginLeft: '10px' }}
+          >
             Publish
           </button>
         </div>
