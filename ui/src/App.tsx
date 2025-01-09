@@ -176,15 +176,24 @@ function App() {
       }
     }
 
+    const handleIframeMessage = (event: MessageEvent) => {
+      if (event.data.eventType === 'keydown') {
+        console.log(event.data)
+        handleKeyDown(event.data)
+      }
+    }
+
     if (activeWindowID !== null) {
       window.addEventListener('keydown', handleKeyDown, { capture: true })
       window.addEventListener('keyup', handleKeyUp, { capture: true })
+      window.addEventListener('message', handleIframeMessage)
     }
 
     // Cleanup event listener when the component is unmounted
     return () => {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
       window.removeEventListener('keyup', handleKeyUp, { capture: true })
+      window.removeEventListener('message', handleIframeMessage)
     }
   }, [
     maxWindow,
