@@ -10,11 +10,11 @@ import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import ReactDOMServer from 'react-dom/server'
 import TextPlain from './renderers/TextPlain'
+import ApplicationJSON from './renderers/ApplicationJSON'
 
 export interface WindowProps {
   id: number
   path: string | null
-  setMaxWindow: React.Dispatch<React.SetStateAction<number>> | null
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
   handleDragStart: (event: React.DragEvent, id: number) => void
   dragWindow: number
@@ -152,8 +152,8 @@ export default function Window({
         }
         case 'application/json': {
           console.log('Processing JSON data...')
-          const txt = await res.text()
-          return <TextPlain text={txt} />
+          const JSON = await res.json()
+          return <ApplicationJSON json={JSON} />
         }
         case 'application/xml': {
           console.log('Processing XML file...')

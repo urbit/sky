@@ -6,6 +6,7 @@ import FileMarkdown from './FileMarkdown'
 import FileHTML from './FileHTML'
 import FilePDF from './FilePDF'
 import FilePlain from './FilePlain'
+import FileJSON from './FileJSON'
 
 interface FileSystemProps {
   id: number
@@ -40,7 +41,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
     }
     case 'application/json': {
       console.log('Rendering application/json')
-      return <FilePlain text={await res.text()} />
+      return <FileJSON json={await res.json()} />
     }
     case 'text/markdown': {
       console.log('Rendering text/markdown')
