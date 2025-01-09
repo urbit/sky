@@ -31,7 +31,7 @@ const htmlEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
 }
 
 const placeholderPreviewContent = (
-  <div className="hf wf p2 fc ac jc">
+  <div className="hf wf p2 fc ac jc b1">
     <p>Nothing to preview</p>
   </div>
 )
