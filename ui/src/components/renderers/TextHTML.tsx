@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react'
 export default function TextHTML({ content, isLocal }: TextHTMLProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
-  //  tracking keyboard events inside iframe and sending them up to App.tsx
+  // on mount, track keyboard events inside iframe and send them to App.tsx
 
   useEffect(() => {
     const iframe = iframeRef?.current as HTMLIFrameElement
