@@ -91,23 +91,42 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
     fetchPreview()
   }, [])
 
-  // on mount, fetch HTML for editor
+  // on mount, fetch HTML for editor and check if
+  // editor content differs from published content
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const res = await get(tempPath)
-        if (res) {
-          if (res.status !== 404) {
-            const content = await res.text()
+        const tempRes = await get(tempPath)
+
+        if (tempRes) {
+          if (tempRes.status !== 404) {
+            const content = await tempRes.text()
             setEditorContent(content)
+            // check if editor content differs from published content
+            // TODO path should never be null
+            const publishedRes = await get(activeWindowPath || '~sampel/home')
+
+            if (publishedRes) {
+              if (publishedRes.status !== 404) {
+                const publishedContent = await publishedRes.text()
+
+                if (publishedContent !== content) {
+                  setIsEdited(true)
+                } else {
+                  setIsEdited(false)
+                }
+              }
+            }
           } else {
             setEditorContent(defaultHTML)
             setPreviewContent(placeholderPreviewContent)
+            setIsEdited(true)
           }
         }
       } catch (err) {
         console.error('Failed to fetch HTML:', err)
         setEditorContent(defaultHTML)
+        setPreviewContent(placeholderPreviewContent)
       }
     }
 
@@ -175,7 +194,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
       <iframe
         className="hf wf"
         // TODO don't hard-code URL
-        // should be window.location.origin; all user
+        // should be window.location.origin all user
         // action to a /tmp should be to our own /tmp
         src={`http://localhost:8000/sys/tmp/${endpoint}`}
         style={{ border: 'none', borderRadius: '2.5px' }}
