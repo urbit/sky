@@ -3,10 +3,7 @@ interface TextHTMLProps {
 }
 import { useEffect, useRef } from 'react'
 
-
 export default function TextHTML({ url }: TextHTMLProps) {
-  if (url) {
-
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
   // on mount, track keyboard events inside iframe and send them to App.tsx
@@ -54,9 +51,7 @@ export default function TextHTML({ url }: TextHTMLProps) {
     }
   }, [])
 
-
-
-
+  if (url) {
     return (
       <div className="hf wf fr as jc">
         <iframe
