@@ -1,5 +1,4 @@
 import { Allotment } from 'allotment'
-import { WindowProps } from '../types/windows'
 import { get, findShipUrls } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
@@ -9,13 +8,20 @@ import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
-import ReactDOMServer from 'react-dom/server'
 import TextPlain from './renderers/TextPlain'
+
+export interface WindowProps {
+  id: number
+  path: string | null
+  setMaxWindow: React.Dispatch<React.SetStateAction<number>> | null
+  handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
+  handleDragStart: (event: React.DragEvent, id: number) => void
+  dragWindow: number
+}
 
 export default function Window({
   id,
   path,
-  setMaxWindow,
   handleDrop,
   handleDragStart,
   dragWindow,
@@ -42,7 +48,13 @@ export default function Window({
     'Urbit',
     'Public',
   ])
-  const { setActiveWindowID, setActiveWindowPath, delWindow } = useWindowStore()
+  const {
+    maxWindow,
+    setMaxWindow,
+    setActiveWindowID,
+    setActiveWindowPath,
+    delWindow,
+  } = useWindowStore()
 
   function handleWindowMouseEnter() {
     setActiveWindowID(id)
@@ -115,12 +127,12 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
-          return (
-            <TextHTML
-              content={await res.text()}
-              isLocal={path?.split('/')[0] === window.urbitID}
-            />
-          )
+          const urls = await findShipUrls(path || '~sampel/home')
+          if (urls) {
+            return <TextHTML url={urls.ship} />
+          }
+
+          return <div>{`No URLs found for ${path}`}</div>
         }
         case 'text/markdown': {
           console.log('Processing markdown file...')
@@ -269,7 +281,7 @@ export default function Window({
   }
 
   function handleXButtonClick(id: number) {
-    if (setMaxWindow) {
+    if (id === maxWindow) {
       setMaxWindow(0)
     } else {
       delWindow(id)
@@ -282,79 +294,25 @@ export default function Window({
     }
   }
 
+  // when this window's path changes, fetch from path
   useEffect(() => {
-    const idString = id.toString()
     const fetchContent = async () => {
-      if (setMaxWindow !== null) {
-        const content = sessionStorage.getItem(idString)
+      if (path === '') {
+        setWindowContent(defaultContent)
+      }
+      if (path) {
+        const content = await renderContent(path)
+        // TODO: Error message if content is null/undefined
         if (content) {
-          const parser = new DOMParser()
-          const doc = parser.parseFromString(content, 'text/html')
-          const iframe = doc.querySelector('iframe')
-          if (path === '') {
-            setWindowContent(defaultContent)
-          } else if (iframe) {
-            if (iframe.src) {
-              setWindowContent(
-                <iframe
-                  src={iframe.src}
-                  className="hf wf"
-                  style={{ border: 'none' }}
-                />
-              )
-            } else if (iframe.srcdoc) {
-              setWindowContent(
-                <TextHTML
-                  content={iframe.srcdoc}
-                  isLocal={
-                    path?.split('/')[0] === window.urbitID || path === ''
-                  }
-                />
-              )
-            }
-          } else if (
-            path &&
-            path !== '' &&
-            content === ReactDOMServer.renderToString(defaultContent)
-          ) {
-            const newContent = await renderContent(path)
-            if (newContent) {
-              setWindowContent(newContent)
-            }
-          } else {
-            setWindowContent(
-              <TextHTML
-                content={content}
-                isLocal={path?.split('/')[0] === window.urbitID || path === ''}
-              />
-            )
-          }
-        }
-      } else {
-        if (path === '') {
-          sessionStorage.setItem(
-            idString,
-            ReactDOMServer.renderToString(defaultContent)
-          )
-          setWindowContent(defaultContent)
-        }
-        if (path) {
-          const content = await renderContent(path)
-          if (content) {
-            // TODO: Error message if content is null/undefined
-            sessionStorage.setItem(
-              idString,
-              ReactDOMServer.renderToString(content)
-            )
-            setWindowContent(content)
-          }
+          setWindowContent(content)
         }
       }
     }
+
     fetchContent()
-    console.log('local?', path?.split('/')[0], window.urbitID)
   }, [path])
 
+  // update visibility options based on published state
   useEffect(() => {
     const options = ['Personal', 'Private', 'Urbit', 'Public']
     const filteredOptions = options.filter(item => item !== published)

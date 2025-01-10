@@ -1,10 +1,12 @@
 interface TextHTMLProps {
-  content: string
-  isLocal: boolean
+  url: string
 }
 import { useEffect, useRef } from 'react'
 
-export default function TextHTML({ content, isLocal }: TextHTMLProps) {
+
+export default function TextHTML({ url }: TextHTMLProps) {
+  if (url) {
+
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
   // on mount, track keyboard events inside iframe and send them to App.tsx
@@ -52,35 +54,15 @@ export default function TextHTML({ content, isLocal }: TextHTMLProps) {
     }
   }, [])
 
-  if (content) {
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(content, 'text/html')
 
-    if (isLocal) {
-      // TODO link to ../stlye/... files rather than public
-      // vite won't follow links to style dir in dev mode
-      const hollowLink = doc.createElement('link')
-      hollowLink.rel = 'stylesheet'
-      hollowLink.href = 'hollow.css'
 
-      const spineLink = doc.createElement('link')
-      spineLink.rel = 'stylesheet'
-      spineLink.href = 'spine.css'
-
-      const featherLink = doc.createElement('link')
-      featherLink.rel = 'stylesheet'
-      featherLink.href = 'feather.css'
-
-      doc.head.appendChild(spineLink)
-      doc.head.appendChild(featherLink)
-    }
 
     return (
       <div className="hf wf fr as jc">
         <iframe
           ref={iframeRef}
           className="hf wf"
-          srcDoc={new XMLSerializer().serializeToString(doc)}
+          src={url}
           style={{ border: 'none', borderRadius: '2.5px' }}
           sandbox="allow-scripts allow-same-origin"
         />
@@ -88,5 +70,9 @@ export default function TextHTML({ content, isLocal }: TextHTMLProps) {
     )
   }
 
-  return null
+  return (
+    <div>
+      <p>No URL to render</p>
+    </div>
+  )
 }

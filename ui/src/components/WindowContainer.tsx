@@ -1,8 +1,16 @@
 import { Allotment } from 'allotment'
-import { WindowContainerProps } from '../types/windows.ts'
 import { useRef, useCallback } from 'react'
 import Window from './Window.tsx'
 import useWindowStore from '../state/useWindowStore'
+
+export interface WindowContainerProps {
+  map: Map<number, string | null>
+  id: number
+  isVertical: boolean
+  handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
+  handleDragStart: (event: React.DragEvent, id: number) => void
+  dragWindow: number
+}
 
 export default function WindowContainer({
   map,
@@ -75,7 +83,6 @@ export default function WindowContainer({
         <Window
           id={id}
           path={map.get(id) ?? null}
-          setMaxWindow={null}
           handleDrop={handleDrop}
           handleDragStart={handleDragStart}
           dragWindow={dragWindow}

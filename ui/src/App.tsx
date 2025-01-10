@@ -12,15 +12,16 @@ import { useEffect, useState, useRef } from 'react'
 function App() {
   const {
     windowMap,
+    maxWindow,
     activeWindowID,
     addWindow,
     delWindow,
+    setMaxWindow,
     updateWindowPath,
     setActiveWindowID,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
-  const [maxWindow, setMaxWindow] = useState(0)
   const holdingKey = useRef(false)
 
   function enableWindows() {
@@ -120,22 +121,32 @@ function App() {
     }
   }
 
+  // listen for keydown events
   useEffect(() => {
+    console.log(
+      `path: ${activeWindowID ? windowMap.get(activeWindowID) : 'null'}`
+    )
+    console.log(`activeWindowID: ${activeWindowID}`)
+    console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey) {
         holdingKey.current = true
         handleSwap()
       }
+
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
         console.log('Pressed CTRL+N')
         event.preventDefault()
+
         if (activeWindowID !== null && maxWindow === 0) {
           addWindow(activeWindowID, '')
         }
       }
+
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
         console.log('Pressed CTRL+W')
         event.preventDefault()
+
         if (activeWindowID !== null && maxWindow === 0) {
           if (activeWindowID === 1) {
             updateWindowPath(activeWindowID, '')
@@ -145,15 +156,18 @@ function App() {
           }
         }
       }
+
       if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
         console.log('Pressed CTRL+M')
         event.preventDefault()
+
         if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
           const path = windowMap.get(activeWindowID) ?? null
+
           if (path !== null) {
             setMaxWindow(activeWindowID)
           }
-        } else if (maxWindow > 1) {
+        } else if (maxWindow !== 0) {
           setMaxWindow(0)
         }
       }
@@ -178,6 +192,7 @@ function App() {
       window.addEventListener('keyup', handleKeyUp, { capture: true })
       window.addEventListener('message', handleIframeMessage)
     }
+
     // Cleanup event listener when the component is unmounted
     return () => {
       window.removeEventListener('keydown', handleKeyDown, { capture: true })
@@ -185,12 +200,12 @@ function App() {
       window.removeEventListener('message', handleIframeMessage)
     }
   }, [
+    maxWindow,
     activeWindowID,
     delWindow,
     addWindow,
     updateWindowPath,
     setActiveWindowID,
-    maxWindow,
   ])
 
   // TODO handle real window.urbitID, not suitable for production
@@ -208,7 +223,7 @@ function App() {
         shoving the WindowContainer off the bottom of the screen
       */}
       <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
-        {maxWindow > 1 && (
+        {maxWindow !== 0 && (
           <div
             className="wf hf absolute p3"
             style={{ zIndex: 100, opacity: '98%' }}
@@ -216,7 +231,6 @@ function App() {
             <Window
               id={maxWindow}
               path={windowMap.get(maxWindow) ?? ''}
-              setMaxWindow={setMaxWindow}
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}
               dragWindow={dragWindow}

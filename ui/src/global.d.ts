@@ -1,6 +1,14 @@
 type React = import('react')
 
-// global.d.ts
+interface SigilProps {
+  point: string
+  size: string
+  detail: string
+  space: string
+  background: string
+  foreground: string
+}
+
 export {}
 
 declare global {
@@ -14,7 +22,7 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       'urbit-sigil': React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & import('./types/sigil').SigilProps,
+        React.HTMLAttributes<HTMLElement> & SigilProps,
         HTMLElement
       >
     }
