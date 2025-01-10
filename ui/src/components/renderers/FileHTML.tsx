@@ -118,8 +118,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
               }
             }
           } else {
-            setEditorContent(defaultHTML)
-            setPreviewContent(placeholderPreviewContent)
+            setEditorContent(html || defaultHTML)
             setIsEdited(true)
           }
         }
