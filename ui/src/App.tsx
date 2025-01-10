@@ -65,7 +65,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function() {
+        event.target.addEventListener('dragend', function () {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -121,8 +121,11 @@ function App() {
     }
   }
 
+  // listen for keydown events
   useEffect(() => {
-    console.log(`path: ${activeWindowID ? windowMap.get(activeWindowID) : 'null'}`)
+    console.log(
+      `path: ${activeWindowID ? windowMap.get(activeWindowID) : 'null'}`
+    )
     console.log(`activeWindowID: ${activeWindowID}`)
     console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -160,6 +163,7 @@ function App() {
 
         if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
           const path = windowMap.get(activeWindowID) ?? null
+
           if (path !== null) {
             setMaxWindow(activeWindowID)
           }
