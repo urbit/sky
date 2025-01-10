@@ -155,7 +155,9 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
         setEditorContent(content)
         setIsEdited(true)
         const formData = new FormData()
-        const file = new File([content], `${pathArray.slice(-1)}.html`, { type: 'text/html' })
+        const file = new File([content], `${pathArray.slice(-1)}.html`, {
+          type: 'text/html',
+        })
         formData.append('file', file)
 
         try {
@@ -175,7 +177,9 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   const handlePublish = async () => {
     if (activeWindowPath) {
       const formData = new FormData()
-      const file = new File([editorContent], `${pathArray.slice(-1)}.html`, { type: 'text/html' })
+      const file = new File([editorContent], `${pathArray.slice(-1)}.html`, {
+        type: 'text/html',
+      })
       formData.append('file', file)
 
       try {
