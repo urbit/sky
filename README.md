@@ -25,3 +25,10 @@ Run `server.py` (which is hard-coded to run on `localhost:8000`) to run the mock
 cd piraeus/athens
 python server.py
 ```
+
+Copy in the `/namespace` folder to `/athens` to add some default files like stylesheets, a homescreen, etc.
+
+```
+cd piraeus
+cp -r namespace athens
+```
