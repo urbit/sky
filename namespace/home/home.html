@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Screen</title>
+    <link rel="stylesheet" href="/sys/css/hollow">
+    <link rel="stylesheet" href="/sys/css/spine">
+    <link rel="stylesheet" href="/sys/css/feather">
+</head>
+<body class="p4 b1">
+    <div class="hf wf fr ac jc b1">
+        <div class="hf fc ac js">
+            <!-- path bar -->
+            <div class="wf fr ac jc">
+                <input type="text" placeholder="~sampel/home" />
+            </div>
+            <!-- tiles -->
+            <div id="app-container" class="wf fr as js frw" style="width: 500px; flex-wrap: wrap; margin-top: 8px;">
+                <!-- App tiles will be generated here -->
+            </div>
+        </div>
+    </div>
+    <script type="module">
+    import { get } from '/sys/js/api'
+
+    async function makeTiles() {
+        const res = await get('~sampel/app-data')
+        const data = await res.json()
+
+        const appContainer = document.getElementById('app-container')
+
+        for (const tileName in data) {
+            const tile = document.createElement('a')
+            tile.href = data[tileName]
+            tile.textContent = tileName
+            tile.style.cssText = 'height: 100px; width: 100px; margin-right: 8px; margin-bottom: 8px; text-decoration: none;'
+            tile.className = 'b2 br1 p2 fc as je'
+            appContainer.appendChild(tile)
+        }
+    }
+
+    makeTiles()
+</script>
+</body>
+</html>
