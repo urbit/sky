@@ -13,7 +13,7 @@ import TextPlain from './renderers/TextPlain'
 export interface WindowProps {
   id: number
   path: string | null
-  setMaxWindow: React.Dispatch<React.SetStateAction<number>> | null
+  setMaxWindow: (id: number) => void
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
   handleDragStart: (event: React.DragEvent, id: number) => void
   dragWindow: number
@@ -156,11 +156,8 @@ export default function Window({
         }
         case 'application/xml': {
           console.log('Processing XML file...')
-          return (
-            <>
-              <p>XML content is not currently displayed.</p>
-            </>
-          )
+          const txt = await res.text()
+          return <TextPlain text={txt} />
         }
         case 'application/pdf': {
           console.log('Processing PDF document...')
