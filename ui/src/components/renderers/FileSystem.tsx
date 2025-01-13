@@ -42,6 +42,10 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       console.log('Rendering application/json')
       return <FilePlain text={await res.text()} />
     }
+    case 'application/xml': {
+      console.log('Rendering application/xml')
+      return <FilePlain text={await res.text()} />
+    }
     case 'text/markdown': {
       console.log('Rendering text/markdown')
       const text = await res.text()
@@ -150,7 +154,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload file</button>
       <input
         type="file"
-        accept=".css, .html, .js, .json, .md, .pdf, .png, .txt"
+        accept=".css, .html, .js, .json, .md, .pdf, .png, .txt, .xml"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />

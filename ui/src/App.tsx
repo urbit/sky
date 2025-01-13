@@ -225,6 +225,7 @@ function App() {
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}
               dragWindow={dragWindow}
+              setMaxWindow={setMaxWindow}
             />
           </div>
         )}
