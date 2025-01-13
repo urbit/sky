@@ -6,48 +6,26 @@ import { useEffect, useRef } from 'react'
 export default function TextHTML({ url }: TextHTMLProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
-  // on mount, track keyboard events inside iframe and send them to App.tsx
-
   useEffect(() => {
     const iframe = iframeRef?.current as HTMLIFrameElement
+  
+    // Setting blur on the iframe every 30 seconds for demonstration purposes only
+    const setBlur = () => {
+      iframe.blur();
+      console.log('set blur on ', iframe)
+    };
 
-    const addIframeListener = () => {
-      const iframeDocument =
-        iframe?.contentDocument || iframe?.contentWindow?.document
-
-      if (iframeDocument) {
-        iframeDocument.addEventListener('keydown', e => {
-          // sending keydown event up to parent element and setting iframe focus to blur
-          if (e.key === 'Meta' || e.key === 'Control') {
-            iframe?.blur()
-            window.parent.postMessage(
-              {
-                eventType: 'keydown',
-                key: e.key,
-                code: e.code,
-                metaKey: e.metaKey,
-                ctrlKey: e.ctrlKey,
-              },
-              '*'
-            )
-          }
-        })
-      } else {
-        // Retry after a small delay if iframe is not found yet
-        setTimeout(addIframeListener, 100)
-      }
-    }
+    const interval = setInterval(setBlur, 30000);
 
     if (iframe) {
       iframe.onload = () => {
-        addIframeListener()
+        console.log('iframe loaded')
       }
+
     }
 
     return () => {
-      iframe?.removeEventListener('keydown', () => {
-        console.log('key up')
-      })
+      clearInterval(interval);
     }
   }, [])
 
@@ -59,7 +37,8 @@ export default function TextHTML({ url }: TextHTMLProps) {
           className="hf wf"
           src={url}
           style={{ border: 'none', borderRadius: '2.5px' }}
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts"
+          title="iframe"
         />
       </div>
     )

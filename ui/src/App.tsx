@@ -129,6 +129,7 @@ function App() {
     console.log(`activeWindowID: ${activeWindowID}`)
     console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
+      console.log('event', event)
       if (event.metaKey || event.ctrlKey) {
         holdingKey.current = true
         handleSwap()
@@ -136,7 +137,9 @@ function App() {
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
         console.log('Pressed CTRL+N')
+        if(event.preventDefault){
         event.preventDefault()
+        }
 
         if (activeWindowID !== null && maxWindow === 0) {
           addWindow(activeWindowID, '')
@@ -145,7 +148,9 @@ function App() {
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
         console.log('Pressed CTRL+W')
-        event.preventDefault()
+        if(event.preventDefault){
+          event.preventDefault()
+        }
 
         if (activeWindowID !== null && maxWindow === 0) {
           if (activeWindowID === 1) {
@@ -159,7 +164,9 @@ function App() {
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
         console.log('Pressed CTRL+M')
-        event.preventDefault()
+        if(event.preventDefault){
+          event.preventDefault()
+          }
 
         if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
           const path = windowMap.get(activeWindowID) ?? null
@@ -180,9 +187,12 @@ function App() {
       }
     }
 
+
+    // Handles messages from the iframe, triggered by a keydown event, 
+    // only if iframe contains a script that posts messages to the parent
     const handleIframeMessage = (event: MessageEvent) => {
       if (event.data.eventType === 'keydown') {
-        console.log(event.data)
+        console.log('iframe mesage', event.data)
         handleKeyDown(event.data)
       }
     }
