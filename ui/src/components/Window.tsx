@@ -13,7 +13,7 @@ import TextPlain from './renderers/TextPlain'
 export interface WindowProps {
   id: number
   path: string | null
-  setMaxWindow: React.Dispatch<React.SetStateAction<number>> | null
+  setMaxWindow: (id: number) => void
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
   handleDragStart: (event: React.DragEvent, id: number) => void
   dragWindow: number

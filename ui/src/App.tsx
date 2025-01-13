@@ -1,8 +1,4 @@
-import './style/hollow.css'
-import './style/spine.css'
-import './style/feather.css'
 import 'allotment/dist/style.css'
-import './style/wind.css'
 import WindowContainer from './components/WindowContainer.tsx'
 import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
@@ -225,6 +221,7 @@ function App() {
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}
               dragWindow={dragWindow}
+              setMaxWindow={setMaxWindow}
             />
           </div>
         )}
