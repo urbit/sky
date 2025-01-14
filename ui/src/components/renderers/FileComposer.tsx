@@ -162,6 +162,7 @@ export default function FileComposer(): JSX.Element {
   useEffect(() => {
     const detectedLanguage = detectLanguage(editorContent)
     setLanguage(detectedLanguage)
+    console.log('Detected language:', detectedLanguage)
   }, [editorContent])
 
   // Set dark/light theme based on system preference
