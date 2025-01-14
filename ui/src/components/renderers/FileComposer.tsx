@@ -26,14 +26,14 @@ const editorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   mouseWheelZoom: true,
 }
 
-const textTypes = {
+const languageToMimeType = {
   html: 'text/html',
   css: 'text/css',
-  js: 'text/javascript',
+  javascript: 'text/javascript',
   json: 'application/json',
   xml: 'application/xml',
-  md: 'text/markdown',
-  txt: 'text/plain',
+  markdown: 'text/markdown',
+  plaintext: 'text/plain',
 }
 
 export default function FileComposer(): JSX.Element {
@@ -138,7 +138,7 @@ export default function FileComposer(): JSX.Element {
     // XML detection - check for XML declaration or typical XML structure
     if (
       trimmedContent.startsWith('<?xml') ||
-      (trimmedContent.includes('</') && />$/.test(trimmedContent))
+      /<\?xml|<[a-zA-Z0-9]+(\s+[^>]*)?>(.*?)<\/[a-zA-Z0-9]+>/s.test(trimmedContent)
     ) {
       return 'xml'
     }
@@ -188,10 +188,11 @@ export default function FileComposer(): JSX.Element {
         setIsEdited(true)
         const formData = new FormData()
         const detectedLanguage = detectLanguage(value)
-        const extension =
-          Object.keys(textTypes).find(key => detectedLanguage.includes(key)) ||
-          'txt'
-        const mimeType = textTypes[extension as keyof typeof textTypes]
+        const mimeType = languageToMimeType[detectedLanguage as keyof typeof languageToMimeType] || 'text/plain'
+        const extension = detectedLanguage === 'plaintext' ? 'txt' :
+                         detectedLanguage === 'javascript' ? 'js' :
+                         detectedLanguage === 'markdown' ? 'md' :
+                         detectedLanguage
         const file = new File([value], `${pathArray.slice(-1)}.${extension}`, {
           type: mimeType,
         })
@@ -219,10 +220,11 @@ export default function FileComposer(): JSX.Element {
     if (activeWindowPath && editorContent) {
       const formData = new FormData()
       const detectedLanguage = detectLanguage(editorContent)
-      const extension =
-        Object.keys(textTypes).find(key => detectedLanguage.includes(key)) ||
-        'txt'
-      const mimeType = textTypes[extension as keyof typeof textTypes]
+      const mimeType = languageToMimeType[detectedLanguage as keyof typeof languageToMimeType] || 'text/plain'
+      const extension = detectedLanguage === 'plaintext' ? 'txt' :
+                       detectedLanguage === 'javascript' ? 'js' :
+                       detectedLanguage === 'markdown' ? 'md' :
+                       detectedLanguage
       const file = new File(
         [editorContent],
         `${pathArray.slice(-1)}.${extension}`,
