@@ -30,7 +30,7 @@ const editorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   mouseWheelZoom: true,
 }
 
-const mimeTypes = {
+const textTypes = {
   html: 'text/html',
   css: 'text/css',
   js: 'text/javascript',
@@ -155,9 +155,9 @@ export default function FileComposer({
         const formData = new FormData()
         const detectedLanguage = detectLanguage(value)
         const extension =
-          Object.keys(mimeTypes).find(key => detectedLanguage.includes(key)) ||
+          Object.keys(textTypes).find(key => detectedLanguage.includes(key)) ||
           'txt'
-        const mimeType = mimeTypes[extension as keyof typeof mimeTypes]
+        const mimeType = textTypes[extension as keyof typeof textTypes]
         const file = new File([value], `${pathArray.slice(-1)}.${extension}`, {
           type: mimeType,
         })
@@ -186,9 +186,9 @@ export default function FileComposer({
       const formData = new FormData()
       const detectedLanguage = detectLanguage(editorContent)
       const extension =
-        Object.keys(mimeTypes).find(key => detectedLanguage.includes(key)) ||
+        Object.keys(textTypes).find(key => detectedLanguage.includes(key)) ||
         'txt'
-      const mimeType = mimeTypes[extension as keyof typeof mimeTypes]
+      const mimeType = textTypes[extension as keyof typeof textTypes]
       const file = new File(
         [editorContent],
         `${pathArray.slice(-1)}.${extension}`,
