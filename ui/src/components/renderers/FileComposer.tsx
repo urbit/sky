@@ -166,6 +166,13 @@ export default function FileComposer({
         try {
           await put(tempPath, formData)
           console.log('Upload successful')
+          if (showPreview && language === 'html') {
+            // Force iframe reload by updating its key
+            const iframe = document.querySelector('iframe')
+            if (iframe) {
+              iframe.src = iframe.src
+            }
+          }
         } catch (err) {
           console.error('Upload failed:', err)
         }
