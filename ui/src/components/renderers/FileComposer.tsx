@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
-import { put } from '../../api/sky'
+import { get, put } from '../../api/sky'
 import { emmetHTML } from 'emmet-monaco-es'
 
 const editorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
@@ -51,6 +51,45 @@ export default function FileComposer(): JSX.Element {
   const tempPath = `${ship}/sys/tmp/${endpoint}`
 
   const [editorContent, setEditorContent] = useState('')
+
+  // On mount, fetch content from /tmp and check if it differs from published content
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        // First check temp path for any saved work
+        const tempRes = await get(tempPath)
+
+        if (tempRes) {
+          if (tempRes.status !== 404) {
+            const content = await tempRes.text()
+            setEditorContent(content)
+            
+            // If we found content in /tmp, check if it differs from published version
+            if (activeWindowPath) {
+              const publishedRes = await get(activeWindowPath)
+
+              if (publishedRes && publishedRes.status !== 404) {
+                const publishedContent = await publishedRes.text()
+                // If content in /tmp differs from published, mark as edited
+                if (publishedContent !== content) {
+                  setIsEdited(true)
+                }
+              } else {
+                // If no published version exists but we have temp content, mark as edited
+                setIsEdited(true)
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch content:', err)
+      }
+    }
+
+    if (activeWindowPath) {
+      fetchContent()
+    }
+  }, [activeWindowPath])
 
   // Enhanced pattern-based file type detection
   const detectLanguage = (content: string): string => {
