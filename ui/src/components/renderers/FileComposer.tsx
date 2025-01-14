@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
-import { get, put } from '../../api/sky'
+import { put } from '../../api/sky'
 import { emmetHTML } from 'emmet-monaco-es'
 
 interface FileComposerProps {
@@ -40,7 +40,9 @@ const mimeTypes = {
   txt: 'text/plain',
 }
 
-export default function FileComposer({ initialContent }: FileComposerProps): JSX.Element {
+export default function FileComposer({
+  initialContent,
+}: FileComposerProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
   const [language, setLanguage] = useState('plaintext')
   const [isEdited, setIsEdited] = useState(false)
@@ -55,33 +57,70 @@ export default function FileComposer({ initialContent }: FileComposerProps): JSX
 
   const [editorContent, setEditorContent] = useState(initialContent || '')
 
-  // Detect language from content
-  const detectLanguage = (content: string) => {
-    // Check for HTML-like content
-    if (content.trim().startsWith('<!DOCTYPE html>') || content.trim().startsWith('<html')) {
+  // Enhanced pattern-based file type detection
+  const detectLanguage = (content: string): string => {
+    const trimmedContent = content.trim()
+
+    // HTML detection - check for doctype or common HTML tags
+    if (
+      trimmedContent.startsWith('<!DOCTYPE html>') ||
+      trimmedContent.startsWith('<html') ||
+      /<(div|span|p|h[1-6]|body|head|link|meta|script|style)\b/.test(
+        trimmedContent
+      )
+    ) {
       return 'html'
     }
-    // Check for CSS-like content
-    if (content.includes('{') && /[.#][\w-]+\s*{/.test(content)) {
+
+    // CSS detection - look for typical CSS patterns
+    if (
+      (trimmedContent.includes('{') && /[.#][\w-]+\s*{/.test(trimmedContent)) ||
+      /@(media|keyframes|import|charset|font-face)\b/.test(trimmedContent)
+    ) {
       return 'css'
     }
-    // Check for JavaScript-like content
-    if (content.includes('function') || content.includes('=>') || content.includes('const ')) {
+
+    // JavaScript detection - check for typical JS patterns
+    if (
+      /(function|=>|const |let |var |import |export |class\s+\w+)/.test(
+        trimmedContent
+      ) ||
+      /\b(if|for|while|return|async|await)\b/.test(trimmedContent)
+    ) {
       return 'javascript'
     }
-    // Check for JSON-like content
+
+    // JSON detection
     try {
-      JSON.parse(content)
-      return 'json'
-    } catch {}
-    // Check for XML-like content
-    if (content.trim().startsWith('<?xml') || (content.includes('<') && content.includes('/>'))) {
+      JSON.parse(trimmedContent)
+      // Additional check to avoid false positives with plain numbers or booleans
+      return trimmedContent.startsWith('{') || trimmedContent.startsWith('[')
+        ? 'json'
+        : 'plaintext'
+    } catch {
+      // Not valid JSON, continue checking other formats
+    }
+
+    // XML detection - check for XML declaration or typical XML structure
+    if (
+      trimmedContent.startsWith('<?xml') ||
+      (trimmedContent.includes('</') && />$/.test(trimmedContent))
+    ) {
       return 'xml'
     }
-    // Check for Markdown-like content
-    if (content.includes('#') && /^#+ /.test(content)) {
+
+    // Markdown detection - look for common Markdown syntax
+    if (
+      /^#+ /.test(trimmedContent) || // Headers
+      /\[.+\]\(.+\)/.test(trimmedContent) || // Links
+      /(\*\*|__)[\w\s]+(\*\*|__)/.test(trimmedContent) || // Bold text
+      /^[-*+] /.test(trimmedContent) || // List items
+      /^>\s/.test(trimmedContent)
+    ) {
+      // Blockquotes
       return 'markdown'
     }
+
     return 'plaintext'
   }
 
@@ -114,9 +153,9 @@ export default function FileComposer({ initialContent }: FileComposerProps): JSX
         setIsEdited(true)
         const formData = new FormData()
         const detectedLanguage = detectLanguage(value)
-        const extension = Object.keys(mimeTypes).find(key => 
-          detectedLanguage.includes(key)
-        ) || 'txt'
+        const extension =
+          Object.keys(mimeTypes).find(key => detectedLanguage.includes(key)) ||
+          'txt'
         const mimeType = mimeTypes[extension as keyof typeof mimeTypes]
         const file = new File([value], `${pathArray.slice(-1)}.${extension}`, {
           type: mimeType,
@@ -138,13 +177,17 @@ export default function FileComposer({ initialContent }: FileComposerProps): JSX
     if (activeWindowPath && editorContent) {
       const formData = new FormData()
       const detectedLanguage = detectLanguage(editorContent)
-      const extension = Object.keys(mimeTypes).find(key => 
-        detectedLanguage.includes(key)
-      ) || 'txt'
+      const extension =
+        Object.keys(mimeTypes).find(key => detectedLanguage.includes(key)) ||
+        'txt'
       const mimeType = mimeTypes[extension as keyof typeof mimeTypes]
-      const file = new File([editorContent], `${pathArray.slice(-1)}.${extension}`, {
-        type: mimeType,
-      })
+      const file = new File(
+        [editorContent],
+        `${pathArray.slice(-1)}.${extension}`,
+        {
+          type: mimeType,
+        }
+      )
       formData.append('file', file)
 
       try {
@@ -161,10 +204,7 @@ export default function FileComposer({ initialContent }: FileComposerProps): JSX
     <div className="hf wf">
       <div className="fc as js hf wf">
         <div className="p2 fr ac jb">
-          <button
-            onClick={handlePublish}
-            disabled={!isEdited}
-          >
+          <button onClick={handlePublish} disabled={!isEdited}>
             Publish
           </button>
         </div>

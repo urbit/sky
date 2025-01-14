@@ -3,6 +3,7 @@ import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
+import FileHTML from './FileHTML'
 import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
 import FilePlain from './FilePlain'
@@ -37,7 +38,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       return <FileCSS css={content} />
     }
     case 'text/javascript': {
-      console.log('Rendering text/plain')
+      console.log('Rendering text/javascript')
       return <FilePlain text={await res.text()} />
     }
     case 'application/json': {

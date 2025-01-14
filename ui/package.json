@@ -16,6 +16,7 @@
     "@urbit/sigil-js": "^2.2.0",
     "allotment": "^1.20.2",
     "emmet-monaco-es": "^5.5.0",
+    "lodash": "^4.17.21",
     "monaco-editor": "^0.52.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
