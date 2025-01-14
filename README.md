@@ -26,9 +26,9 @@ cd piraeus/athens
 python server.py
 ```
 
-Copy in the `/namespace` folder to `/athens` to add some default files like stylesheets, a homescreen, etc.
+Use `init.js` to PUT the contents of the `/namespace` folder into the namespace. This folder has the default content that will be pre-populated in a user's namespace when they open the app for the first time. Note that this uses the API in `/namespace/sys/js`; just copying the `/namespace` folder into `/athens` won't work.
 
 ```
 cd piraeus
-cp -r namespace athens
+node init.js
 ```
