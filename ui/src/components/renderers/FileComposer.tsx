@@ -206,20 +206,17 @@ export default function FileComposer({
       <div className="fc as js hf wf">
         <div className="p2 fr ac jb">
           <div className="fr ac">
-            <span className="f4 mr2">Detected: {language}</span>
-          </div>
-          <div className="fr ac">
+            <button onClick={handlePublish} disabled={!isEdited}>
+              Publish
+            </button>
             {language === 'html' && (
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                style={{ marginRight: '10px' }}
+                style={{ marginLeft: '10px' }}
               >
                 {showPreview ? 'Hide Preview' : 'Show Preview'}
               </button>
             )}
-            <button onClick={handlePublish} disabled={!isEdited}>
-              Publish
-            </button>
           </div>
         </div>
         <div className="hf wf fr">
