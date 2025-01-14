@@ -284,6 +284,7 @@ export default function FileComposer(): JSX.Element {
             <div className="hf wf p2">
               <iframe
                 className="hf wf"
+                // TODO remove hard-coded domain
                 src={`http://localhost:8000/sys/tmp/${endpoint}`}
                 style={{ border: 'none', borderRadius: '2.5px' }}
                 sandbox="allow-scripts"
