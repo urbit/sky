@@ -86,7 +86,6 @@ export default function WindowContainer({
           handleDrop={handleDrop}
           handleDragStart={handleDragStart}
           dragWindow={dragWindow}
-          setMaxWindow={setMaxWindow}
         />
       ) : (
         // return a window container
