@@ -20,7 +20,7 @@ export default function WindowContainer({
   handleDragStart,
   dragWindow,
 }: WindowContainerProps): JSX.Element {
-  const { delWindow, setMaxWindow } = useWindowStore()
+  const { delWindow } = useWindowStore()
   const lastChange = useRef<number[]>([])
 
   const childId = id * 2
