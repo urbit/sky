@@ -3,7 +3,7 @@ import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
-import FileHTML from './FileHTML'
+import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
 import FilePlain from './FilePlain'
 import FileCSS from './FileCSS'
@@ -80,8 +80,8 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     if (input) (input as HTMLInputElement).click()
   }
 
-  function handleHTMLClick() {
-    setFileViewerContent(<FileHTML html="" />)
+  function handleComposerClick() {
+    setFileViewerContent(<FileComposer />)
   }
 
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,7 +152,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const createFileMenu = (
     <div className="fc ac jc hf wf">
-      <button onClick={handleHTMLClick}>Write HTML</button>
+      <button onClick={handleComposerClick}>Write something</button>
       <button onClick={handleUploadClick}>Upload file</button>
       <input
         type="file"
