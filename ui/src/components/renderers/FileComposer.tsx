@@ -6,10 +6,6 @@ import { debounce } from 'lodash'
 import { put } from '../../api/sky'
 import { emmetHTML } from 'emmet-monaco-es'
 
-interface FileComposerProps {
-  initialContent?: string
-}
-
 const editorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
   automaticLayout: true,
@@ -40,9 +36,7 @@ const textTypes = {
   txt: 'text/plain',
 }
 
-export default function FileComposer({
-  initialContent,
-}: FileComposerProps): JSX.Element {
+export default function FileComposer(): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
   const [language, setLanguage] = useState('plaintext')
   const [isEdited, setIsEdited] = useState(false)
@@ -56,7 +50,7 @@ export default function FileComposer({
   const endpoint = pathArray.slice(1).join('/')
   const tempPath = `${ship}/sys/tmp/${endpoint}`
 
-  const [editorContent, setEditorContent] = useState(initialContent || '')
+  const [editorContent, setEditorContent] = useState('')
 
   // Enhanced pattern-based file type detection
   const detectLanguage = (content: string): string => {
