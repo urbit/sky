@@ -6,6 +6,7 @@ import FileMarkdown from './FileMarkdown'
 import FileHTML from './FileHTML'
 import FilePDF from './FilePDF'
 import FilePlain from './FilePlain'
+import FileCSS from './FileCSS'
 
 interface FileSystemProps {
   id: number
@@ -31,8 +32,9 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       return <FileHTML html={html} />
     }
     case 'text/css': {
-      console.log('Rendering text/plain')
-      return <FilePlain text={await res.text()} />
+      console.log('Rendering text/css')
+      const content = await res.text()
+      return <FileCSS css={content} />
     }
     case 'text/javascript': {
       console.log('Rendering text/plain')

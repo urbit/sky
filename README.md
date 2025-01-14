@@ -25,3 +25,10 @@ Run `server.py` (which is hard-coded to run on `localhost:8000`) to run the mock
 cd piraeus/athens
 python server.py
 ```
+
+Use `init.js` to PUT the contents of the `/namespace` folder into the namespace. This folder has the default content that will be pre-populated in a user's namespace when they open the app for the first time. Note that this uses the API in `/namespace/sys/js`; just copying the `/namespace` folder into `/athens` won't work.
+
+```
+cd piraeus
+node init.js
+```
