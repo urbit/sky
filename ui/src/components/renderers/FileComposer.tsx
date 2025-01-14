@@ -271,13 +271,13 @@ export default function FileComposer(): JSX.Element {
           >
             <Editor
               height="100%"
-              defaultLanguage="plaintext"
+              defaultLanguage="html"
               language={language}
               value={editorContent}
               options={editorConfig}
               theme={theme}
               onChange={handleEditorChange}
-              beforeMount={language === 'html' ? emmetHTML : undefined}
+              beforeMount={emmetHTML}
             />
           </div>
           {showPreview && language === 'html' && (
