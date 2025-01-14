@@ -17,6 +17,9 @@ function App() {
     addWindow,
     delWindow,
     setMaxWindow,
+    setPathBarView,
+    removePathBarView,
+    inPathBarView,
     updateWindowPath,
     setActiveWindowID,
   } = useWindowStore()
@@ -174,16 +177,19 @@ function App() {
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
         console.log('Pressed CTRL+K')
+
         event.preventDefault()
 
-        if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
+        if (activeWindowID !== null) {
           const path = windowMap.get(activeWindowID) ?? null
 
-          if (path !== null) {
-            setMaxWindow(activeWindowID)
+          if (path !== null && path !== '') {
+            if (inPathBarView(activeWindowID)) {
+              removePathBarView(activeWindowID)
+            } else {
+              setPathBarView(activeWindowID)
+            }
           }
-        } else if (maxWindow !== 0) {
-          setMaxWindow(0)
         }
       }
     }
@@ -232,7 +238,7 @@ function App() {
         {maxWindow !== 0 && (
           <div
             className="wf hf absolute p3"
-            style={{ zIndex: 100, opacity: '98%'}}
+            style={{ zIndex: 100, opacity: '98%' }}
           >
             <Window
               id={maxWindow}

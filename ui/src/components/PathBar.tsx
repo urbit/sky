@@ -10,7 +10,8 @@ export default function PathBar({
   path: string | null
 }) {
   const [inputValue, setInputValue] = useState('')
-  const { updateWindowPath } = useWindowStore()
+  const { updateWindowPath, inPathBarView, removePathBarView } =
+    useWindowStore()
 
   useEffect(() => {
     setInputValue(path || '')
@@ -47,8 +48,11 @@ export default function PathBar({
   // TODO if first path segment is azimuth point, convert to @p
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-
     if (isValidPath(inputValue)) {
+      if (inPathBarView(id)) {
+        removePathBarView(id)
+      }
+
       updateWindowPath(id, inputValue)
     }
   }
