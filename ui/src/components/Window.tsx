@@ -320,10 +320,18 @@ export default function Window({
     <Allotment>
       <Allotment.Pane visible key={id} className="wf hf fr">
         <div
-          className="hf wf fc ac jc"
+          className="hf wf fc ac jc relative"
           style={{ padding: '5px', position: 'relative' }}
           onMouseEnter={handleWindowMouseEnter}
         >
+          <div
+            className="wf hf absolute p3"
+            style={{ zIndex: 99, opacity: '90%', background: 'var(--b1)'}}
+          >
+            <div className="hf wf p2 fc ac jc">
+              <PathBar id={id} path={path} />
+            </div>
+          </div>
           <div
             id={id.toString()}
             draggable={dragWindow === id ? true : false}

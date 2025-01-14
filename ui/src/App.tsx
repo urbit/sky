@@ -171,6 +171,21 @@ function App() {
           setMaxWindow(0)
         }
       }
+
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        console.log('Pressed CTRL+K')
+        event.preventDefault()
+
+        if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
+          const path = windowMap.get(activeWindowID) ?? null
+
+          if (path !== null) {
+            setMaxWindow(activeWindowID)
+          }
+        } else if (maxWindow !== 0) {
+          setMaxWindow(0)
+        }
+      }
     }
 
     const handleKeyUp = (event: KeyboardEvent) => {
@@ -217,7 +232,7 @@ function App() {
         {maxWindow !== 0 && (
           <div
             className="wf hf absolute p3"
-            style={{ zIndex: 100, opacity: '98%' }}
+            style={{ zIndex: 100, opacity: '98%'}}
           >
             <Window
               id={maxWindow}
