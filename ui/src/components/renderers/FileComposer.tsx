@@ -46,6 +46,7 @@ export default function FileComposer({
   const [theme, setTheme] = useState('vs-light')
   const [language, setLanguage] = useState('plaintext')
   const [isEdited, setIsEdited] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
   const { activeWindowPath } = useWindowStore()
 
   const pathArray = activeWindowPath
@@ -204,12 +205,30 @@ export default function FileComposer({
     <div className="hf wf">
       <div className="fc as js hf wf">
         <div className="p2 fr ac jb">
-          <button onClick={handlePublish} disabled={!isEdited}>
-            Publish
-          </button>
+          <div className="fr ac">
+            <span className="f4 mr2">Detected: {language}</span>
+          </div>
+          <div className="fr ac">
+            {language === 'html' && (
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                style={{ marginRight: '10px' }}
+              >
+                {showPreview ? 'Hide Preview' : 'Show Preview'}
+              </button>
+            )}
+            <button onClick={handlePublish} disabled={!isEdited}>
+              Publish
+            </button>
+          </div>
         </div>
         <div className="hf wf fr">
-          <div className="hf p2 wf">
+          <div
+            className="hf p2"
+            style={{
+              width: showPreview && language === 'html' ? '50%' : '100%',
+            }}
+          >
             <Editor
               height="100%"
               defaultLanguage="plaintext"
@@ -221,6 +240,16 @@ export default function FileComposer({
               beforeMount={language === 'html' ? emmetHTML : undefined}
             />
           </div>
+          {showPreview && language === 'html' && (
+            <div className="hf wf p2">
+              <iframe
+                className="hf wf"
+                src={`http://localhost:8000/sys/tmp/${endpoint}`}
+                style={{ border: 'none', borderRadius: '2.5px' }}
+                sandbox="allow-scripts"
+              ></iframe>
+            </div>
+          )}
         </div>
       </div>
     </div>
