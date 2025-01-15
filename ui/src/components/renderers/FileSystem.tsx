@@ -153,8 +153,8 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const createFileMenu = (
     <div className="fc ac jc hf wf">
-      <button onClick={handleComposerClick}>Write something</button>
-      <button onClick={handleUploadClick}>Upload file</button>
+      <button style={{ marginBottom: '10px' }} onClick={handleComposerClick}>Write something</button>
+      <button onClick={handleUploadClick}>Upload a file</button>
       <input
         type="file"
         accept=".css, .html, .js, .json, .md, .pdf, .png, .txt, .xml"
