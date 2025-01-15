@@ -12,7 +12,7 @@ import TextPlain from './renderers/TextPlain'
 
 export interface WindowProps {
   id: number
-  path: string | null
+  path: string 
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
   handleDragStart: (event: React.DragEvent, id: number) => void
   dragWindow: number
@@ -58,7 +58,7 @@ export default function Window({
 
   function handleWindowMouseEnter() {
     setActiveWindowID(id)
-    setActiveWindowPath(path ?? `${window.ship || window.urbitID}/home`)
+    setActiveWindowPath(path)
   }
 
   const notRecognizedContent = (
