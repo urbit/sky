@@ -177,7 +177,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
   },
 
   // track active window
-  setActiveWindowID: (id: number | null) => set({ activeWindowID: id }),
+  setActiveWindowID: (id: number) => set({ activeWindowID: id }),
 
   // track active window's path
   setActiveWindowPath: (path: string) => set({ activeWindowPath: path }),
