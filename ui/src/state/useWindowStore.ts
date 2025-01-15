@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import WindowState from './windowState'
 
-export const defaultPath = '~sampel/home'
+const defaultPath= `~sampel/home`
 const defaultMap = new Map<number, string>([[1, defaultPath]])
 
 const useWindowStore = create<WindowState>((set, get) => ({
@@ -17,7 +17,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
     const windowMap = get().windowMap
     const parentPath = windowMap.get(parentId) ?? defaultPath
 
-    // When splitting a window, the parent becomes a container window with the default path
+    // When splitting a window, the parent becomes a container window
     windowMap.set(parentId * 2, parentPath)
     windowMap.set(parentId * 2 + 1, path)
     windowMap.set(parentId, defaultPath)

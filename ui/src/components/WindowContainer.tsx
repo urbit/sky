@@ -2,7 +2,6 @@ import { Allotment } from 'allotment'
 import { useRef, useCallback } from 'react'
 import Window from './Window.tsx'
 import useWindowStore from '../state/useWindowStore'
-import { defaultPath } from '../state/useWindowStore'
 
 export interface WindowContainerProps {
   map: Map<number, string> | undefined
@@ -85,7 +84,7 @@ export default function WindowContainer({
         // return a window
         <Window
           id={id}
-          path={map.get(id) ?? defaultPath}
+          path={map.get(id) ?? `${window.ship || window.urbitID}/home`}
           handleDrop={handleDrop}
           handleDragStart={handleDragStart}
           dragWindow={dragWindow}
