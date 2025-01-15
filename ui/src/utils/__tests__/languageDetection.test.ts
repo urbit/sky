@@ -81,4 +81,95 @@ describe('detectLanguage', () => {
   it('should handle empty strings', () => {
     expect(detectLanguage('')).toBe('plaintext')
   })
+
+  // Additional Edge Cases
+  describe('HTML vs XML edge cases', () => {
+    it('should detect HTML even with XML-like custom elements', () => {
+      const content = '<custom-element><div>This is HTML</div></custom-element>'
+      expect(detectLanguage(content)).toBe('html')
+    })
+
+    it('should detect XML when using namespaces', () => {
+      const content = '<ns:root xmlns:ns="http://example.com"><ns:child>Data</ns:child></ns:root>'
+      expect(detectLanguage(content)).toBe('xml')
+    })
+
+    it('should detect HTML with SVG content', () => {
+      const content = '<div><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/></svg></div>'
+      expect(detectLanguage(content)).toBe('html')
+    })
+  })
+
+  describe('JavaScript vs JSON edge cases', () => {
+    it('should detect JavaScript when using object literals with functions', () => {
+      const content = 'const obj = { method() { return 42; } }'
+      expect(detectLanguage(content)).toBe('javascript')
+    })
+
+    it('should detect JavaScript with template literals', () => {
+      const content = 'const msg = `Hello ${name}`'
+      expect(detectLanguage(content)).toBe('javascript')
+    })
+
+    it('should detect JSON even with escaped quotes', () => {
+      const content = '{"message": "Hello \\"world\\""}'
+      expect(detectLanguage(content)).toBe('json')
+    })
+
+    it('should detect JavaScript with regex literals', () => {
+      const content = 'const pattern = /^[A-Z]+$/g'
+      expect(detectLanguage(content)).toBe('javascript')
+    })
+  })
+
+  describe('CSS edge cases', () => {
+    it('should detect CSS with nested rules', () => {
+      const content = '.parent { .child { color: blue; } }'
+      expect(detectLanguage(content)).toBe('css')
+    })
+
+    it('should detect CSS with complex selectors', () => {
+      const content = 'div.class[data-attr^="prefix"]:hover > span + p { color: red; }'
+      expect(detectLanguage(content)).toBe('css')
+    })
+
+    it('should detect CSS with vendor prefixes', () => {
+      const content = '.box { -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); }'
+      expect(detectLanguage(content)).toBe('css')
+    })
+  })
+
+  describe('Markdown edge cases', () => {
+    it('should detect Markdown with inline code blocks', () => {
+      const content = 'Use the `console.log()` function to debug'
+      expect(detectLanguage(content)).toBe('markdown')
+    })
+
+    it('should detect Markdown with fenced code blocks', () => {
+      const content = '```javascript\nconst x = 42;\n```'
+      expect(detectLanguage(content)).toBe('markdown')
+    })
+
+    it('should detect Markdown with HTML content', () => {
+      const content = '# Title\n<div class="custom">Mixed content</div>'
+      expect(detectLanguage(content)).toBe('markdown')
+    })
+  })
+
+  describe('Ambiguous content edge cases', () => {
+    it('should handle text that looks like HTML but is not', () => {
+      const content = 'Today I learned about <tags> in HTML'
+      expect(detectLanguage(content)).toBe('plaintext')
+    })
+
+    it('should handle text with special characters', () => {
+      const content = '2 * 2 = 4; {text} [in brackets] <angles>'
+      expect(detectLanguage(content)).toBe('plaintext')
+    })
+
+    it('should handle text with URLs', () => {
+      const content = 'Check out https://example.com/page?param=value#hash'
+      expect(detectLanguage(content)).toBe('plaintext')
+    })
+  })
 })
