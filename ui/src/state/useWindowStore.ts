@@ -36,8 +36,6 @@ const useWindowStore = create<WindowState>((set, get) => ({
       return
     }
 
-    windowMap.delete(id)
-
     function isEven(num: number): boolean {
       return num % 2 === 0
     }
@@ -92,19 +90,6 @@ const useWindowStore = create<WindowState>((set, get) => ({
       return 1
     }
 
-    //  decrements id of window to parent id, if sibling is being deleted
-    // function validParent(map: Map<number, string | null>, id: number) {
-    //   //  saving path to set valid parent in map to that path
-    //   const path = map.get(id) ?? ''
-    //   const parentId = findValidParent(map, id)
-
-    //   if (parentId === 1) {
-    //     map.set(1, path)
-    //   } else {
-    //     map.set(parentId, path)
-    //   }
-    // }
-
     function handleDelete(map: Map<number, string | null>, id: number) {
       const siblingId = isEven(id) ? id + 1 : id - 1
       const siblingPath = map.get(siblingId) ?? null
@@ -145,6 +130,8 @@ const useWindowStore = create<WindowState>((set, get) => ({
       })
       set({ windowMap: newMap })
     }
+
+    windowMap.delete(id)
 
     if (id === 1) {
       set({ windowMap: defaultMap })
