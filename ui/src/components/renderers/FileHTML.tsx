@@ -45,10 +45,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
   )
   const { activeWindowPath } = useWindowStore()
 
-  // TODO path should never be null
-  const pathArray = activeWindowPath
-    ? activeWindowPath.split('/')
-    : `${window.ship || window.urbitID}/home`.split('/')
+  const pathArray = activeWindowPath.split('/')
   const ship = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
   const tempPath = `${ship}/sys/tmp/${endpoint}`
@@ -104,7 +101,7 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
             setEditorContent(content)
             // check if editor content differs from published content
             // TODO path should never be null
-            const publishedRes = await get(activeWindowPath || '~sampel/home')
+            const publishedRes = await get(activeWindowPath)
 
             if (publishedRes) {
               if (publishedRes.status !== 404) {
