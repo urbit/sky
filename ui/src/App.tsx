@@ -62,7 +62,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function () {
+        event.target.addEventListener('dragend', function() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -91,7 +91,7 @@ function App() {
 
   function handleSwap() {
     if (windowMap.size > 1 && maxWindow === 0) {
-      setDragWindow(activeWindowID ?? 0)
+      setDragWindow(activeWindowID)
       const containers = document.querySelectorAll('.container')
       containers.forEach(container => {
         //  create overlay for each window
@@ -121,7 +121,7 @@ function App() {
   // listen for keydown events
   useEffect(() => {
     console.log(
-      `path: ${activeWindowID ? windowMap.get(activeWindowID) : 'null'}`
+      `path: ${windowMap.get(activeWindowID)}`
     )
     console.log(`activeWindowID: ${activeWindowID}`)
     console.log(`maxWindow: ${maxWindow}`)
@@ -139,7 +139,7 @@ function App() {
         }
         event.preventDefault()
 
-        if (activeWindowID !== null && maxWindow === 0) {
+        if (maxWindow === 0) {
           addWindow(activeWindowID, '')
         }
       }
@@ -152,7 +152,7 @@ function App() {
         }
         event.preventDefault()
 
-        if (activeWindowID !== null && maxWindow === 0) {
+        if (maxWindow === 0) {
           delWindow(activeWindowID)
         }
       }
@@ -165,7 +165,7 @@ function App() {
         }
         event.preventDefault()
 
-        if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
+        if (activeWindowID > 1 && maxWindow === 0) {
           const path = windowMap.get(activeWindowID) ?? null
 
           if (path !== null) {
@@ -202,10 +202,8 @@ function App() {
       }
     }
 
-    if (activeWindowID !== null) {
-      window.addEventListener('keydown', handleKeyDown, { capture: true })
-      window.addEventListener('keyup', handleKeyUp, { capture: true })
-    }
+    window.addEventListener('keydown', handleKeyDown, { capture: true })
+    window.addEventListener('keyup', handleKeyUp, { capture: true })
 
     // Cleanup event listener when the component is unmounted
     return () => {
