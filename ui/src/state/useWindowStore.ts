@@ -148,9 +148,6 @@ const useWindowStore = create<WindowState>((set, get) => ({
     }
   },
 
-  // remove all nodes, open the default window
-  clearWindows: () => set({ windowMap: defaultMap }),
-
   // update a window's path
   updateWindowPath: (id: number, path: string) => {
     const windowMap = get().windowMap

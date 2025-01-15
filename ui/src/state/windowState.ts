@@ -6,7 +6,6 @@ export default interface WindowState {
   activeWindowPath: string
   addWindow: (parentId: number, path: string) => void
   delWindow: (id: number) => void
-  clearWindows: () => void
   updateWindowPath: (id: number, path: string) => void
   setMaxWindow: (id: number) => void
   togglePathBarView: (id: number) => void
