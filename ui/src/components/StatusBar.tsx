@@ -17,21 +17,32 @@ const sigilConfig = {
 }
 
 export default function StatusBar() {
-  const { setActiveWorkspace } = useWorkspaceStore()
+  const { workspaces, activeWorkspace, setActiveWorkspace } = useWorkspaceStore()
 
+  function toggleActiveWorkspace(workspace: string) {
+
+    setActiveWorkspace(workspace)
+
+
+  }
   return (
-    <div className="fr ac jb" style={{ height: '50px' }}>
+    <div className="fr ac jb" style={{ padding: '5px', height: '50px' }}>
+      <div className="fr ac g1">
+      {workspaces.map((workspace) => (
       <div
-        className="br1 fr ac jb b1"
+        key={workspace} 
+        className={activeWorkspace === workspace ? "br1 fr ac jb b2" : "br1 fr ac jb b1"}
         style={{
           height: '30px',
           paddingLeft: '10px',
           paddingRight: '10px',
           width: '200px',
         }}
+        onClick={() => toggleActiveWorkspace(workspace)}
       >
-        <span onClick={()=>{setActiveWorkspace('home')}}>Home</span>
-        <span onClick={()=>{setActiveWorkspace('Workspace1')}}>Workspace 1</span>
+        <span>
+          {workspace}
+        </span>
         <div>
           <img
             style={{ height: '10px', width: '10px' }}
@@ -39,6 +50,8 @@ export default function StatusBar() {
             alt="Close space"
           />
         </div>
+      </div>
+      ))}
       </div>
       <div className="fr ac jb" style={{ height: '30px' }}>
         <div

@@ -14,6 +14,7 @@ const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     console.log('setting workspace to ', workspace )
     if(workspaces.includes(workspace)){
       set({ activeWorkspace: workspace })
+      console.log('updated activeWorksapce in useWorkspaceStore ', get().activeWorkspace)
     }
   }
 }))

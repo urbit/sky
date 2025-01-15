@@ -244,7 +244,7 @@ function App() {
         </div>
       }
       {activeWorkspace === 'Home' && 
-          <div className="wf hf p3">
+          <div className="wf" style={{ height: `calc(100% - ${65}px)` }}>
             <Window
               id={maxWindow}
               path={'~sampel/home'}
