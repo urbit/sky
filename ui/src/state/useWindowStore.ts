@@ -20,7 +20,9 @@ const useWindowStore = create<WindowState>((set, get) => ({
     // When splitting a window, the parent becomes a container window
     windowMap.set(parentId * 2, parentPath)
     windowMap.set(parentId * 2 + 1, path)
-    windowMap.set(parentId, defaultPath)
+    // TODO this is an awful concession to bad rendering logic
+    // inshallah we will fix it in another PR
+    windowMap.set(parentId, '')
 
     set({ windowMap })
   },
