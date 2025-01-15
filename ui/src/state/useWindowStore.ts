@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import WindowState from './windowState'
 
 const defaultPath = '~sampel/home'
-const defaultMap = new Map<number, string | null>([[1, defaultPath]])
+const defaultMap = new Map<number, string>([[1, defaultPath]])
 
 const useWindowStore = create<WindowState>((set, get) => ({
   // init default state values
@@ -15,11 +15,14 @@ const useWindowStore = create<WindowState>((set, get) => ({
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
-    const parentPath = windowMap.get(parentId) ?? ''
+    const parentPath = windowMap.get(parentId) ?? defaultPath
 
+    // When splitting a window, the parent becomes a container window
     windowMap.set(parentId * 2, parentPath)
     windowMap.set(parentId * 2 + 1, path)
-    windowMap.set(parentId, null)
+    // TODO this is an awful concession to bad rendering logic
+    // inshallah we will fix it in another PR
+    windowMap.set(parentId, '')
 
     set({ windowMap })
   },
@@ -28,7 +31,10 @@ const useWindowStore = create<WindowState>((set, get) => ({
   delWindow: (id: number) => {
     const windowMap = get().windowMap
 
-    windowMap.delete(id)
+    // If this is the last window (defaultMap), don't allow deletion
+    if (windowMap.size === 1 && windowMap.has(1)) {
+      return
+    }
 
     function isEven(num: number): boolean {
       return num % 2 === 0
@@ -84,19 +90,6 @@ const useWindowStore = create<WindowState>((set, get) => ({
       return 1
     }
 
-    //  decrements id of window to parent id, if sibling is being deleted
-    // function validParent(map: Map<number, string | null>, id: number) {
-    //   //  saving path to set valid parent in map to that path
-    //   const path = map.get(id) ?? ''
-    //   const parentId = findValidParent(map, id)
-
-    //   if (parentId === 1) {
-    //     map.set(1, path)
-    //   } else {
-    //     map.set(parentId, path)
-    //   }
-    // }
-
     function handleDelete(map: Map<number, string | null>, id: number) {
       const siblingId = isEven(id) ? id + 1 : id - 1
       const siblingPath = map.get(siblingId) ?? null
@@ -131,29 +124,35 @@ const useWindowStore = create<WindowState>((set, get) => ({
       }
       //  otherwise keep sibling window state
       //console.log('map', new Map(map))
-      set({ windowMap: map })
+      const newMap = new Map<number, string>()
+      map.forEach((value, key) => {
+        newMap.set(key, value ?? defaultPath)
+      })
+      set({ windowMap: newMap })
     }
+
+    windowMap.delete(id)
 
     if (id === 1) {
       set({ windowMap: defaultMap })
     } else {
       handleDelete(windowMap, id)
+
+      // If no windows are left after deletion, reset to defaultMap
+      if (windowMap.size === 0) {
+        set({ windowMap: defaultMap })
+      } else {
+        set({ windowMap })
+      }
     }
   },
-
-  // remove all nodes, open the default window
-  clearWindows: () => set({ windowMap: defaultMap }),
 
   // update a window's path
   updateWindowPath: (id: number, path: string) => {
     const windowMap = get().windowMap
-
-    if (windowMap.has(id)) {
-      windowMap.set(id, path)
-      set({ windowMap: windowMap })
-    } else {
-      set({ windowMap: windowMap })
-    }
+    // If the window doesn't exist, create it with the provided path
+    windowMap.set(id, path)
+    set({ windowMap })
   },
 
   // maximise a window
@@ -178,10 +177,10 @@ const useWindowStore = create<WindowState>((set, get) => ({
   },
 
   // track active window
-  setActiveWindowID: (id: number | null) => set({ activeWindowID: id }),
+  setActiveWindowID: (id: number) => set({ activeWindowID: id }),
 
   // track active window's path
-  setActiveWindowPath: (path: string | null) => set({ activeWindowPath: path }),
+  setActiveWindowPath: (path: string) => set({ activeWindowPath: path }),
 }))
 
 export default useWindowStore
