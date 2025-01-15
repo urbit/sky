@@ -136,7 +136,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
       //console.log('map', new Map(map))
       const newMap = new Map<number, string>()
       map.forEach((value, key) => {
-        newMap.set(key, value ?? `${window.ship || window.urbitID}/home`)
+        newMap.set(key, value ?? defaultPath)
       })
       set({ windowMap: newMap })
     }
