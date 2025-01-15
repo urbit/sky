@@ -132,9 +132,9 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
-        if(event.metaKey){
+        if (event.metaKey) {
           console.log('Pressed CMD+n')
-        }else{
+        } else {
           console.log('Pressed CTRL+n')
         }
         event.preventDefault()
@@ -145,9 +145,9 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
-        if(event.metaKey){
+        if (event.metaKey) {
           console.log('Pressed CMD+w')
-        }else{
+        } else {
           console.log('Pressed CTRL+w')
         }
         event.preventDefault()
@@ -163,9 +163,9 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
-        if(event.metaKey){
+        if (event.metaKey) {
           console.log('Pressed CMD+m')
-        }else{
+        } else {
           console.log('Pressed CTRL+m')
         }
         event.preventDefault()
@@ -182,9 +182,9 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-        if(event.metaKey){
+        if (event.metaKey) {
           console.log('Pressed CMD+k')
-        }else{
+        } else {
           console.log('Pressed CTRL+k')
         }
 

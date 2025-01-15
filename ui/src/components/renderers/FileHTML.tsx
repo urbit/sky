@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
 import { get, put } from '../../api/sky'
-import { emmetHTML } from 'emmet-monaco-es'
+import { emmetHTML, registerCustomSnippets } from 'emmet-monaco-es'
 
 interface FileHTMLProps {
   html: string
@@ -233,7 +233,12 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
               options={htmlEditorConfig}
               theme={theme}
               onChange={handleEditorChange}
-              beforeMount={emmetHTML}
+              beforeMount={monaco => {
+                emmetHTML(monaco, ['html'])
+                registerCustomSnippets('html', {
+                  'html:sky': `!!!+html[lang="en"]>(head>(meta[charset="UTF-8"])+(meta[name="viewport" content="width=device-width, initial-scale=1.0"])+(title{${ship}/${endpoint}})+(link[rel="stylesheet" href="/sys/css/hollow"])+(link[rel="stylesheet" href="/sys/css/spine"])+(link[rel="stylesheet" href="/sys/css/feather"]))+(body.p2.b0>p{Hello world, this is ${ship}/${endpoint}})`,
+                })
+              }}
             />
           </div>
           {showPreview && previewContent}

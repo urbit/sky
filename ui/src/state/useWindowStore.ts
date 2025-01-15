@@ -168,7 +168,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
       set({
         pathBarView: [...windowArray, id],
       })
-    }else{
+    } else {
       // remove window id from the pathBarView array
       const updatedPathBarView = windowArray.filter(item => item !== id)
       set({

@@ -4,6 +4,7 @@ import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
 import FileMarkdown from './FileMarkdown'
 import FileHTML from './FileHTML'
+import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
 import FilePlain from './FilePlain'
 import FileCSS from './FileCSS'
@@ -37,7 +38,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
       return <FileCSS css={content} />
     }
     case 'text/javascript': {
-      console.log('Rendering text/plain')
+      console.log('Rendering text/javascript')
       return <FilePlain text={await res.text()} />
     }
     case 'application/json': {
@@ -80,8 +81,8 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
     if (input) (input as HTMLInputElement).click()
   }
 
-  function handleHTMLClick() {
-    setFileViewerContent(<FileHTML html="" />)
+  function handleComposerClick() {
+    setFileViewerContent(<FileComposer />)
   }
 
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,8 +153,10 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
 
   const createFileMenu = (
     <div className="fc ac jc hf wf">
-      <button onClick={handleHTMLClick}>Write HTML</button>
-      <button onClick={handleUploadClick}>Upload file</button>
+      <button style={{ marginBottom: '10px' }} onClick={handleComposerClick}>
+        Write something
+      </button>
+      <button onClick={handleUploadClick}>Upload a file</button>
       <input
         type="file"
         accept=".css, .html, .js, .json, .md, .pdf, .png, .txt, .xml"

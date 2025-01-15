@@ -10,8 +10,7 @@ export default function PathBar({
   path: string | null
 }) {
   const [inputValue, setInputValue] = useState('')
-  const { pathBarView, updateWindowPath, togglePathBarView } =
-    useWindowStore()
+  const { pathBarView, updateWindowPath, togglePathBarView } = useWindowStore()
 
   useEffect(() => {
     setInputValue(path || '')
