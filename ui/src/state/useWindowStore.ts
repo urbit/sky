@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import WindowState from './windowState'
 
-const defaultPath= `~sampel/home`
+const defaultPath = `~sampel/home`
 const defaultMap = new Map<number, string>([[1, defaultPath]])
 
 const useWindowStore = create<WindowState>((set, get) => ({
@@ -132,7 +132,11 @@ const useWindowStore = create<WindowState>((set, get) => ({
       }
       //  otherwise keep sibling window state
       //console.log('map', new Map(map))
-      set({ windowMap: map })
+      const newMap = new Map<number, string>()
+      map.forEach((value, key) => {
+        newMap.set(key, value ?? `${window.ship || window.urbitID}/home`)
+      })
+      set({ windowMap: newMap })
     }
 
     if (id === 1) {

@@ -25,7 +25,7 @@ export default function WindowContainer({
 
   const childId = id * 2
   // A window has children if it's being used as a container
-  const hasChildren = map.has(childId) || map.has(childId + 1)
+  const hasChildren = map?.has(childId) || map?.has(childId + 1)
 
   // TODO should get size info from Window and use
   // that for the preferredSize
@@ -50,11 +50,11 @@ export default function WindowContainer({
         const index = sizes.findIndex(num => num === 0)
 
         if (index !== -1 && hasChildren) {
-          if (index === 0 && map.has(childId)) {
+          if (index === 0 && map?.has(childId)) {
             setTimeout(() => {
               delWindow(childId)
             }, 1000)
-          } else if (index === 1 && map.has(childId + 1)) {
+          } else if (index === 1 && map?.has(childId + 1)) {
             setTimeout(() => {
               delWindow(childId + 1)
             }, 1000)
@@ -69,7 +69,7 @@ export default function WindowContainer({
   )
 
   // We know map must exist after this check
-  if (!map) return null
+  if (!map) return <></>
 
   return (
     <Allotment

@@ -58,7 +58,7 @@ export default function Window({
 
   function handleWindowMouseEnter() {
     setActiveWindowID(id)
-    setActiveWindowPath(path)
+    setActiveWindowPath(path ?? `${window.ship || window.urbitID}/home`)
   }
 
   const notRecognizedContent = (
