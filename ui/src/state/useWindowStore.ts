@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import WindowState from './windowState'
 
-const defaultPath = `~sampel/home`
+const defaultPath = '~sampel/home'
 const defaultMap = new Map<number, string>([[1, defaultPath]])
 
 const useWindowStore = create<WindowState>((set, get) => ({
