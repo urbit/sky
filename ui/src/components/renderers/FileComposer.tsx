@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
 import { get, put } from '../../api/sky'
-import { emmetHTML } from 'emmet-monaco-es'
+import { emmetHTML, registerCustomSnippets } from 'emmet-monaco-es'
 
 const editorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
@@ -63,7 +63,7 @@ export default function FileComposer(): JSX.Element {
           if (tempRes.status !== 404) {
             const content = await tempRes.text()
             setEditorContent(content)
-            
+
             // If we found content in /tmp, check if it differs from published version
             if (activeWindowPath) {
               const publishedRes = await get(activeWindowPath)
@@ -190,9 +190,9 @@ export default function FileComposer(): JSX.Element {
         const detectedLanguage = detectLanguage(value)
         const mimeType = languageToMimeType[detectedLanguage as keyof typeof languageToMimeType] || 'text/plain'
         const extension = detectedLanguage === 'plaintext' ? 'txt' :
-                         detectedLanguage === 'javascript' ? 'js' :
-                         detectedLanguage === 'markdown' ? 'md' :
-                         detectedLanguage
+          detectedLanguage === 'javascript' ? 'js' :
+            detectedLanguage === 'markdown' ? 'md' :
+              detectedLanguage
         const file = new File([value], `${pathArray.slice(-1)}.${extension}`, {
           type: mimeType,
         })
@@ -203,9 +203,12 @@ export default function FileComposer(): JSX.Element {
           console.log('Upload successful')
           if (showPreview && language === 'html') {
             // Force iframe reload by updating its key
+            // Force iframe reload
             const iframe = document.querySelector('iframe')
-            if (iframe) {
-              iframe.src = iframe.src
+            if (iframe && iframe instanceof HTMLIFrameElement) {
+              const currentSrc = iframe.src
+              iframe.src = 'about:blank'
+              iframe.src = currentSrc
             }
           }
         } catch (err) {
@@ -222,9 +225,9 @@ export default function FileComposer(): JSX.Element {
       const detectedLanguage = detectLanguage(editorContent)
       const mimeType = languageToMimeType[detectedLanguage as keyof typeof languageToMimeType] || 'text/plain'
       const extension = detectedLanguage === 'plaintext' ? 'txt' :
-                       detectedLanguage === 'javascript' ? 'js' :
-                       detectedLanguage === 'markdown' ? 'md' :
-                       detectedLanguage
+        detectedLanguage === 'javascript' ? 'js' :
+          detectedLanguage === 'markdown' ? 'md' :
+            detectedLanguage
       const file = new File(
         [editorContent],
         `${pathArray.slice(-1)}.${extension}`,
@@ -277,7 +280,22 @@ export default function FileComposer(): JSX.Element {
               options={editorConfig}
               theme={theme}
               onChange={handleEditorChange}
-              beforeMount={emmetHTML}
+              beforeMount={(monaco) => {
+                emmetHTML(monaco, ['html'])
+                registerCustomSnippets('html', {
+                  tmpl: `!!!+html[lang="en"]>(head>(meta[charset="UTF-8"])+(meta[name="viewport" content="width=device-width, initial-scale=1.0"])+(title{${ship}/${endpoint}})+(link[rel="stylesheet" href="/sys/css/hollow"])+(link[rel="stylesheet" href="/sys/css/spine"])+(link[rel="stylesheet" href="/sys/css/feather"]))+(body.p2.b0>p{Hello world, this is ${ship}/${endpoint}})`
+                })
+              }}
+              onMount={(editor) => {
+                // Add content change listener directly to the editor's model
+                editor.getModel()?.onDidChangeContent(() => {
+                  // Force trigger onChange with current content
+                  const content = editor.getModel()?.getValue()
+                  if (content !== undefined) {
+                    handleEditorChange(content)
+                  }
+                })
+              }}
             />
           </div>
           {showPreview && language === 'html' && (
