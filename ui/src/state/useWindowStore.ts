@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import WindowState from './windowState'
 
-const defaultPath = '~sampel/home'
-const defaultMap = new Map<number, string | null>([[1, defaultPath]])
+export const defaultPath = '~sampel/home'
+const defaultMap = new Map<number, string>([[1, defaultPath]])
 
 const useWindowStore = create<WindowState>((set, get) => ({
   // init default state values
@@ -15,11 +15,12 @@ const useWindowStore = create<WindowState>((set, get) => ({
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
-    const parentPath = windowMap.get(parentId) ?? ''
+    const parentPath = windowMap.get(parentId) ?? defaultPath
 
+    // When splitting a window, the parent becomes a container window with the default path
     windowMap.set(parentId * 2, parentPath)
     windowMap.set(parentId * 2 + 1, path)
-    windowMap.set(parentId, null)
+    windowMap.set(parentId, defaultPath)
 
     set({ windowMap })
   },
@@ -147,13 +148,9 @@ const useWindowStore = create<WindowState>((set, get) => ({
   // update a window's path
   updateWindowPath: (id: number, path: string) => {
     const windowMap = get().windowMap
-
-    if (windowMap.has(id)) {
-      windowMap.set(id, path)
-      set({ windowMap: windowMap })
-    } else {
-      set({ windowMap: windowMap })
-    }
+    // If the window doesn't exist, create it with the provided path
+    windowMap.set(id, path)
+    set({ windowMap })
   },
 
   // maximise a window
@@ -181,7 +178,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
   setActiveWindowID: (id: number | null) => set({ activeWindowID: id }),
 
   // track active window's path
-  setActiveWindowPath: (path: string | null) => set({ activeWindowPath: path }),
+  setActiveWindowPath: (path: string) => set({ activeWindowPath: path }),
 }))
 
 export default useWindowStore

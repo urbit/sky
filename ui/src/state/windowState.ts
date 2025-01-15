@@ -1,9 +1,9 @@
 export default interface WindowState {
-  windowMap: Map<number, string | null>
+  windowMap: Map<number, string>
   maxWindow: number
   pathBarView: Array<number>
   activeWindowID: number | null
-  activeWindowPath: string | null
+  activeWindowPath: string
   addWindow: (parentId: number, path: string) => void
   delWindow: (id: number) => void
   clearWindows: () => void
@@ -11,5 +11,5 @@ export default interface WindowState {
   setMaxWindow: (id: number) => void
   togglePathBarView: (id: number) => void
   setActiveWindowID: (id: number | null) => void
-  setActiveWindowPath: (path: string | null) => void
+  setActiveWindowPath: (path: string) => void
 }

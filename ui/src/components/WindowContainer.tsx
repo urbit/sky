@@ -2,9 +2,10 @@ import { Allotment } from 'allotment'
 import { useRef, useCallback } from 'react'
 import Window from './Window.tsx'
 import useWindowStore from '../state/useWindowStore'
+import { defaultPath } from '../state/useWindowStore'
 
 export interface WindowContainerProps {
-  map: Map<number, string | null>
+  map: Map<number, string> | undefined
   id: number
   isVertical: boolean
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
@@ -24,7 +25,8 @@ export default function WindowContainer({
   const lastChange = useRef<number[]>([])
 
   const childId = id * 2
-  const hasChildren = map ? map.get(id) === null : false
+  // A window has children if it's being used as a container
+  const hasChildren = map.has(childId) || map.has(childId + 1)
 
   // TODO should get size info from Window and use
   // that for the preferredSize
@@ -67,7 +69,8 @@ export default function WindowContainer({
     [map, hasChildren, childId, delWindow]
   )
 
-  if (!map) return <></>
+  // We know map must exist after this check
+  if (!map) return null
 
   return (
     <Allotment
@@ -82,7 +85,7 @@ export default function WindowContainer({
         // return a window
         <Window
           id={id}
-          path={map.get(id) ?? null}
+          path={map.get(id) ?? defaultPath}
           handleDrop={handleDrop}
           handleDragStart={handleDragStart}
           dragWindow={dragWindow}
