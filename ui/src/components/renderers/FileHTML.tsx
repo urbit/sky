@@ -100,7 +100,6 @@ export default function FileHTML({ html }: FileHTMLProps): JSX.Element {
             const content = await tempRes.text()
             setEditorContent(content)
             // check if editor content differs from published content
-            // TODO path should never be null
             const publishedRes = await get(activeWindowPath)
 
             if (publishedRes) {
