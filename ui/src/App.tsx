@@ -13,6 +13,7 @@ function App() {
     addWindow,
     delWindow,
     setMaxWindow,
+    togglePathBarView,
     updateWindowPath,
     setActiveWindowID,
   } = useWindowStore()
@@ -131,7 +132,11 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
-        console.log('Pressed CTRL+N')
+        if(event.metaKey){
+          console.log('Pressed CMD+n')
+        }else{
+          console.log('Pressed CTRL+n')
+        }
         event.preventDefault()
 
         if (activeWindowID !== null && maxWindow === 0) {
@@ -140,7 +145,11 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
-        console.log('Pressed CTRL+W')
+        if(event.metaKey){
+          console.log('Pressed CMD+w')
+        }else{
+          console.log('Pressed CTRL+w')
+        }
         event.preventDefault()
 
         if (activeWindowID !== null && maxWindow === 0) {
@@ -154,7 +163,11 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
-        console.log('Pressed CTRL+M')
+        if(event.metaKey){
+          console.log('Pressed CMD+m')
+        }else{
+          console.log('Pressed CTRL+m')
+        }
         event.preventDefault()
 
         if (activeWindowID !== null && activeWindowID > 1 && maxWindow === 0) {
@@ -165,6 +178,24 @@ function App() {
           }
         } else if (maxWindow !== 0) {
           setMaxWindow(0)
+        }
+      }
+
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        if(event.metaKey){
+          console.log('Pressed CMD+k')
+        }else{
+          console.log('Pressed CTRL+k')
+        }
+
+        event.preventDefault()
+
+        if (activeWindowID !== null) {
+          const path = windowMap.get(activeWindowID) ?? null
+
+          if (path !== null && path !== '') {
+            togglePathBarView(activeWindowID)
+          }
         }
       }
     }

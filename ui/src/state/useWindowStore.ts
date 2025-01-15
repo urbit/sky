@@ -8,6 +8,7 @@ const useWindowStore = create<WindowState>((set, get) => ({
   // init default state values
   windowMap: defaultMap,
   maxWindow: 0,
+  pathBarView: [],
   activeWindowID: 1,
   activeWindowPath: defaultPath,
 
@@ -157,6 +158,24 @@ const useWindowStore = create<WindowState>((set, get) => ({
 
   // maximise a window
   setMaxWindow: (id: number) => set({ maxWindow: id }),
+
+  // toggle window id in and out of pathBarView array
+  togglePathBarView: (id: number) => {
+    const windowArray = get().pathBarView
+    const pathBarView = get().pathBarView
+    if (!pathBarView.includes(id)) {
+      // add window id to the pathBarView array
+      set({
+        pathBarView: [...windowArray, id],
+      })
+    }else{
+      // remove window id from the pathBarView array
+      const updatedPathBarView = windowArray.filter(item => item !== id)
+      set({
+        pathBarView: updatedPathBarView,
+      })
+    }
+  },
 
   // track active window
   setActiveWindowID: (id: number | null) => set({ activeWindowID: id }),

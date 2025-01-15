@@ -49,6 +49,7 @@ export default function Window({
   ])
   const {
     maxWindow,
+    pathBarView,
     setMaxWindow,
     setActiveWindowID,
     setActiveWindowPath,
@@ -319,14 +320,32 @@ export default function Window({
     <Allotment>
       <Allotment.Pane visible key={id} className="wf hf fr">
         <div
-          className="hf wf fc ac jc"
-          style={{ padding: '5px', position: 'relative' }}
+          className="wf hf fc ac jc relative"
+          style={{
+            padding: '5px',
+            boxSizing: 'border-box',
+          }}
           onMouseEnter={handleWindowMouseEnter}
         >
+          {pathBarView.includes(id) && (
+            <div
+              className="absolute b1 br1 bd1"
+              style={{
+                zIndex: 90,
+                opacity: '90%',
+                width: 'calc(100% - 10px)',
+                height: 'calc(100% - 10px)',
+              }}
+            >
+              <div className="hf wf p2 fc ac jc">
+                <PathBar id={id} path={path} />
+              </div>
+            </div>
+          )}
           <div
             id={id.toString()}
             draggable={dragWindow === id ? true : false}
-            className="hf wf container fc as js b1 br1 bd1"
+            className="wf hf container fc as js b1 br1 bd1"
             onDragStart={e => handleDragStart(e, id)}
             onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
             onDragEnd={handleDragEnd}
