@@ -8,6 +8,7 @@ import { emmetHTML, registerCustomSnippets } from 'emmet-monaco-es'
 import { detectLanguage } from '../../utils/languageDetection'
 
 const editorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
+  lineNumbers: 'off',
   minimap: { enabled: false },
   automaticLayout: true,
   wordWrap: 'off',
@@ -17,12 +18,22 @@ const editorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   renderLineHighlight: 'none',
   readOnly: false,
   links: true,
-  folding: true,
-  foldingStrategy: 'indentation',
+  folding: false,
   quickSuggestions: true,
   suggestOnTriggerCharacters: false,
-  renderFinalNewline: 'on',
+  cursorBlinking: 'blink',
+  cursorStyle: 'line',
+  fontLigatures: true,
+  formatOnPaste: true,
+  formatOnType: true,
+  renderFinalNewline: 'off',
   selectionHighlight: true,
+  overviewRulerBorder: false,
+  overviewRulerLanes: 0,
+  scrollbar: {
+    vertical: 'auto',
+    horizontal: 'auto',
+  },
   smoothScrolling: true,
   mouseWheelZoom: true,
 }
@@ -124,7 +135,7 @@ export default function FileComposer(): JSX.Element {
         const detectedLanguage = detectLanguage(value)
         const mimeType =
           languageToMimeType[
-            detectedLanguage as keyof typeof languageToMimeType
+          detectedLanguage as keyof typeof languageToMimeType
           ] || 'text/plain'
         const extension =
           detectedLanguage === 'plaintext'
@@ -166,7 +177,7 @@ export default function FileComposer(): JSX.Element {
       const detectedLanguage = detectLanguage(editorContent)
       const mimeType =
         languageToMimeType[
-          detectedLanguage as keyof typeof languageToMimeType
+        detectedLanguage as keyof typeof languageToMimeType
         ] || 'text/plain'
       const extension =
         detectedLanguage === 'plaintext'
