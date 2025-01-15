@@ -1,6 +1,7 @@
 import 'allotment/dist/style.css'
 import WindowContainer from './components/WindowContainer.tsx'
 import useWindowStore from './state/useWindowStore.ts'
+import useWorkspaceStore from './state/useWorkspaceStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
@@ -16,6 +17,8 @@ function App() {
     updateWindowPath,
     setActiveWindowID,
   } = useWindowStore()
+
+  const {activeWorkspace, setActiveWorkspace} = useWorkspaceStore()
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
@@ -143,7 +146,11 @@ function App() {
         console.log('Pressed CTRL+W')
         event.preventDefault()
 
-        if (activeWindowID !== null && maxWindow === 0) {
+        if(activeWorkspace === 'Home'){
+        // Should track last used workspace and set ActiveWorkspace to it 
+          setActiveWorkspace('Workspace1')
+
+        }else if(activeWindowID !== null && maxWindow === 0) {
           if (activeWindowID === 1) {
             updateWindowPath(activeWindowID, '')
           } else {
@@ -193,6 +200,7 @@ function App() {
     addWindow,
     updateWindowPath,
     setActiveWindowID,
+    activeWorkspace
   ])
 
   // TODO handle real window.urbitID, not suitable for production
@@ -209,30 +217,43 @@ function App() {
         TODO this height calc is a kludge, fixes StatusBar
         shoving the WindowContainer off the bottom of the screen
       */}
-      <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
-        {maxWindow !== 0 && (
-          <div
-            className="wf hf absolute p3"
-            style={{ zIndex: 100, opacity: '98%' }}
-          >
+      {activeWorkspace === 'Workspace1'  &&
+        <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
+          {maxWindow !== 0 && (
+            <div
+              className="wf hf absolute p3"
+              style={{ zIndex: 100, opacity: '98%' }}
+            >
+              <Window
+                id={maxWindow}
+                path={windowMap.get(maxWindow) ?? ''}
+                handleDrop={handleDrop}
+                handleDragStart={handleDragStart}
+                dragWindow={dragWindow}
+              />
+            </div>
+          )}
+          <WindowContainer
+            map={windowMap}
+            id={1}
+            isVertical={window.innerWidth > window.innerHeight}
+            handleDrop={handleDrop}
+            handleDragStart={handleDragStart}
+            dragWindow={dragWindow}
+          />
+        </div>
+      }
+      {activeWorkspace === 'Home' && 
+          <div className="wf hf p3">
             <Window
               id={maxWindow}
-              path={windowMap.get(maxWindow) ?? ''}
+              path={'~sampel/home'}
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}
               dragWindow={dragWindow}
             />
           </div>
-        )}
-        <WindowContainer
-          map={windowMap}
-          id={1}
-          isVertical={window.innerWidth > window.innerHeight}
-          handleDrop={handleDrop}
-          handleDragStart={handleDragStart}
-          dragWindow={dragWindow}
-        />
-      </div>
+      }
     </div>
   )
 }

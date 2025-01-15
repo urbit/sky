@@ -1,6 +1,7 @@
 import '@urbit/sigil-js'
 import bellIcon from '../assets/images/bell.png'
 import closeIcon from '../assets/images/close.png'
+import useWorkspaceStore from '../state/useWorkspaceStore'
 
 const sigilConfig = {
   // TODO don't hard-code height all over this component
@@ -16,6 +17,8 @@ const sigilConfig = {
 }
 
 export default function StatusBar() {
+  const { setActiveWorkspace } = useWorkspaceStore()
+
   return (
     <div className="fr ac jb" style={{ height: '50px' }}>
       <div
@@ -27,7 +30,8 @@ export default function StatusBar() {
           width: '200px',
         }}
       >
-        <span>Workspace 1</span>
+        <span onClick={()=>{setActiveWorkspace('home')}}>Home</span>
+        <span onClick={()=>{setActiveWorkspace('Workspace1')}}>Workspace 1</span>
         <div>
           <img
             style={{ height: '10px', width: '10px' }}
