@@ -242,7 +242,7 @@ export default function FileComposer(): JSX.Element {
               beforeMount={monaco => {
                 emmetHTML(monaco, ['html'])
                 registerCustomSnippets('html', {
-                  tmpl: `!!!+html[lang="en"]>(head>(meta[charset="UTF-8"])+(meta[name="viewport" content="width=device-width, initial-scale=1.0"])+(title{${ship}/${endpoint}})+(link[rel="stylesheet" href="/sys/css/hollow"])+(link[rel="stylesheet" href="/sys/css/spine"])+(link[rel="stylesheet" href="/sys/css/feather"]))+(body.p2.b0>p{Hello world, this is ${ship}/${endpoint}})`,
+                  'html:sky': `!!!+html[lang="en"]>(head>(meta[charset="UTF-8"])+(meta[name="viewport" content="width=device-width, initial-scale=1.0"])+(title{${ship}/${endpoint}})+(link[rel="stylesheet" href="/sys/css/hollow"])+(link[rel="stylesheet" href="/sys/css/spine"])+(link[rel="stylesheet" href="/sys/css/feather"]))+(body.p2.b0>p{Hello world, this is ${ship}/${endpoint}})`,
                 })
               }}
               onMount={editor => {
