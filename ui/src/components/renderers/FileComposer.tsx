@@ -5,6 +5,7 @@ import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
 import { get, put } from '../../api/sky'
 import { emmetHTML, registerCustomSnippets } from 'emmet-monaco-es'
+import { detectLanguage } from '../../utils/languageDetection'
 
 const editorConfig: monaco.editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
@@ -91,73 +92,6 @@ export default function FileComposer(): JSX.Element {
     }
   }, [activeWindowPath])
 
-  // Enhanced pattern-based file type detection
-  const detectLanguage = (content: string): string => {
-    const trimmedContent = content.trim()
-
-    // HTML detection - check for doctype or common HTML tags
-    if (
-      trimmedContent.startsWith('<!DOCTYPE html>') ||
-      trimmedContent.startsWith('<html') ||
-      /<(div|span|p|h[1-6]|body|head|link|meta|script|style)\b/.test(
-        trimmedContent
-      )
-    ) {
-      return 'html'
-    }
-
-    // CSS detection - look for typical CSS patterns
-    if (
-      (trimmedContent.includes('{') && /[.#][\w-]+\s*{/.test(trimmedContent)) ||
-      /@(media|keyframes|import|charset|font-face)\b/.test(trimmedContent)
-    ) {
-      return 'css'
-    }
-
-    // JavaScript detection - check for typical JS patterns
-    if (
-      /(function|=>|const |let |var |import |export |class\s+\w+)/.test(
-        trimmedContent
-      ) ||
-      /\b(if|for|while|return|async|await)\b/.test(trimmedContent)
-    ) {
-      return 'javascript'
-    }
-
-    // JSON detection
-    try {
-      JSON.parse(trimmedContent)
-      // Additional check to avoid false positives with plain numbers or booleans
-      return trimmedContent.startsWith('{') || trimmedContent.startsWith('[')
-        ? 'json'
-        : 'plaintext'
-    } catch {
-      // Not valid JSON, continue checking other formats
-    }
-
-    // XML detection - check for XML declaration or typical XML structure
-    if (
-      trimmedContent.startsWith('<?xml') ||
-      /<\?xml|<[a-zA-Z0-9]+(\s+[^>]*)?>(.*?)<\/[a-zA-Z0-9]+>/s.test(trimmedContent)
-    ) {
-      return 'xml'
-    }
-
-    // Markdown detection - look for common Markdown syntax
-    if (
-      /^#+ /.test(trimmedContent) || // Headers
-      /\[.+\]\(.+\)/.test(trimmedContent) || // Links
-      /(\*\*|__)[\w\s]+(\*\*|__)/.test(trimmedContent) || // Bold text
-      /^[-*+] /.test(trimmedContent) || // List items
-      /^>\s/.test(trimmedContent)
-    ) {
-      // Blockquotes
-      return 'markdown'
-    }
-
-    return 'plaintext'
-  }
-
   // Update language when content changes
   useEffect(() => {
     const detectedLanguage = detectLanguage(editorContent)
@@ -188,11 +122,18 @@ export default function FileComposer(): JSX.Element {
         setIsEdited(true)
         const formData = new FormData()
         const detectedLanguage = detectLanguage(value)
-        const mimeType = languageToMimeType[detectedLanguage as keyof typeof languageToMimeType] || 'text/plain'
-        const extension = detectedLanguage === 'plaintext' ? 'txt' :
-          detectedLanguage === 'javascript' ? 'js' :
-            detectedLanguage === 'markdown' ? 'md' :
-              detectedLanguage
+        const mimeType =
+          languageToMimeType[
+            detectedLanguage as keyof typeof languageToMimeType
+          ] || 'text/plain'
+        const extension =
+          detectedLanguage === 'plaintext'
+            ? 'txt'
+            : detectedLanguage === 'javascript'
+              ? 'js'
+              : detectedLanguage === 'markdown'
+                ? 'md'
+                : detectedLanguage
         const file = new File([value], `${pathArray.slice(-1)}.${extension}`, {
           type: mimeType,
         })
@@ -223,11 +164,18 @@ export default function FileComposer(): JSX.Element {
     if (activeWindowPath && editorContent) {
       const formData = new FormData()
       const detectedLanguage = detectLanguage(editorContent)
-      const mimeType = languageToMimeType[detectedLanguage as keyof typeof languageToMimeType] || 'text/plain'
-      const extension = detectedLanguage === 'plaintext' ? 'txt' :
-        detectedLanguage === 'javascript' ? 'js' :
-          detectedLanguage === 'markdown' ? 'md' :
-            detectedLanguage
+      const mimeType =
+        languageToMimeType[
+          detectedLanguage as keyof typeof languageToMimeType
+        ] || 'text/plain'
+      const extension =
+        detectedLanguage === 'plaintext'
+          ? 'txt'
+          : detectedLanguage === 'javascript'
+            ? 'js'
+            : detectedLanguage === 'markdown'
+              ? 'md'
+              : detectedLanguage
       const file = new File(
         [editorContent],
         `${pathArray.slice(-1)}.${extension}`,
@@ -280,13 +228,13 @@ export default function FileComposer(): JSX.Element {
               options={editorConfig}
               theme={theme}
               onChange={handleEditorChange}
-              beforeMount={(monaco) => {
+              beforeMount={monaco => {
                 emmetHTML(monaco, ['html'])
                 registerCustomSnippets('html', {
-                  tmpl: `!!!+html[lang="en"]>(head>(meta[charset="UTF-8"])+(meta[name="viewport" content="width=device-width, initial-scale=1.0"])+(title{${ship}/${endpoint}})+(link[rel="stylesheet" href="/sys/css/hollow"])+(link[rel="stylesheet" href="/sys/css/spine"])+(link[rel="stylesheet" href="/sys/css/feather"]))+(body.p2.b0>p{Hello world, this is ${ship}/${endpoint}})`
+                  tmpl: `!!!+html[lang="en"]>(head>(meta[charset="UTF-8"])+(meta[name="viewport" content="width=device-width, initial-scale=1.0"])+(title{${ship}/${endpoint}})+(link[rel="stylesheet" href="/sys/css/hollow"])+(link[rel="stylesheet" href="/sys/css/spine"])+(link[rel="stylesheet" href="/sys/css/feather"]))+(body.p2.b0>p{Hello world, this is ${ship}/${endpoint}})`,
                 })
               }}
-              onMount={(editor) => {
+              onMount={editor => {
                 // Add content change listener directly to the editor's model
                 editor.getModel()?.onDidChangeContent(() => {
                   // Force trigger onChange with current content
