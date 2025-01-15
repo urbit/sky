@@ -10,7 +10,6 @@ export default interface WindowState {
   updateWindowPath: (id: number, path: string) => void
   setMaxWindow: (id: number) => void
   togglePathBarView: (id: number) => void
-  inPathBarView: (id: number) => boolean
   setActiveWindowID: (id: number | null) => void
   setActiveWindowPath: (path: string | null) => void
 }

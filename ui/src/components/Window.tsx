@@ -50,7 +50,7 @@ export default function Window({
   ])
   const {
     maxWindow,
-    inPathBarView,
+    pathBarView,
     setMaxWindow,
     setActiveWindowID,
     setActiveWindowPath,
@@ -328,7 +328,7 @@ export default function Window({
           }}
           onMouseEnter={handleWindowMouseEnter}
         >
-          {inPathBarView(id) && (
+          {pathBarView.includes(id) && (
             <div
               className="absolute b1 br1 bd1"
               style={{

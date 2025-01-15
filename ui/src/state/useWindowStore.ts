@@ -162,8 +162,8 @@ const useWindowStore = create<WindowState>((set, get) => ({
   // toggle window id in and out of pathBarView array
   togglePathBarView: (id: number) => {
     const windowArray = get().pathBarView
-    const inPathBarView = get().inPathBarView(id)
-    if (!inPathBarView) {
+    const pathBarView = get().pathBarView
+    if (!pathBarView.includes(id)) {
       // add window id to the pathBarView array
       set({
         pathBarView: [...windowArray, id],
@@ -175,12 +175,6 @@ const useWindowStore = create<WindowState>((set, get) => ({
         pathBarView: updatedPathBarView,
       })
     }
-  },
-
-  //  return boolean if window id in pathBarView array
-  inPathBarView: (id: number) => {
-    const pathBarView = get().pathBarView
-    return pathBarView.includes(id)
   },
 
   // track active window
