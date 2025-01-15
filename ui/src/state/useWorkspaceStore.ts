@@ -1,18 +1,40 @@
 import { create } from 'zustand'
 import WorkspaceState from './workspaceState'
 
-const defaultWorkspaces = ['Home', 'Workspace1']
+const defaultPath = '~sampel/home'
+const defaultWindowMap = new Map<number, string | null>([[1, defaultPath]])
+const defaultMap = new Map<string, Map<number, string | null>>([
+    ['Home', defaultWindowMap],
+    ['Workspace1', defaultWindowMap]
+])
 
 const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
-
   // init default state values
-  workspaces: defaultWorkspaces,
+  workspaceMap: defaultMap,
   activeWorkspace: 'Home',
 
+  addWorkspace: (paths: Array<string>) =>{
+    const workspaceMap = get().workspaceMap
+    const index = workspaceMap.size
+    const newWorkspace = `Workspace${index}`
+    const windowMap = new Map<number, string | null>(paths.map((path, i) => [i, path]))
+    workspaceMap.set(newWorkspace, windowMap)
+    set({ 
+        workspaceMap: workspaceMap,
+        activeWorkspace: newWorkspace
+    })
+  },
+
+  removeWorkspace(workspace: string) {
+    const workspaceMap = get().workspaceMap
+    workspaceMap.delete(workspace)
+    set({ workspaceMap: workspaceMap})
+  },
+
   setActiveWorkspace: (workspace: string) => {
-    const workspaces = get().workspaces
-    console.log('setting workspace to ', workspace )
-    if(workspaces.includes(workspace)){
+    const workspaceMap = get().workspaceMap
+    console.log('is ', workspaceMap.has(workspace))
+    if(workspaceMap.has(workspace)){
       set({ activeWorkspace: workspace })
       console.log('updated activeWorksapce in useWorkspaceStore ', get().activeWorkspace)
     }

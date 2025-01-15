@@ -11,6 +11,11 @@ const useWindowStore = create<WindowState>((set, get) => ({
   activeWindowID: 1,
   activeWindowPath: defaultPath,
 
+  setWindowMap: (windowMap: Map<number, string | null>) => {
+    console.log('setting window map to , windowMap')
+    set({ windowMap })
+  },
+
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap

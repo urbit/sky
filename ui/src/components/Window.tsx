@@ -9,6 +9,7 @@ import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import TextPlain from './renderers/TextPlain'
+import useWorkspaceStore from '../state/useWorkspaceStore'
 
 export interface WindowProps {
   id: number
@@ -54,6 +55,8 @@ export default function Window({
     setActiveWindowPath,
     delWindow,
   } = useWindowStore()
+
+  const {activeWorkspace, addWorkspace} = useWorkspaceStore()
 
   function handleWindowMouseEnter() {
     setActiveWindowID(id)
@@ -233,6 +236,10 @@ export default function Window({
 
   async function renderContent(path: string) {
     console.log('render', path)
+    if(path !== '~sampel/home' && activeWorkspace === 'Home'){
+      addWorkspace([path])
+    }
+
     try {
       const res = await get(path)
       console.log('Data in renderContent is', res)

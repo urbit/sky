@@ -8,7 +8,7 @@ import { useEffect, useState, useRef } from 'react'
 
 function App() {
   const {
-    windowMap,
+    //windowMap,
     maxWindow,
     activeWindowID,
     addWindow,
@@ -18,10 +18,14 @@ function App() {
     setActiveWindowID,
   } = useWindowStore()
 
-  const {activeWorkspace, setActiveWorkspace} = useWorkspaceStore()
+  const {workspaceMap, activeWorkspace, setActiveWorkspace} = useWorkspaceStore()
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
+
+  const defaultMap = new Map<number, string | null>([
+    [1, '~sampel/home']])
+  const windowMap = workspaceMap.get(activeWorkspace) ?? defaultMap
 
   function enableWindows() {
     setDragWindow(0)
@@ -140,6 +144,7 @@ function App() {
         if (activeWindowID !== null && maxWindow === 0) {
           addWindow(activeWindowID, '')
         }
+        console.log(workspaceMap)
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
@@ -200,7 +205,8 @@ function App() {
     addWindow,
     updateWindowPath,
     setActiveWindowID,
-    activeWorkspace
+    activeWorkspace,
+    workspaceMap
   ])
 
   // TODO handle real window.urbitID, not suitable for production
@@ -217,7 +223,6 @@ function App() {
         TODO this height calc is a kludge, fixes StatusBar
         shoving the WindowContainer off the bottom of the screen
       */}
-      {activeWorkspace === 'Workspace1'  &&
         <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
           {maxWindow !== 0 && (
             <div
@@ -242,8 +247,7 @@ function App() {
             dragWindow={dragWindow}
           />
         </div>
-      }
-      {activeWorkspace === 'Home' && 
+      {/* {activeWorkspace === 'Home' && 
           <div className="wf" style={{ height: `calc(100% - ${65}px)` }}>
             <Window
               id={maxWindow}
@@ -253,7 +257,7 @@ function App() {
               dragWindow={dragWindow}
             />
           </div>
-      }
+      } */}
     </div>
   )
 }

@@ -3,6 +3,7 @@ export default interface WindowState {
   maxWindow: number
   activeWindowID: number | null
   activeWindowPath: string | null
+  setWindowMap: (windowMap: Map<number, string | null>) => void
   addWindow: (parentId: number, path: string) => void
   delWindow: (id: number) => void
   clearWindows: () => void
