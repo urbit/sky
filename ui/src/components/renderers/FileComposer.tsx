@@ -135,7 +135,7 @@ export default function FileComposer(): JSX.Element {
         const detectedLanguage = detectLanguage(value)
         const mimeType =
           languageToMimeType[
-          detectedLanguage as keyof typeof languageToMimeType
+            detectedLanguage as keyof typeof languageToMimeType
           ] || 'text/plain'
         const extension =
           detectedLanguage === 'plaintext'
@@ -177,7 +177,7 @@ export default function FileComposer(): JSX.Element {
       const detectedLanguage = detectLanguage(editorContent)
       const mimeType =
         languageToMimeType[
-        detectedLanguage as keyof typeof languageToMimeType
+          detectedLanguage as keyof typeof languageToMimeType
         ] || 'text/plain'
       const extension =
         detectedLanguage === 'plaintext'

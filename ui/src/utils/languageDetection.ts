@@ -4,15 +4,18 @@ export const detectLanguage = (content: string): string => {
   // First check for Markdown since we want it to have highest precedence
   if (
     // Headers (at start of line or after newline)
-    /^#+ /.test(trimmedContent) || /\n#+ /.test(trimmedContent) ||
+    /^#+ /.test(trimmedContent) ||
+    /\n#+ /.test(trimmedContent) ||
     // Links
     /\[.+\]\(.+\)/.test(trimmedContent) ||
     // Emphasis/bold
     /(\*\*|__)[\w\s]+(\*\*|__)/.test(trimmedContent) ||
     // Lists (at start of line or after newline)
-    /^[-*+] /.test(trimmedContent) || /\n[-*+] /.test(trimmedContent) ||
+    /^[-*+] /.test(trimmedContent) ||
+    /\n[-*+] /.test(trimmedContent) ||
     // Blockquotes (at start of line or after newline)
-    /^>\s/.test(trimmedContent) || /\n>\s/.test(trimmedContent) ||
+    /^>\s/.test(trimmedContent) ||
+    /\n>\s/.test(trimmedContent) ||
     // Fenced code blocks
     /^```[\s\S]*?\n[\s\S]*?\n```/.test(trimmedContent) ||
     /\n```[\s\S]*?\n[\s\S]*?\n```/.test(trimmedContent) ||
@@ -21,14 +24,17 @@ export const detectLanguage = (content: string): string => {
     // Tables
     /^\|[\s\S]*\|/.test(trimmedContent) ||
     // Task lists
-    /^- \[ \]/.test(trimmedContent) || /\n- \[ \]/.test(trimmedContent)
+    /^- \[ \]/.test(trimmedContent) ||
+    /\n- \[ \]/.test(trimmedContent)
   ) {
     return 'markdown'
   }
 
   // Then check for JavaScript keywords and patterns
   if (
-    /(^|\s)(const|let|var|function|class|import|export)\s/.test(trimmedContent) ||
+    /(^|\s)(const|let|var|function|class|import|export)\s/.test(
+      trimmedContent
+    ) ||
     /`[^`]*\${[^}]*}`/.test(trimmedContent) || // Template literals with interpolation
     /=>\s*{/.test(trimmedContent) // Arrow functions
   ) {
@@ -63,15 +69,13 @@ export const detectLanguage = (content: string): string => {
   // JavaScript detection - check for typical JS patterns
   if (
     !trimmedContent.startsWith('```') && // Avoid matching Markdown code blocks
-    (
-      // Object method definitions and arrow functions
-      /\{[\s\w]+\([^)]*\)\s*{/.test(trimmedContent) ||
+    // Object method definitions and arrow functions
+    (/\{[\s\w]+\([^)]*\)\s*{/.test(trimmedContent) ||
       /=>\s*{/.test(trimmedContent) ||
       // Regex literals
       /(?:^|\s)\/[^/\n]+\/[gimsuy]*(?:\s|$)/.test(trimmedContent) ||
       // Control flow statements
-      /(?:^|\s)(if|for|while)\s*\(/.test(trimmedContent)
-    )
+      /(?:^|\s)(if|for|while)\s*\(/.test(trimmedContent))
   ) {
     return 'javascript'
   }
@@ -79,14 +83,14 @@ export const detectLanguage = (content: string): string => {
   // CSS detection - look for typical CSS patterns
   if (
     (trimmedContent.includes('{') &&
-      (
-        // Basic selectors
-        /[.#*][\w-]+\s*{/.test(trimmedContent) ||
+      // Basic selectors
+      (/[.#*][\w-]+\s*{/.test(trimmedContent) ||
         // Complex selectors
-        /[\w-]+(?:\.[^\s{]+|\[.+?\]|\:[^\s{]+|\s*>\s*|\s*\+\s*|\s*~\s*)*\s*{/.test(trimmedContent) ||
+        /[\w-]+(?:\.[^\s{]+|\[.+?\]|:[^\s{]+|\s*>\s*|\s*\+\s*|\s*~\s*)*\s*{/.test(
+          trimmedContent
+        ) ||
         // At-rules
-        /@[\w-]+\s*{/.test(trimmedContent)
-      )) ||
+        /@[\w-]+\s*{/.test(trimmedContent))) ||
     /@(media|keyframes|import|charset|font-face)\b/.test(trimmedContent) ||
     // Vendor prefixes
     /\{[^}]*-(?:webkit|moz|ms|o)-/.test(trimmedContent)

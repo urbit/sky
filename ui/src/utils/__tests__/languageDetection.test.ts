@@ -90,12 +90,14 @@ describe('detectLanguage', () => {
     })
 
     it('should detect XML when using namespaces', () => {
-      const content = '<ns:root xmlns:ns="http://example.com"><ns:child>Data</ns:child></ns:root>'
+      const content =
+        '<ns:root xmlns:ns="http://example.com"><ns:child>Data</ns:child></ns:root>'
       expect(detectLanguage(content)).toBe('xml')
     })
 
     it('should detect HTML with SVG content', () => {
-      const content = '<div><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/></svg></div>'
+      const content =
+        '<div><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/></svg></div>'
       expect(detectLanguage(content)).toBe('html')
     })
   })
@@ -129,12 +131,14 @@ describe('detectLanguage', () => {
     })
 
     it('should detect CSS with complex selectors', () => {
-      const content = 'div.class[data-attr^="prefix"]:hover > span + p { color: red; }'
+      const content =
+        'div.class[data-attr^="prefix"]:hover > span + p { color: red; }'
       expect(detectLanguage(content)).toBe('css')
     })
 
     it('should detect CSS with vendor prefixes', () => {
-      const content = '.box { -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); }'
+      const content =
+        '.box { -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); }'
       expect(detectLanguage(content)).toBe('css')
     })
   })
