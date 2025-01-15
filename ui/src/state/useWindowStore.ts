@@ -31,6 +31,11 @@ const useWindowStore = create<WindowState>((set, get) => ({
   delWindow: (id: number) => {
     const windowMap = get().windowMap
 
+    // If this is the last window (defaultMap), don't allow deletion
+    if (windowMap.size === 1 && windowMap.has(1)) {
+      return
+    }
+
     windowMap.delete(id)
 
     function isEven(num: number): boolean {
@@ -145,6 +150,13 @@ const useWindowStore = create<WindowState>((set, get) => ({
       set({ windowMap: defaultMap })
     } else {
       handleDelete(windowMap, id)
+
+      // If no windows are left after deletion, reset to defaultMap
+      if (windowMap.size === 0) {
+        set({ windowMap: defaultMap })
+      } else {
+        set({ windowMap })
+      }
     }
   },
 

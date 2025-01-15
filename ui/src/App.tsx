@@ -62,7 +62,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function () {
+        event.target.addEventListener('dragend', function() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -153,12 +153,8 @@ function App() {
         event.preventDefault()
 
         if (activeWindowID !== null && maxWindow === 0) {
-          if (activeWindowID === 1) {
-            updateWindowPath(activeWindowID, '')
-          } else {
-            delWindow(activeWindowID)
-            setActiveWindowID(null)
-          }
+          delWindow(activeWindowID)
+          setActiveWindowID(null)
         }
       }
 
