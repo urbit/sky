@@ -10,7 +10,7 @@ export default function PathBar({
   path: string | null
 }) {
   const [inputValue, setInputValue] = useState('')
-  const { updateWindowPath, inPathBarView, removePathBarView } =
+  const { updateWindowPath, inPathBarView, togglePathBarView } =
     useWindowStore()
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function PathBar({
     e.preventDefault()
     if (isValidPath(inputValue)) {
       if (inPathBarView(id)) {
-        removePathBarView(id)
+        togglePathBarView(id)
       }
 
       updateWindowPath(id, inputValue)

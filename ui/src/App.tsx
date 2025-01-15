@@ -17,9 +17,7 @@ function App() {
     addWindow,
     delWindow,
     setMaxWindow,
-    setPathBarView,
-    removePathBarView,
-    inPathBarView,
+    togglePathBarView,
     updateWindowPath,
     setActiveWindowID,
   } = useWindowStore()
@@ -184,11 +182,7 @@ function App() {
           const path = windowMap.get(activeWindowID) ?? null
 
           if (path !== null && path !== '') {
-            if (inPathBarView(activeWindowID)) {
-              removePathBarView(activeWindowID)
-            } else {
-              setPathBarView(activeWindowID)
-            }
+            togglePathBarView(activeWindowID)
           }
         }
       }

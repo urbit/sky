@@ -9,8 +9,7 @@ export default interface WindowState {
   clearWindows: () => void
   updateWindowPath: (id: number, path: string) => void
   setMaxWindow: (id: number) => void
-  setPathBarView: (id: number) => void
-  removePathBarView: (id: number) => void
+  togglePathBarView: (id: number) => void
   inPathBarView: (id: number) => boolean
   setActiveWindowID: (id: number | null) => void
   setActiveWindowPath: (path: string | null) => void

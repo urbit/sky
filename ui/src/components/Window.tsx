@@ -332,7 +332,7 @@ export default function Window({
             <div
               className="absolute b1 br1 bd1"
               style={{
-                zIndex: 99,
+                zIndex: 90,
                 opacity: '90%',
                 width: 'calc(100% - 10px)',
                 height: 'calc(100% - 10px)',
