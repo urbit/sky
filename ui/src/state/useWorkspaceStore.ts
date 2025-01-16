@@ -4,8 +4,8 @@ import WorkspaceState from './workspaceState'
 const defaultPath = '~sampel/home'
 const defaultWindowMap = new Map<number, string | null>([[1, defaultPath]])
 const defaultMap = new Map<string, Map<number, string | null>>([
-    ['Home', defaultWindowMap],
-    ['Workspace1', defaultWindowMap]
+    ['Home', defaultWindowMap]
+    // ['Workspace1', defaultWindowMap]
 ])
 
 const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
@@ -17,7 +17,11 @@ const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const workspaceMap = get().workspaceMap
     const index = workspaceMap.size
     const newWorkspace = `Workspace${index}`
+    //  TODO: store paths in WindowMap as a tree like structure rather than just index to path
     const windowMap = new Map<number, string | null>(paths.map((path, i) => [i, path]))
+
+    console.log('setting up new ', newWorkspace)
+
     workspaceMap.set(newWorkspace, windowMap)
     set({ 
         workspaceMap: workspaceMap,

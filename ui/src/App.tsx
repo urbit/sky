@@ -18,7 +18,7 @@ function App() {
     setActiveWindowID,
   } = useWindowStore()
 
-  const {workspaceMap, activeWorkspace, setActiveWorkspace} = useWorkspaceStore()
+  const {workspaceMap, activeWorkspace, addWorkspace, setActiveWorkspace} = useWorkspaceStore()
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
@@ -141,6 +141,8 @@ function App() {
         console.log('Pressed CTRL+N')
         event.preventDefault()
 
+        //TODO: if in Home workspace create a new workspace
+        
         if (activeWindowID !== null && maxWindow === 0) {
           addWindow(activeWindowID, '')
         }
@@ -152,9 +154,8 @@ function App() {
         event.preventDefault()
 
         if(activeWorkspace === 'Home'){
-        // Should track last used workspace and set ActiveWorkspace to it 
-          setActiveWorkspace('Workspace1')
-
+          console.log('in Home space, creating new workspace')
+          addWorkspace([''])
         }else if(activeWindowID !== null && maxWindow === 0) {
           if (activeWindowID === 1) {
             updateWindowPath(activeWindowID, '')
