@@ -227,14 +227,14 @@ function App() {
   }, [])
 
   return (
-    <div className="p3" style={{ width: '100vw', height: '100vh', boxSizing: 'border-box' }}>
+    <div style={{ width: '100vw', height: '100vh', boxSizing: 'border-box', padding: '5px 5px 0px 5px' }}>
       <StatusBar />
       {/* 
           TODO the calc is a hack to prevent the
           StatusBar shoving the WindowContainer off
           the bottom of the screen
       */}
-      <div className="wf relative" style={{ height: 'calc(100% - 50px)', marginTop: '10px' }}>
+      <div className="wf relative" style={{ height: 'calc(100% - 45px)' }}>
         {maxWindow !== 0 && (
           <div
             className="wf hf absolute p3"

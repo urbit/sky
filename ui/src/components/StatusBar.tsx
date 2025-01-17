@@ -17,7 +17,7 @@ const sigilConfig = {
 
 export default function StatusBar() {
   return (
-    <div className="fr ac jb" style={{ height: '40px' }}>
+    <div className="fr ac jb" style={{ height: '40px', paddingLeft: '5px', paddingRight: '5px' }}>
       <div
         className="br1 fr ac jb b1"
         style={{
