@@ -17,7 +17,7 @@ const sigilConfig = {
 
 export default function StatusBar() {
   return (
-    <div className="fr ac jb" style={{ height: '50px' }}>
+    <div className="fr ac jb" style={{ height: '40px' }}>
       <div
         className="br1 fr ac jb b1"
         style={{
@@ -39,7 +39,7 @@ export default function StatusBar() {
       <div className="fr ac jb" style={{ height: '30px' }}>
         <div
           className="fr ac jc br1 b1"
-          style={{ width: '30px', height: '30px' }}
+          style={{ width: '30px', height: '30px', marginLeft: '10px' }}
         >
           <img
             src={bellIcon}

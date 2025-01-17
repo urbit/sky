@@ -227,13 +227,14 @@ function App() {
   }, [])
 
   return (
-    <div style={{ width: `calc(100vw - ${20}px)`, height: '100vh' }}>
+    <div className="p3" style={{ width: '100vw', height: '100vh', boxSizing: 'border-box' }}>
       <StatusBar />
-      {/*
-        TODO this height calc is a kludge, fixes StatusBar
-        shoving the WindowContainer off the bottom of the screen
+      {/* 
+          TODO the calc is a hack to prevent the
+          StatusBar shoving the WindowContainer off
+          the bottom of the screen
       */}
-      <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
+      <div className="wf relative" style={{ height: 'calc(100% - 50px)', marginTop: '10px' }}>
         {maxWindow !== 0 && (
           <div
             className="wf hf absolute p3"
