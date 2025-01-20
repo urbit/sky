@@ -48,14 +48,32 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const windowMap = get().windowMap
     const parentPath = windowMap.get(parentId) ?? defaultPath
 
-    // When splitting a window, the parent becomes a container window
-    windowMap.set(parentId * 2, parentPath)
-    windowMap.set(parentId * 2 + 1, path)
-    // TODO this is an awful concession to bad rendering logic
-    // inshallah we will fix it in another PR
-    windowMap.set(parentId, '')
+    const newWindowMap = new Map(windowMap)
+    newWindowMap.set(parentId * 2, parentPath)
+    newWindowMap.set(parentId * 2 + 1, path)
+    newWindowMap.set(parentId, '')
 
-    set({ windowMap })
+    set({ windowMap: newWindowMap })
+
+    try {
+      const serializedState = {
+        ...get(),
+        windowMap: Array.from(newWindowMap.entries())
+      }
+
+      const stateFile = new File(
+        [JSON.stringify(serializedState, null, 2)],
+        'state.json',
+        { type: 'application/json' }
+      )
+
+      const formData = new FormData()
+      formData.append('file', stateFile)
+      put('~sampel/sys/state/windows', formData)
+      //console.log('Saved window state to namespace')
+    } catch (err) {
+      console.error('Failed to save window state to namespace:', err)
+    }
   },
 
   // remove a node from the tree
