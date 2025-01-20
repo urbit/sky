@@ -194,6 +194,26 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         set({ windowMap })
       }
     }
+
+    // Save the updated state to the namespace
+    try {
+      const serializedState = {
+        ...get(),
+        windowMap: Array.from(windowMap.entries())
+      }
+
+      const stateFile = new File(
+        [JSON.stringify(serializedState, null, 2)],
+        'state.json',
+        { type: 'application/json' }
+      )
+
+      const formData = new FormData()
+      formData.append('file', stateFile)
+      put('~sampel/sys/state/windows', formData)
+    } catch (err) {
+      console.error('Failed to save window state to namespace:', err)
+    }
   },
 
   // update a window's path
