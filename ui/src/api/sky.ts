@@ -33,10 +33,7 @@ async function findPathUrls(path: string): Promise<{ ship: string, athens: strin
     shipLocation = window.location.origin
   }
 
-  if (!path.startsWith('~') && !path.startsWith('/')) {
-    console.log('Path does not start with ~ or /')
-    shipLocation = window.location.href
-  }
+  // TODO support e.g. get('foo/bar') as well as get(/foo/bar)
 
   if (path.startsWith('~')) {
     console.log('Path starts with ~')

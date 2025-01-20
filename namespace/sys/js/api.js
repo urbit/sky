@@ -33,11 +33,6 @@ async function findPathUrls(path) {
     shipLocation = window.location.origin
   }
 
-  if (!path.startsWith('~') && !path.startsWith('/')) {
-    console.log('Path does not start with ~ or /')
-    shipLocation = window.location.href
-  }
-
   if (path.startsWith('~')) {
     console.log('Path starts with ~')
     shipLocation = await findShipDomain(path)
