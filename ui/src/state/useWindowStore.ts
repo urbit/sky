@@ -1,16 +1,47 @@
 import { create } from 'zustand'
-import WindowState from './windowState'
+import { get, put } from '../api/sky'
 
-const defaultPath = '~sampel/home'
-const defaultMap = new Map<number, string>([[1, defaultPath]])
+interface WindowStateObject {
+  windowMap: Map<number, string>
+  maxWindow: number
+  pathBarView: Array<number>
+  activeWindowID: number
+  activeWindowPath: string
+}
 
-const useWindowStore = create<WindowState>((set, get) => ({
-  // init default state values
+interface WindowStore extends WindowStateObject {
+  addWindow: (parentId: number, path: string) => void
+  delWindow: (id: number) => void
+  updateWindowPath: (id: number, path: string) => void
+  setMaxWindow: (id: number) => void
+  togglePathBarView: (id: number) => void
+  setActiveWindowID: (id: number) => void
+  setActiveWindowPath: (path: string) => void
+}
+
+// default state values
+const defaultPath: string = '~sampel/home'
+const defaultMap: Map<number, string> = new Map<number, string>([[1, defaultPath]])
+const defaultState: WindowStateObject = {
   windowMap: defaultMap,
   maxWindow: 0,
   pathBarView: [],
   activeWindowID: 1,
   activeWindowPath: defaultPath,
+}
+
+// get state from namespace, use defaultState as fallback
+// TODO don't hard-code ~sampel; API should support relative paths
+const savedStateRes: Response | void = await get('~sampel/sys/state/windows')
+const state: WindowStateObject = savedStateRes ? await savedStateRes.json() : defaultState
+
+const useWindowStore = create<WindowStore>((set, get) => ({
+  // init state values
+  windowMap: new Map(state.windowMap),
+  maxWindow: state.maxWindow,
+  pathBarView: state.pathBarView,
+  activeWindowID: state.activeWindowID,
+  activeWindowPath: state.activeWindowPath,
 
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
