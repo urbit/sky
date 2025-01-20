@@ -24,20 +24,31 @@ async function findShipDomain(path) {
   }
 }
 
-/**
- * Find URLs for a given ship path
- * @param {string} path - The path to find URLs for
- * @returns {Promise<ShipUrls|undefined>} - The URLs if found
- */
-async function findShipUrls(path) {
-  const shipDomain = await findShipDomain(path)
+async function findPathUrls(path) {
+  let shipLocation
+  console.log('Attempting to find URLs for', path)
 
-  if (!shipDomain) {
-    console.error(`No URL found for ${path.split('/').slice(0)}`)
+  if (path.startsWith('/')) {
+    console.log('Path starts with /')
+    shipLocation = window.location.origin
+  }
+
+  if (!path.startsWith('~') && !path.startsWith('/')) {
+    console.log('Path does not start with ~ or /')
+    shipLocation = window.location.href
+  }
+
+  if (path.startsWith('~')) {
+    console.log('Path starts with ~')
+    shipLocation = await findShipDomain(path)
+  }
+
+  if (!shipLocation) {
+    console.error(`No URLs found for ${path}`)
   } else {
     const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
-    const shipUrl = `${shipDomain}/${endpoint}`
+    const shipUrl = `${shipLocation}/${endpoint}`
     const athensUrl = `https://${ship}.urbit.org/${endpoint}`
     console.log(shipUrl)
     console.log(athensUrl)
@@ -47,6 +58,9 @@ async function findShipUrls(path) {
       athens: athensUrl,
     }
   }
+
+  console.error('Unrecognized path:', path)
+  return null
 }
 
 /**
@@ -55,7 +69,7 @@ async function findShipUrls(path) {
  * @returns {Promise<Response|void>} - The response if successful
  */
 async function get(path) {
-  const urls = await findShipUrls(path)
+  const urls = await findPathUrls(path)
 
   if (!urls) {
     console.error(`File not found at ${path}`)
@@ -118,7 +132,7 @@ async function get(path) {
  * @returns {Promise<Response|void>} - The response if successful
  */
 async function put(path, data) {
-  const urls = await findShipUrls(path)
+  const urls = await findPathUrls(path)
 
   if (!urls) {
     console.error(`No URLs found for ${path.split('/').slice(0)}`)
@@ -231,4 +245,4 @@ async function del(path) {
   }
 }
 
-export { get, put, post, del, findShipUrls, findShipDomain }
+export { get, put, post, del, findPathUrls, findShipDomain }

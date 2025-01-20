@@ -1,5 +1,5 @@
 import { Allotment } from 'allotment'
-import { get, findShipUrls } from '../api/sky'
+import { get, findPathUrls } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
@@ -127,7 +127,7 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
-          const urls = await findShipUrls(path || '~sampel/home')
+          const urls = await findPathUrls(path || '~sampel/home')
           if (urls) {
             return <TextHTML url={urls.ship} />
           }
@@ -245,7 +245,7 @@ export default function Window({
       // TODO nothing below this todo should be necessary;
       // get() should account for all of this
 
-      const urls = await findShipUrls(path)
+      const urls = await findPathUrls(path)
       if (!urls) {
         console.error(`No URLs found for ${path.split('/').slice(0)}`)
         return noURLcontent(path)
