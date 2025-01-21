@@ -4,6 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
+import { auth, get, put, post, del } from './api/sky'
 
 function App() {
   const {
@@ -20,6 +21,36 @@ function App() {
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const resAuth = await auth("zod")
+        console.log('Authentication response', resAuth)
+        if(resAuth){
+          const resGet = await get('~zod/api')
+          if (resGet) {
+            console.log('got response from GET request', resGet)
+          }
+          const resPost = await post('~zod/api', {name: 'John Doe'})
+          if(resPost){
+            console.log('got response from POST request', resPost)
+          }
+          const resPut = await put('~zod/api/put', {name: 'John Doe'})
+          if (resPut) {
+            console.log('got response from PUT request', resPut)
+          }
+          const resDelete = await del('~zod/api/del')
+          if(resDelete){
+            console.log('got response from DELETE request', resDelete)
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    }
+    fetchData()
+  }, [])
 
   function enableWindows() {
     setDragWindow(0)

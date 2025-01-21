@@ -1,3 +1,5 @@
+import Urbit from '@urbit/http-api';
+
 export interface HTTPRequest {
   url: string
   method: string
@@ -11,12 +13,14 @@ export interface HTTPRequest {
 async function findShipDomain(path: string) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
+  console.log('window.ship', window.ship)
   // TODO replace with real server
   const res = await fetch(`http://localhost:3000/domains`)
   const data = await res.json()
 
   // TODO don't return all domains for all ships
   if (data[ship]) {
+    console.log('domain',  data[ship])
     return data[ship]
   } else {
     console.error(`No domains found for ${ship}`)
@@ -43,6 +47,23 @@ async function findShipUrls(path: string) {
   }
 }
 
+async function auth(ship: string){
+  const shipUrl = await findShipDomain(`~${ship}`)
+  console.log('shipUrl', shipUrl)
+  if(ship && shipUrl){
+    console.log('AUTHENTICATION for ', `~${ship}`)
+    const resAuth = await Urbit.authenticate({
+        ship: ship,
+        url: shipUrl,
+        code: "lidlut-tabwed-pillex-ridrup",
+        verbose: true
+    });
+    if(resAuth){
+      return resAuth.sseClientInitialized
+    }
+  }
+}
+
 async function get(path: string): Promise<Response | void> {
   const urls = await findShipUrls(path)
 
@@ -65,6 +86,7 @@ async function get(path: string): Promise<Response | void> {
 
   try {
     const res = await fetch(urls.athens, {
+      credentials: 'include',
       method: 'GET',
       // TODO Authorization header
     })
@@ -79,6 +101,7 @@ async function get(path: string): Promise<Response | void> {
 
     try {
       const res = await fetch(urls.ship, {
+        credentials: 'include',
         method: 'GET',
       })
 
@@ -111,6 +134,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
   // TODO for development; remove
   if (window.urbitID === '~sampel') {
     return fetch(urls.ship, {
+      credentials: 'include',
       method: 'PUT',
       // TODO Authorization header
       body: data,
@@ -118,7 +142,9 @@ async function put(path: string, data: FormData): Promise<Response | void> {
   }
 
   if (window.ship) {
+    console.log('putting in', window.ship)
     return fetch(urls.ship, {
+      credentials: 'include',
       method: 'PUT',
       // TODO Authorization header
       body: data,
@@ -127,6 +153,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
 
   if (window.urbitID) {
     return fetch(urls.athens, {
+      credentials: 'include',
       method: 'PUT',
       // TODO Authorization header
       body: data,
@@ -135,7 +162,21 @@ async function put(path: string, data: FormData): Promise<Response | void> {
 }
 
 async function post(path: string, json: JSON): Promise<Response | void> {
+  const urls = await findShipUrls(path)
+
+  if (!urls) {
+    console.error(`No URLs found for ${path.split('/').slice(0)}`)
+    return
+  }
+
   if (window.ship) {
+    console.log('have window.ship', window.ship)
+    return fetch(urls.ship, {
+      credentials: 'include',
+      method: 'POST',
+      // TODO Authorization header
+      body: null,
+    })
     //pokeSky({
     //  method: "POST",
     //  body: {
@@ -149,6 +190,7 @@ async function post(path: string, json: JSON): Promise<Response | void> {
     const url = `https://${ship}.urbit.org/${endpoint}`
 
     return fetch(url, {
+      credentials: 'include',
       method: 'POST',
       // TODO Authorization header
       body: JSON.stringify(json),
@@ -169,19 +211,18 @@ async function post(path: string, json: JSON): Promise<Response | void> {
 }
 
 async function del(path: string): Promise<Response | void> {
-  if (window.ship) {
-    //pokeSky({
-    //  method: "DELETE",
-    //  body: {
-    //    path: path,
-    //  },
-    //})
-  } else {
+  const urls = await findShipUrls(path)
+  if (!urls) {
+    console.error(`No URLs found for ${path.split('/').slice(0)}`)
+    return
+  }
+  if(window.ship){
     const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
-    const url = `https://${ship}.urbit.org/${endpoint}`
+    const url = urls.ship || `https://${ship}.urbit.org/${endpoint}`
 
     return fetch(url, {
+      credentials: 'include',
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -200,6 +241,8 @@ async function del(path: string): Promise<Response | void> {
       .catch(err => {
         console.error(`DELETE request to ${url} failed:`, err)
       })
+  }else{
+    console.log(`Not authenticated`)
   }
 }
 
@@ -221,4 +264,4 @@ async function del(path: string): Promise<Response | void> {
 //  })
 //}
 
-export { del, get, post, put, findShipDomain, findShipUrls }
+export { del, get, post, put, auth, findShipDomain, findShipUrls }
