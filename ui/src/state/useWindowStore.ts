@@ -31,17 +31,18 @@ function updateWindowState(
   state: WindowStateObject,
   update: WindowStateObjectAttribute
 ): void {
-  let updatedState: object = {
-    ...state,
+  // Create a new state object without spreading the old one
+  const updatedState = {
+    maxWindow: state.maxWindow,
+    pathBarView: state.pathBarView,
+    activeWindowID: state.activeWindowID,
+    activeWindowPath: state.activeWindowPath,
+    // Handle windowMap specially - both the one from state and any update
+    windowMap: update.key === 'windowMap' 
+      ? Array.from(update.value.entries())
+      : Array.from(state.windowMap.entries()),
+    // Override with update for non-windowMap updates
     [update.key]: update.value,
-  }
-
-  if (update.key === 'windowMap') {
-    updatedState = {
-      ...updatedState,
-      windowMap: Array.from(update.value.entries()),
-    }
-    //updatedState.windowMap = Array.from(update.value.entries())
   }
 
   try {
@@ -80,6 +81,8 @@ const savedStateRes: Response | void = await get('~sampel/sys/state/windows')
 const state: WindowStateObject = savedStateRes
   ? await savedStateRes.json()
   : defaultState
+
+console.log('State loaded from backend:', state)
 
 const useWindowStore = create<WindowStore>((set, get) => ({
   // init state values
