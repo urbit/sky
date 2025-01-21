@@ -77,29 +77,34 @@ const defaultState: WindowStateObject = {
   activeWindowPath: defaultPath,
 }
 
-// get state from namespace, use defaultState as fallback
-// TODO don't hard-code ~sampel; API should support relative paths
-// TODO remove top-level await
-let state: WindowStateObject = defaultState
-try {
-  const savedStateRes: Response | void = await get('~sampel/sys/state/windows')
-
-  if (savedStateRes && savedStateRes.ok) {
-    state = await savedStateRes.json()
-  }
-} catch (err) {
-  console.log('Failed to load window state from namespace, using default state: ', err)
-}
-
-console.log('State loaded from backend:', state)
+//let state: WindowStateObject = defaultState
+//
+//async function getWindowState(): Promise<WindowStateObject | null> {
+//  // get state from namespace, use defaultState as fallback
+//  // TODO don't hard-code ~sampel; API should support relative paths
+//  // TODO remove top-level await
+//  try {
+//    const savedStateRes: Response | void = await get('~sampel/sys/state/windows')
+//
+//    if (savedStateRes && savedStateRes.ok) {
+//      return savedStateRes.json()
+//    }
+//
+//    return null
+//  } catch (err) {
+//    console.log('Failed to load window state from namespace, using default state: ', err)
+//  }
+//
+//  return null
+//}
 
 const useWindowStore = create<WindowStore>((set, get) => ({
   // init state values
-  windowMap: new Map(state.windowMap),
-  maxWindow: state.maxWindow,
-  pathBarView: state.pathBarView,
-  activeWindowID: state.activeWindowID,
-  activeWindowPath: state.activeWindowPath,
+  windowMap: defaultState.windowMap,
+  maxWindow: defaultState.maxWindow,
+  pathBarView: defaultState.pathBarView,
+  activeWindowID: defaultState.activeWindowID,
+  activeWindowPath: defaultState.activeWindowPath,
 
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
