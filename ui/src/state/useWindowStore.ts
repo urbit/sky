@@ -9,6 +9,13 @@ interface WindowStateObject {
   activeWindowPath: string
 }
 
+type WindowStateObjectAttribute = {
+  [k in keyof WindowStateObject]: {
+    key: k
+    value: WindowStateObject[k]
+  }
+}[keyof WindowStateObject]
+
 interface WindowStore extends WindowStateObject {
   addWindow: (parentId: number, path: string) => void
   delWindow: (id: number) => void
@@ -19,9 +26,45 @@ interface WindowStore extends WindowStateObject {
   setActiveWindowPath: (path: string) => void
 }
 
+// helper to update window state in the namespace
+function updateWindowState(
+  state: WindowStateObject,
+  update: WindowStateObjectAttribute
+): void {
+  let updatedState: object = {
+    ...state,
+    [update.key]: update.value,
+  }
+
+  if (update.key === 'windowMap') {
+    updatedState = {
+      ...updatedState,
+      windowMap: Array.from(update.value.entries()),
+    }
+    //updatedState.windowMap = Array.from(update.value.entries())
+  }
+
+  try {
+    const stateFile = new File(
+      [JSON.stringify(updatedState, null, 2)],
+      'window-state.json',
+      { type: 'application/json' }
+    )
+
+    const formData = new FormData()
+    formData.append('file', stateFile)
+    // TODO remove ~sampel; API should accept relative paths
+    put('~sampel/sys/state/windows', formData)
+  } catch (err) {
+    console.log('Failed to save window state to namespace: ', err)
+  }
+}
+
 // default state values
 const defaultPath: string = '~sampel/home'
-const defaultMap: Map<number, string> = new Map<number, string>([[1, defaultPath]])
+const defaultMap: Map<number, string> = new Map<number, string>([
+  [1, defaultPath],
+])
 const defaultState: WindowStateObject = {
   windowMap: defaultMap,
   maxWindow: 0,
@@ -32,8 +75,11 @@ const defaultState: WindowStateObject = {
 
 // get state from namespace, use defaultState as fallback
 // TODO don't hard-code ~sampel; API should support relative paths
+// TODO remove top-level await
 const savedStateRes: Response | void = await get('~sampel/sys/state/windows')
-const state: WindowStateObject = savedStateRes ? await savedStateRes.json() : defaultState
+const state: WindowStateObject = savedStateRes
+  ? await savedStateRes.json()
+  : defaultState
 
 const useWindowStore = create<WindowStore>((set, get) => ({
   // init state values
@@ -54,26 +100,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     newWindowMap.set(parentId, '')
 
     set({ windowMap: newWindowMap })
-
-    try {
-      const serializedState = {
-        ...get(),
-        windowMap: Array.from(newWindowMap.entries())
-      }
-
-      const stateFile = new File(
-        [JSON.stringify(serializedState, null, 2)],
-        'state.json',
-        { type: 'application/json' }
-      )
-
-      const formData = new FormData()
-      formData.append('file', stateFile)
-      put('~sampel/sys/state/windows', formData)
-      //console.log('Saved window state to namespace')
-    } catch (err) {
-      console.error('Failed to save window state to namespace:', err)
-    }
+    updateWindowState(get(), { key: 'windowMap', value: newWindowMap })
   },
 
   // remove a node from the tree
@@ -184,72 +211,73 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
     if (id === 1) {
       set({ windowMap: defaultMap })
+      updateWindowState(get(), { key: 'windowMap', value: defaultMap })
     } else {
       handleDelete(windowMap, id)
 
       // If no windows are left after deletion, reset to defaultMap
       if (windowMap.size === 0) {
         set({ windowMap: defaultMap })
+        updateWindowState(get(), { key: 'windowMap', value: defaultMap })
       } else {
-        set({ windowMap })
+        // TODO this relies on handleDelete mutating the
+        // windowMap directly, mutation isn't ideal imo
+        set({ windowMap: windowMap })
+        updateWindowState(get(), { key: 'windowMap', value: windowMap })
       }
-    }
-
-    // Save the updated state to the namespace
-    try {
-      const serializedState = {
-        ...get(),
-        windowMap: Array.from(windowMap.entries())
-      }
-
-      const stateFile = new File(
-        [JSON.stringify(serializedState, null, 2)],
-        'state.json',
-        { type: 'application/json' }
-      )
-
-      const formData = new FormData()
-      formData.append('file', stateFile)
-      put('~sampel/sys/state/windows', formData)
-    } catch (err) {
-      console.error('Failed to save window state to namespace:', err)
     }
   },
 
   // update a window's path
   updateWindowPath: (id: number, path: string) => {
     const windowMap = get().windowMap
-    // If the window doesn't exist, create it with the provided path
-    windowMap.set(id, path)
-    set({ windowMap })
+    const newWindowMap = windowMap.set(id, path)
+
+    set({ windowMap: newWindowMap })
+    updateWindowState(get(), { key: 'windowMap', value: newWindowMap })
   },
 
   // maximise a window
-  setMaxWindow: (id: number) => set({ maxWindow: id }),
+  setMaxWindow: (id: number) => {
+    set({ maxWindow: id })
+    updateWindowState(get(), { key: 'maxWindow', value: id })
+  },
 
   // toggle window id in and out of pathBarView array
   togglePathBarView: (id: number) => {
     const windowArray = get().pathBarView
     const pathBarView = get().pathBarView
+
     if (!pathBarView.includes(id)) {
       // add window id to the pathBarView array
-      set({
-        pathBarView: [...windowArray, id],
+      set({ pathBarView: [...windowArray, id] })
+      updateWindowState(get(), {
+        key: 'pathBarView',
+        value: [...windowArray, id],
       })
     } else {
       // remove window id from the pathBarView array
       const updatedPathBarView = windowArray.filter(item => item !== id)
-      set({
-        pathBarView: updatedPathBarView,
+
+      set({ pathBarView: updatedPathBarView })
+      updateWindowState(get(), {
+        key: 'pathBarView',
+        value: updatedPathBarView,
       })
     }
   },
 
   // track active window
-  setActiveWindowID: (id: number) => set({ activeWindowID: id }),
+  setActiveWindowID: (id: number) => {
+    set({ activeWindowID: id })
+    updateWindowState(get(), { key: 'activeWindowID', value: id })
+  },
 
   // track active window's path
-  setActiveWindowPath: (path: string) => set({ activeWindowPath: path }),
+  setActiveWindowPath: (path: string) => {
+    set({ activeWindowPath: path })
+    updateWindowState(get(), { key: 'activeWindowPath', value: path })
+  },
 }))
 
 export default useWindowStore

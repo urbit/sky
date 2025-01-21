@@ -29,7 +29,10 @@ export default function StatusBar() {
   }
 
   return (
-    <div className="fr ac jb" style={{ height: '40px', paddingLeft: '5px', paddingRight: '5px' }}>
+    <div
+      className="fr ac jb"
+      style={{ height: '40px', paddingLeft: '5px', paddingRight: '5px' }}
+    >
       <div className="fr ac">
         <div
           className="br1 fr ac jc b1 pointer"

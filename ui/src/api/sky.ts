@@ -24,7 +24,9 @@ async function findShipDomain(path: string) {
   }
 }
 
-async function findPathUrls(path: string): Promise<{ ship: string, athens: string } | null> {
+async function findPathUrls(
+  path: string
+): Promise<{ ship: string; athens: string } | null> {
   let shipLocation
   console.log('Attempting to find URLs for', path)
 
