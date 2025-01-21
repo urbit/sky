@@ -99,8 +99,8 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     newWindowMap.set(parentId * 2 + 1, path)
     newWindowMap.set(parentId, '')
 
-    set({ windowMap: newWindowMap })
     updateWindowState(get(), { key: 'windowMap', value: newWindowMap })
+    set({ windowMap: newWindowMap })
   },
 
   // remove a node from the tree
@@ -210,20 +210,20 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     windowMap.delete(id)
 
     if (id === 1) {
-      set({ windowMap: defaultMap })
       updateWindowState(get(), { key: 'windowMap', value: defaultMap })
+      set({ windowMap: defaultMap })
     } else {
       handleDelete(windowMap, id)
 
       // If no windows are left after deletion, reset to defaultMap
       if (windowMap.size === 0) {
-        set({ windowMap: defaultMap })
         updateWindowState(get(), { key: 'windowMap', value: defaultMap })
+        set({ windowMap: defaultMap })
       } else {
         // TODO this relies on handleDelete mutating the
         // windowMap directly, mutation isn't ideal imo
-        set({ windowMap: windowMap })
         updateWindowState(get(), { key: 'windowMap', value: windowMap })
+        set({ windowMap: windowMap })
       }
     }
   },
@@ -233,14 +233,14 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const windowMap = get().windowMap
     const newWindowMap = windowMap.set(id, path)
 
-    set({ windowMap: newWindowMap })
     updateWindowState(get(), { key: 'windowMap', value: newWindowMap })
+    set({ windowMap: newWindowMap })
   },
 
   // maximise a window
   setMaxWindow: (id: number) => {
-    set({ maxWindow: id })
     updateWindowState(get(), { key: 'maxWindow', value: id })
+    set({ maxWindow: id })
   },
 
   // toggle window id in and out of pathBarView array
@@ -250,33 +250,33 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
     if (!pathBarView.includes(id)) {
       // add window id to the pathBarView array
-      set({ pathBarView: [...windowArray, id] })
       updateWindowState(get(), {
         key: 'pathBarView',
         value: [...windowArray, id],
       })
+      set({ pathBarView: [...windowArray, id] })
     } else {
       // remove window id from the pathBarView array
       const updatedPathBarView = windowArray.filter(item => item !== id)
 
-      set({ pathBarView: updatedPathBarView })
       updateWindowState(get(), {
         key: 'pathBarView',
         value: updatedPathBarView,
       })
+      set({ pathBarView: updatedPathBarView })
     }
   },
 
   // track active window
   setActiveWindowID: (id: number) => {
-    set({ activeWindowID: id })
     updateWindowState(get(), { key: 'activeWindowID', value: id })
+    set({ activeWindowID: id })
   },
 
   // track active window's path
   setActiveWindowPath: (path: string) => {
-    set({ activeWindowPath: path })
     updateWindowState(get(), { key: 'activeWindowPath', value: path })
+    set({ activeWindowPath: path })
   },
 }))
 
