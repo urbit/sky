@@ -16,10 +16,6 @@ type WindowStateObjectAttribute = {
   }
 }[keyof WindowStateObject]
 
-interface IntermediateWindowStateObject extends Omit<WindowStateObject, 'windowMap'> {
-  windowMap: Map<number, string> | Array<[number, string]>
-}
-
 interface WindowStore extends WindowStateObject {
   addWindow: (parentId: number, path: string) => void
   delWindow: (id: number) => void
@@ -35,6 +31,10 @@ function updateWindowState(
   state: WindowStateObject,
   update: WindowStateObjectAttribute
 ): void {
+  interface IntermediateWindowStateObject extends Omit<WindowStateObject, 'windowMap'> {
+    windowMap: Map<number, string> | Array<[number, string]>
+  }
+
   const oldWindowMap = state.windowMap
 
   let updatedState: IntermediateWindowStateObject = {
