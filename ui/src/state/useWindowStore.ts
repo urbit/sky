@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { get, put } from '../api/sky'
+import { put } from '../api/sky'
 
 interface WindowStateObject {
   windowMap: Map<number, string>
@@ -32,15 +32,16 @@ function sendWindowStateToNamespace(
   state: WindowStateObject,
   update: WindowStateObjectAttribute
 ): void {
-  interface IntermediateWindowStateObject extends Omit<WindowStateObject, 'windowMap'> {
+  interface IntermediateWindowStateObject
+    extends Omit<WindowStateObject, 'windowMap'> {
     windowMap: Map<number, string> | Array<[number, string]>
   }
 
   const oldWindowMap = state.windowMap
 
-  let updatedState: IntermediateWindowStateObject = {
+  const updatedState: IntermediateWindowStateObject = {
     ...state,
-    [update.key]: update.val
+    [update.key]: update.val,
   }
 
   if (update.key === 'windowMap') {
@@ -77,7 +78,6 @@ const defaultState: WindowStateObject = {
   activeWindowID: 1,
   activeWindowPath: defaultPath,
 }
-
 
 const useWindowStore = create<WindowStore>((set, get) => ({
   // init state values
@@ -283,9 +283,9 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       maxWindow: state.maxWindow,
       pathBarView: state.pathBarView,
       activeWindowID: state.activeWindowID,
-      activeWindowPath: state.activeWindowPath
+      activeWindowPath: state.activeWindowPath,
     })
-  }
+  },
 }))
 
 export default useWindowStore
