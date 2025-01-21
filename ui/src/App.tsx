@@ -4,6 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
+import { get } from './api/sky.ts'
 
 function App() {
   const {
@@ -16,6 +17,7 @@ function App() {
     togglePathBarView,
     updateWindowPath,
     setActiveWindowID,
+    setWindowState,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
@@ -62,7 +64,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function () {
+        event.target.addEventListener('dragend', function() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -217,7 +219,22 @@ function App() {
     setActiveWindowID,
   ])
 
+  // on mount, init window state
+  useEffect(() => {
+    async function init() {
+      const res = await get('~sampel/sys/state/windows')
+
+      if (res && res.ok) {
+        const data = await res.json()
+        setWindowState(data)
+      }
+    }
+
+    init()
+  }, [])
+
   // TODO handle real window.urbitID, not suitable for production
+  // on mount, set window.urbitID
   useEffect(() => {
     if (!window.urbitID) {
       window.urbitID = '~sampel'

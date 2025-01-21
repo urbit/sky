@@ -278,27 +278,8 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   setWindowState: (state: WindowStateObject) => {
-    //async function getWindowState(): Promise<WindowStateObject | null> {
-    //  // get state from namespace, use defaultState as fallback
-    //  // TODO don't hard-code ~sampel; API should support relative paths
-    //  // TODO remove top-level await
-    //  try {
-    //    const savedStateRes: Response | void = await get('~sampel/sys/state/windows')
-    //
-    //    if (savedStateRes && savedStateRes.ok) {
-    //      return savedStateRes.json()
-    //    }
-    //
-    //    return null
-    //  } catch (err) {
-    //    console.log('Failed to load window state from namespace, using default state: ', err)
-    //  }
-    //
-    //  return null
-    //}
-
     set({
-      windowMap: state.windowMap,
+      windowMap: new Map(state.windowMap),
       maxWindow: state.maxWindow,
       pathBarView: state.pathBarView,
       activeWindowID: state.activeWindowID,
