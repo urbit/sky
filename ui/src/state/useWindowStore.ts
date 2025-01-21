@@ -16,6 +16,10 @@ type WindowStateObjectAttribute = {
   }
 }[keyof WindowStateObject]
 
+interface IntermediateWindowStateObject extends Omit<WindowStateObject, 'windowMap'> {
+  windowMap: Map<number, string> | Array<[number, string]>
+}
+
 interface WindowStore extends WindowStateObject {
   addWindow: (parentId: number, path: string) => void
   delWindow: (id: number) => void
@@ -31,18 +35,17 @@ function updateWindowState(
   state: WindowStateObject,
   update: WindowStateObjectAttribute
 ): void {
-  // Create a new state object without spreading the old one
-  const updatedState = {
-    maxWindow: state.maxWindow,
-    pathBarView: state.pathBarView,
-    activeWindowID: state.activeWindowID,
-    activeWindowPath: state.activeWindowPath,
-    // Handle windowMap specially - both the one from state and any update
-    windowMap: update.key === 'windowMap' 
-      ? Array.from(update.value.entries())
-      : Array.from(state.windowMap.entries()),
-    // Override with update for non-windowMap updates
-    [update.key]: update.value,
+  const oldWindowMap = state.windowMap
+
+  let updatedState: IntermediateWindowStateObject = {
+    ...state,
+    [update.key]: update.value
+  }
+
+  if (update.key === 'windowMap') {
+    updatedState.windowMap = Array.from(update.value.entries())
+  } else {
+    updatedState.windowMap = Array.from(oldWindowMap.entries())
   }
 
   try {
