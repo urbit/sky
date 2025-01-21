@@ -12,7 +12,7 @@ interface WindowStateObject {
 type WindowStateObjectAttribute = {
   [k in keyof WindowStateObject]: {
     key: k
-    value: WindowStateObject[k]
+    val: WindowStateObject[k]
   }
 }[keyof WindowStateObject]
 
@@ -39,11 +39,11 @@ function sendWindowStateToNamespace(
 
   let updatedState: IntermediateWindowStateObject = {
     ...state,
-    [update.key]: update.value
+    [update.key]: update.val
   }
 
   if (update.key === 'windowMap') {
-    updatedState.windowMap = Array.from(update.value.entries())
+    updatedState.windowMap = Array.from(update.val.entries())
   } else {
     updatedState.windowMap = Array.from(oldWindowMap.entries())
   }
@@ -105,7 +105,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     newWindowMap.set(parentId * 2 + 1, path)
     newWindowMap.set(parentId, '')
 
-    sendWindowStateToNamespace(get(), { key: 'windowMap', value: newWindowMap })
+    sendWindowStateToNamespace(get(), { key: 'windowMap', val: newWindowMap })
     set({ windowMap: newWindowMap })
   },
 
@@ -216,19 +216,19 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     windowMap.delete(id)
 
     if (id === 1) {
-      sendWindowStateToNamespace(get(), { key: 'windowMap', value: defaultMap })
+      sendWindowStateToNamespace(get(), { key: 'windowMap', val: defaultMap })
       set({ windowMap: defaultMap })
     } else {
       handleDelete(windowMap, id)
 
       // If no windows are left after deletion, reset to defaultMap
       if (windowMap.size === 0) {
-        sendWindowStateToNamespace(get(), { key: 'windowMap', value: defaultMap })
+        sendWindowStateToNamespace(get(), { key: 'windowMap', val: defaultMap })
         set({ windowMap: defaultMap })
       } else {
         // TODO this relies on handleDelete mutating the
         // windowMap directly, mutation isn't ideal imo
-        sendWindowStateToNamespace(get(), { key: 'windowMap', value: windowMap })
+        sendWindowStateToNamespace(get(), { key: 'windowMap', val: windowMap })
         set({ windowMap: windowMap })
       }
     }
@@ -239,13 +239,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const windowMap = get().windowMap
     const newWindowMap = windowMap.set(id, path)
 
-    sendWindowStateToNamespace(get(), { key: 'windowMap', value: newWindowMap })
+    sendWindowStateToNamespace(get(), { key: 'windowMap', val: newWindowMap })
     set({ windowMap: newWindowMap })
   },
 
   // maximise a window
   setMaxWindow: (id: number) => {
-    sendWindowStateToNamespace(get(), { key: 'maxWindow', value: id })
+    sendWindowStateToNamespace(get(), { key: 'maxWindow', val: id })
     set({ maxWindow: id })
   },
 
@@ -258,7 +258,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       // add window id to the pathBarView array
       sendWindowStateToNamespace(get(), {
         key: 'pathBarView',
-        value: [...windowArray, id],
+        val: [...windowArray, id],
       })
       set({ pathBarView: [...windowArray, id] })
     } else {
@@ -267,7 +267,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
       sendWindowStateToNamespace(get(), {
         key: 'pathBarView',
-        value: updatedPathBarView,
+        val: updatedPathBarView,
       })
       set({ pathBarView: updatedPathBarView })
     }
@@ -275,13 +275,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // track active window
   setActiveWindowID: (id: number) => {
-    sendWindowStateToNamespace(get(), { key: 'activeWindowID', value: id })
+    sendWindowStateToNamespace(get(), { key: 'activeWindowID', val: id })
     set({ activeWindowID: id })
   },
 
   // track active window's path
   setActiveWindowPath: (path: string) => {
-    sendWindowStateToNamespace(get(), { key: 'activeWindowPath', value: path })
+    sendWindowStateToNamespace(get(), { key: 'activeWindowPath', val: path })
     set({ activeWindowPath: path })
   },
 }))
