@@ -51,7 +51,7 @@ function sendWindowStateToNamespace(
   try {
     const stateFile = new File(
       [JSON.stringify(updatedState, null, 2)],
-      'window-state.json',
+      'windows.json',
       { type: 'application/json' }
     )
 
@@ -80,10 +80,16 @@ const defaultState: WindowStateObject = {
 // get state from namespace, use defaultState as fallback
 // TODO don't hard-code ~sampel; API should support relative paths
 // TODO remove top-level await
-const savedStateRes: Response | void = await get('~sampel/sys/state/windows')
-const state: WindowStateObject = savedStateRes
-  ? await savedStateRes.json()
-  : defaultState
+let state: WindowStateObject = defaultState
+try {
+  const savedStateRes: Response | void = await get('~sampel/sys/state/windows')
+
+  if (savedStateRes && savedStateRes.ok) {
+    state = await savedStateRes.json()
+  }
+} catch (err) {
+  console.log('Failed to load window state from namespace, using default state: ', err)
+}
 
 console.log('State loaded from backend:', state)
 
