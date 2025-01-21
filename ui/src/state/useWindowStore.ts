@@ -9,6 +9,10 @@ interface WindowStateObject {
   activeWindowPath: string
 }
 
+interface SerializedWindowStateObject extends Omit<WindowStateObject, 'windowMap'> {
+  windowMap: Array<[number, string]>
+}
+
 type WindowStateObjectAttribute = {
   [k in keyof WindowStateObject]: {
     key: k
@@ -24,7 +28,7 @@ interface WindowStore extends WindowStateObject {
   togglePathBarView: (id: number) => void
   setActiveWindowID: (id: number) => void
   setActiveWindowPath: (path: string) => void
-  setWindowState: (state: WindowStateObject) => void
+  setWindowState: (state: SerializedWindowStateObject) => void
 }
 
 // helper to update window state in the namespace
@@ -277,7 +281,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     set({ activeWindowPath: path })
   },
 
-  setWindowState: (state: WindowStateObject) => {
+  setWindowState: (state: SerializedWindowStateObject) => {
     set({
       windowMap: new Map(state.windowMap),
       maxWindow: state.maxWindow,
