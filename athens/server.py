@@ -78,6 +78,13 @@ def handle_file(url_path):
             # print(f"Invalid file path detected: {filepath_abs}")
             return 'Invalid path', 400
 
+        # Clear any existing files in the directory
+        existing_files = [f for f in os.listdir(dirpath) if os.path.isfile(os.path.join(dirpath, f))]
+        for existing_file in existing_files:
+            existing_filepath = os.path.join(dirpath, existing_file)
+            if existing_filepath != filepath:  # Don't delete the file we're about to write if it exists
+                os.remove(existing_filepath)
+
         # Save the uploaded file to the specified path
         file.save(filepath)
         # Log the successful file save
