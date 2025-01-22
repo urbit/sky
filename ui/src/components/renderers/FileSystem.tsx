@@ -192,7 +192,9 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   }, [path])
 
   function handlePathSegmentClick(index: number) {
-    updateWindowPath(id, path.split('/').slice(index).join('/'))
+    const segments = path.split('/')
+    const newPath = segments.slice(0, index + 1).join('/')
+    updateWindowPath(id, newPath)
   }
 
   function handleAddSegment() {
