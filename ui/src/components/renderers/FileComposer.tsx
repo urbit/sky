@@ -1,5 +1,5 @@
 import Editor from '@monaco-editor/react'
-import * as monaco from 'monaco-editor'
+import type * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
@@ -92,7 +92,7 @@ export default function FileComposer(): JSX.Element {
           }
         } else if (activeWindowPath) {
           const publishedRes = await get(activeWindowPath)
-          
+
           if (publishedRes && publishedRes.status !== 404) {
             const publishedContent = await publishedRes.text()
             setEditorContent(publishedContent)
@@ -140,7 +140,7 @@ export default function FileComposer(): JSX.Element {
       const detectedLanguage = detectLanguage(content)
       const mimeType =
         languageToMimeType[
-          detectedLanguage as keyof typeof languageToMimeType
+        detectedLanguage as keyof typeof languageToMimeType
         ] || 'text/plain'
       const extension =
         detectedLanguage === 'plaintext'
@@ -187,7 +187,7 @@ export default function FileComposer(): JSX.Element {
       const detectedLanguage = detectLanguage(editorContent)
       const mimeType =
         languageToMimeType[
-          detectedLanguage as keyof typeof languageToMimeType
+        detectedLanguage as keyof typeof languageToMimeType
         ] || 'text/plain'
       const extension =
         detectedLanguage === 'plaintext'

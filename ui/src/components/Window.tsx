@@ -113,7 +113,7 @@ export default function Window({
 
     if (res.status >= 200 && res.status <= 300) {
       const contentType = res.headers.get('Content-Type')
-      console.log(`Content-Type: ${contentType}`)
+      console.log(`Content-Type: ${contentType && contentType.split(';')[0]}`)
 
       if (!contentType) {
         return notRecognizedContent
@@ -144,7 +144,7 @@ export default function Window({
           const txt = await res.text()
           return <TextPlain text={txt} />
         }
-        case 'application/javascript': {
+        case 'text/javascript': {
           console.log('Processing JavaScript data...')
           const txt = await res.text()
           return <TextPlain text={txt} />
