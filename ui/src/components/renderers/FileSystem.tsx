@@ -18,7 +18,7 @@ const composerContentTypes = new Set([
   'text/javascript',
   'application/json',
   'application/xml',
-  'text/markdown'
+  'text/markdown',
 ])
 
 async function renderFile(res: Response): Promise<JSX.Element> {
