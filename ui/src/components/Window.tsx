@@ -1,5 +1,5 @@
 import { Allotment } from 'allotment'
-import { get, findShipUrls } from '../api/sky'
+import { get, findShipUrl } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
@@ -12,7 +12,7 @@ import TextPlain from './renderers/TextPlain'
 
 export interface WindowProps {
   id: number
-  path: string 
+  path: string
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
   handleDragStart: (event: React.DragEvent, id: number) => void
   dragWindow: number
@@ -127,9 +127,9 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
-          const urls = await findShipUrls(path || '~sampel/home')
-          if (urls) {
-            return <TextHTML url={urls.ship} />
+          const url = await findShipUrl(path || '~sampel/home')
+          if (url) {
+            return <TextHTML url={url} />
           }
 
           return <div>{`No URLs found for ${path}`}</div>
@@ -245,13 +245,11 @@ export default function Window({
       // TODO nothing below this todo should be necessary;
       // get() should account for all of this
 
-      const urls = await findShipUrls(path)
-      if (!urls) {
+      const url = await findShipUrl(path)
+      if (!url) {
         console.error(`No URLs found for ${path.split('/').slice(0)}`)
         return noURLcontent(path)
       }
-
-      const url = urls.athens || urls.ship
 
       if (url) {
         return <iframe src={url} className="hf wf" style={{ border: 'none' }} />

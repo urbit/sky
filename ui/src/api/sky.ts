@@ -1,4 +1,4 @@
-import Urbit from '@urbit/http-api';
+import Urbit from '@urbit/http-api'
 
 export interface HTTPRequest {
   url: string
@@ -8,7 +8,7 @@ export interface HTTPRequest {
 }
 
 //
-// TODO authentication for urbit.org / Athens
+// TODO authentication for urbit.org
 //
 async function findShipDomain(path: string) {
   const ship = path.split('/')[0]
@@ -20,54 +20,43 @@ async function findShipDomain(path: string) {
 
   // TODO don't return all domains for all ships
   if (data[ship]) {
-    console.log('domain',  data[ship])
+    console.log('domain', data[ship])
     return data[ship]
   } else {
     console.error(`No domains found for ${ship}`)
   }
 }
 
-async function findShipUrls(path: string) {
+async function findShipUrl(path: string) {
   const shipDomain = await findShipDomain(path)
 
   if (!shipDomain) {
     console.error(`No URL found for ${path.split('/').slice(0)}`)
   } else {
-    const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
-    const shipUrl = `${shipDomain}/${endpoint}`
-    const athensUrl = `https://${ship}.urbit.org/${endpoint}`
-    console.log(shipUrl)
-    console.log(athensUrl)
-
-    return {
-      ship: shipUrl,
-      athens: athensUrl,
-    }
+    const url = `${shipDomain}/${endpoint}`
+    return url
   }
 }
 
-async function auth(ship: string){
-  const shipUrl = await findShipDomain(`~${ship}`)
-  console.log('shipUrl', shipUrl)
-  if(ship && shipUrl){
-    console.log('AUTHENTICATION for ', `~${ship}`)
-    const resAuth = await Urbit.authenticate({
-        ship: ship,
-        url: shipUrl,
-        code: "lidlut-tabwed-pillex-ridrup",
-        verbose: true
-    });
-    if(resAuth){
-      return resAuth.sseClientInitialized
-    }
+async function auth(ship: string, code: string) {
+  const url = await findShipDomain(`~${ship}`)
+  console.log('url', url)
+  if (url) {
+    console.log('Authenticating ', `~${ship}`)
+    return await Urbit.authenticate({
+      ship: ship,
+      url: url,
+      code: code,
+      verbose: true,
+    })
   }
 }
 
 async function get(path: string): Promise<Response | void> {
-  const urls = await findShipUrls(path)
+  const url = await findShipUrl(path)
 
-  if (!urls) {
+  if (!url) {
     console.error(`File not found at ${path}`)
     return new Response(`File not found for ${path}`, {
       status: 404,
@@ -76,174 +65,114 @@ async function get(path: string): Promise<Response | void> {
   }
 
   // TODO remove this for production
-  if (path.split('/')[0] === '~sampel') {
-    if (urls) {
-      return fetch(urls.ship, {
-        method: 'GET',
-      })
-    }
+  if (path.split('/')[0] === '~sampel' && url) {
+    return fetch(url, {
+      method: 'GET',
+    })
   }
 
   try {
-    const res = await fetch(urls.athens, {
-      credentials: 'include',
+    const res = await fetch(url, {
       method: 'GET',
-      // TODO Authorization header
+      credentials: 'include',
     })
-
     if (!res.ok) {
-      throw new Error(`Response not ok at ${urls.athens}`)
+      throw new Error(`Response not ok at ${url}`)
     }
-
     return res
   } catch (err) {
-    console.error(`GET request to ${urls.athens} failed:`, err)
-
-    try {
-      const res = await fetch(urls.ship, {
-        credentials: 'include',
-        method: 'GET',
-      })
-
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${urls.ship}`)
-      }
-
-      return res
-    } catch (err) {
-      console.log(`GET request to ${urls.ship} failed: `, err)
-      return new Response(`File not found for ${path}`, {
-        status: 404,
-        headers: {
-          'Content-Type': 'text/plain',
-          'X-Response-URL': urls.ship,
-        },
-      })
-    }
+    console.log(`GET request to ${url} failed: `, err)
+    return new Response(`File not found for ${path}`, {
+      status: 404,
+      headers: {
+        'Content-Type': 'text/plain',
+        'X-Response-URL': url,
+      },
+    })
   }
 }
 
 async function put(path: string, data: FormData): Promise<Response | void> {
-  const urls = await findShipUrls(path)
+  const url = await findShipUrl(path)
 
-  if (!urls) {
-    console.error(`No URLs found for ${path.split('/').slice(0)}`)
+  if (!url) {
+    console.error(`No url found for ${path.split('/').slice(0)}`)
     return
   }
 
   // TODO for development; remove
-  if (window.urbitID === '~sampel') {
-    return fetch(urls.ship, {
-      credentials: 'include',
-      method: 'PUT',
-      // TODO Authorization header
-      body: data,
+  return fetch(url, {
+    method: 'PUT',
+    credentials: 'include',
+    body: data,
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`Response not ok at ${url}`)
+      }
+      return res.json()
     })
-  }
-
-  if (window.ship) {
-    console.log('putting in', window.ship)
-    return fetch(urls.ship, {
-      credentials: 'include',
-      method: 'PUT',
-      // TODO Authorization header
-      body: data,
+    .then(data => {
+      return data
     })
-  }
-
-  if (window.urbitID) {
-    return fetch(urls.athens, {
-      credentials: 'include',
-      method: 'PUT',
-      // TODO Authorization header
-      body: data,
+    .catch(err => {
+      console.error(`PUT request to ${url} failed:`, err)
     })
-  }
 }
 
 async function post(path: string, json: JSON): Promise<Response | void> {
-  const urls = await findShipUrls(path)
+  const url = await findShipUrl(path)
 
-  if (!urls) {
-    console.error(`No URLs found for ${path.split('/').slice(0)}`)
+  if (!url) {
+    console.error(`No url found for ${path.split('/').slice(0)}`)
     return
   }
 
-  if (window.ship) {
-    console.log('have window.ship', window.ship)
-    return fetch(urls.ship, {
-      credentials: 'include',
-      method: 'POST',
-      // TODO Authorization header
-      body: null,
+  return fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    body: JSON.stringify(json),
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`Response not ok at ${url}`)
+      }
+      return res.json()
     })
-    //pokeSky({
-    //  method: "POST",
-    //  body: {
-    //    path: path,
-    //    json: json,
-    //  },
-    //})
-  } else {
-    const ship = path.split('/')[0].slice(1)
-    const endpoint = path.split('/').slice(1).join('/')
-    const url = `https://${ship}.urbit.org/${endpoint}`
-
-    return fetch(url, {
-      credentials: 'include',
-      method: 'POST',
-      // TODO Authorization header
-      body: JSON.stringify(json),
+    .then(data => {
+      return data
     })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`Response not ok at ${url}`)
-        }
-        return res.json()
-      })
-      .then(data => {
-        return data
-      })
-      .catch(err => {
-        console.error(`POST request to ${url} failed:`, err)
-      })
-  }
+    .catch(err => {
+      console.error(`POST request to ${url} failed:`, err)
+    })
 }
 
 async function del(path: string): Promise<Response | void> {
-  const urls = await findShipUrls(path)
-  if (!urls) {
-    console.error(`No URLs found for ${path.split('/').slice(0)}`)
+  const url = await findShipUrl(path)
+  if (!url) {
+    console.error(`No url found for ${path.split('/').slice(0)}`)
     return
   }
-  if(window.ship){
-    const ship = path.split('/')[0].slice(1)
-    const endpoint = path.split('/').slice(1).join('/')
-    const url = urls.ship || `https://${ship}.urbit.org/${endpoint}`
 
-    return fetch(url, {
-      credentials: 'include',
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        // TODO Authorization header
-      },
+  return fetch(url, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`Response not ok at ${url}`)
+      }
+      return res.json()
     })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`Response not ok at ${url}`)
-        }
-        return res.json()
-      })
-      .then(data => {
-        console.log('Delete successful:', data)
-      })
-      .catch(err => {
-        console.error(`DELETE request to ${url} failed:`, err)
-      })
-  }else{
-    console.log(`Not authenticated`)
-  }
+    .then(data => {
+      console.log('Delete successful:', data)
+    })
+    .catch(err => {
+      console.error(`DELETE request to ${url} failed:`, err)
+    })
 }
 
 // TODO make the type more specific than 'any' or 'JSON'
@@ -264,4 +193,4 @@ async function del(path: string): Promise<Response | void> {
 //  })
 //}
 
-export { del, get, post, put, auth, findShipDomain, findShipUrls }
+export { get, put, post, del, auth, findShipUrl, findShipDomain }

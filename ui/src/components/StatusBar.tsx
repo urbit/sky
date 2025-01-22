@@ -1,5 +1,7 @@
 import '@urbit/sigil-js'
+// @ts-expect-error Type definitions for PNG imports are missing
 import bellIcon from '../assets/images/bell.png'
+// @ts-expect-error Type definitions for PNG imports are missing
 import closeIcon from '../assets/images/close.png'
 
 const sigilConfig = {

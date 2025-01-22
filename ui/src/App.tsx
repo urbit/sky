@@ -25,25 +25,32 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const resAuth = await auth("zod")
-        console.log('Authentication response', resAuth)
-        if(resAuth){
+        const resAuth = await auth('zod', 'lidlut-tabwed-pillex-ridrup')
+
+        if (resAuth) {
+          window.urbitID = window.ship
           const resGet = await get('~zod/api')
           if (resGet) {
             console.log('got response from GET request', resGet)
           }
-          const resPost = await post('~zod/api', {name: 'John Doe'})
-          if(resPost){
+          const formData = new FormData()
+          formData.append('name', 'John Doe')
+          const json = formData as unknown as JSON
+          const resPost = await post('~zod/api', json)
+          if (resPost) {
             console.log('got response from POST request', resPost)
           }
-          const resPut = await put('~zod/api/put', {name: 'John Doe'})
+          const resPut = await put('~zod/api', new FormData())
           if (resPut) {
             console.log('got response from PUT request', resPut)
           }
           const resDelete = await del('~zod/api/del')
-          if(resDelete){
+          if (resDelete) {
             console.log('got response from DELETE request', resDelete)
           }
+        }
+        if (!resAuth) {
+          window.urbitID = '~sampel'
         }
       } catch (error) {
         console.error('Error:', error)
@@ -93,7 +100,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function() {
+        event.target.addEventListener('dragend', function () {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -151,9 +158,7 @@ function App() {
 
   // listen for keydown events
   useEffect(() => {
-    console.log(
-      `path: ${windowMap.get(activeWindowID)}`
-    )
+    console.log(`path: ${windowMap.get(activeWindowID)}`)
     console.log(`activeWindowID: ${activeWindowID}`)
     console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -249,13 +254,6 @@ function App() {
     updateWindowPath,
     setActiveWindowID,
   ])
-
-  // TODO handle real window.urbitID, not suitable for production
-  useEffect(() => {
-    if (!window.urbitID) {
-      window.urbitID = '~sampel'
-    }
-  }, [])
 
   return (
     <div style={{ width: `calc(100vw - ${20}px)`, height: '100vh' }}>
