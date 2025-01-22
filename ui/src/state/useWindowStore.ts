@@ -4,12 +4,15 @@ import { put } from '../api/sky'
 interface WindowStateObject {
   windowMap: Map<number, string>
   maxWindow: number
+  fileView: Array<number>
   pathBarView: Array<number>
   activeWindowID: number
   activeWindowPath: string
 }
 
-interface SerializedWindowStateObject extends Omit<WindowStateObject, 'windowMap'> {
+// window map must be serialized to an array in JSON
+interface SerializedWindowStateObject
+  extends Omit<WindowStateObject, 'windowMap'> {
   windowMap: Array<[number, string]>
 }
 
@@ -25,6 +28,7 @@ interface WindowStore extends WindowStateObject {
   delWindow: (id: number) => void
   updateWindowPath: (id: number, path: string) => void
   setMaxWindow: (id: number) => void
+  toggleFileView: (id: number) => void
   togglePathBarView: (id: number) => void
   setActiveWindowID: (id: number) => void
   setActiveWindowPath: (path: string) => void
@@ -78,6 +82,7 @@ const defaultMap: Map<number, string> = new Map<number, string>([
 const defaultState: WindowStateObject = {
   windowMap: defaultMap,
   maxWindow: 0,
+  fileView: [],
   pathBarView: [],
   activeWindowID: 1,
   activeWindowPath: defaultPath,
@@ -87,6 +92,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   // init state values
   windowMap: defaultState.windowMap,
   maxWindow: defaultState.maxWindow,
+  fileView: defaultState.fileView,
   pathBarView: defaultState.pathBarView,
   activeWindowID: defaultState.activeWindowID,
   activeWindowPath: defaultState.activeWindowPath,
@@ -243,6 +249,29 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   setMaxWindow: (id: number) => {
     sendWindowStateToNamespace(get(), { key: 'maxWindow', val: id })
     set({ maxWindow: id })
+  },
+
+  // toggle "normal" view and file view in a window
+  toggleFileView: (id: number) => {
+    const fileViewArray = get().fileView
+
+    if (!fileViewArray.includes(id)) {
+      const newFileViewArray = [...fileViewArray, id]
+
+      sendWindowStateToNamespace(get(), {
+        key: 'fileView',
+        val: newFileViewArray,
+      })
+      set({ fileView: newFileViewArray })
+    } else {
+      const newFileViewArray = fileViewArray.filter(item => item !== id)
+
+      sendWindowStateToNamespace(get(), {
+        key: 'fileView',
+        val: newFileViewArray,
+      })
+      set({ fileView: newFileViewArray })
+    }
   },
 
   // toggle window id in and out of pathBarView array
