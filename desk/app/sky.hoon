@@ -20,7 +20,8 @@
     def   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  `this
+  :_  this
+    [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
@@ -35,6 +36,7 @@
   |^
     ?+    mark  (on-poke:def mark vase)
         %handle-http-request
+      ~&  >>  src.bowl
       ?>  =(src.bowl our.bowl)
       =^  cards  state
         (handle-http !<([@ta =inbound-request:eyre] vase))
@@ -47,30 +49,43 @@
         (parse-request-line:server url.request.inbound-request)
       =+  send=(cury response:schooner eyre-id)
     ::
-      ?+    method.request.inbound-request
-        [(send [405 ~ [%stock ~]]) state]
+      ?+    method.request.inbound-request  [(send [405 ~ [%stock ~]]) state]
       ::
           %'DELETE'
+        ~&  >>  'got DELETE'
         ~_  leaf/"DELETE failed successfully!"
         !!
       ::
           %'GET'
+        ~&  >>  'got GET'
         ~_  leaf/"GET failed successfully!"
         !!
       ::
           %'POST'
+        ~&  >>  'got POST'
         ~_  leaf/"POST failed successfully!"
         !!
       ::
           %'PUT'
+        ~&  >>  'got PUT'
         ~_  leaf/"PUT failed successfully!"
         !!
       ==
     --
 ::
 ++  on-peek   on-peek:def
-++  on-watch  on-watch:def
-++  on-arvo   on-arvo:def
+++  on-watch  
+  |=  =path
+  `this
+++  on-arvo   
+  |=  [=wire =sign-arvo]
+  ?.  ?=([%eyre %connect ~] wire)
+    (on-arvo:def [wire sign-arvo])
+  ?>  ?=([%eyre %bound *] sign-arvo)
+  ?:  accepted.sign-arvo
+    `this
+  %-  (slog leaf+"Binding /api failed!" ~)
+  `this
 ++  on-leave  on-leave:def
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def

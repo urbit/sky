@@ -1,9 +1,4 @@
-/**
- * @typedef {Object} ShipUrls
- * @property {string} ship - The ship URL
- * @property {string} athens - The Athens URL
- */
-
+import Urbit from '@urbit/http-api'
 /**
  * Find the domain for a given ship path
  * @param {string} path - The path to find the domain for
@@ -27,25 +22,38 @@ async function findShipDomain(path) {
 /**
  * Find URLs for a given ship path
  * @param {string} path - The path to find URLs for
- * @returns {Promise<ShipUrls|undefined>} - The URLs if found
+ * @returns {Promise<urls|undefined>} - The URLs if found
  */
-async function findShipUrls(path) {
+async function findShipUrl(path) {
   const shipDomain = await findShipDomain(path)
 
   if (!shipDomain) {
     console.error(`No URL found for ${path.split('/').slice(0)}`)
   } else {
-    const ship = path.split('/')[0].slice(1)
-    const endpoint = path.split('/').slice(1).join('/')
-    const shipUrl = `${shipDomain}/${endpoint}`
-    const athensUrl = `https://${ship}.urbit.org/${endpoint}`
-    console.log(shipUrl)
-    console.log(athensUrl)
+    const url = `${shipDomain}/${endpoint}`
+    console.log(url)
 
-    return {
-      ship: shipUrl,
-      athens: athensUrl,
-    }
+    return url
+  }
+}
+
+/**
+ * Sends Authentication request using Urbit object
+ * @param {string} ship
+ * @param {string} code
+ * @returns {Promise<urls|undefined>} - The URLs if found
+ */
+async function auth(ship, code) {
+  const url = await findShipDomain(`~${ship}`)
+
+  if (url) {
+    console.log('Authenticating ', `~${ship}`)
+    return await Urbit.authenticate({
+      ship: ship,
+      url: url,
+      code: code,
+      verbose: true
+    })
   }
 }
 
@@ -55,59 +63,44 @@ async function findShipUrls(path) {
  * @returns {Promise<Response|void>} - The response if successful
  */
 async function get(path) {
-  const urls = await findShipUrls(path)
+  const url = await findShipUrl(path)
 
-  if (!urls) {
+  if (!url) {
     console.error(`File not found at ${path}`)
     return new Response(`File not found for ${path}`, {
       status: 404,
-      headers: { 'Content-Type': 'text/plain' },
+      headers: { 'Content-Type': 'text/plain' }
     })
   }
 
   // TODO remove this for production
   if (path.split('/')[0] === '~sampel') {
-    if (urls) {
-      return fetch(urls.ship, {
+    if (url) {
+      return fetch(url, {
         method: 'GET',
+        credentials: 'include'
       })
     }
   }
 
   try {
-    const res = await fetch(urls.athens, {
+    const res = await fetch(url, {
       method: 'GET',
-      // TODO Authorization header
+      credentials: 'include'
     })
-
     if (!res.ok) {
-      throw new Error(`Response not ok at ${urls.athens}`)
+      throw new Error(`Response not ok at ${url}`)
     }
-
     return res
   } catch (err) {
-    console.error(`GET request to ${urls.athens} failed:`, err)
-
-    try {
-      const res = await fetch(urls.ship, {
-        method: 'GET',
-      })
-
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${urls.ship}`)
+    console.log(`GET request to ${url} failed: `, err)
+    return new Response(`File not found for ${path}`, {
+      status: 404,
+      headers: {
+        'Content-Type': 'text/plain',
+        'X-Response-URL': url
       }
-
-      return res
-    } catch (err) {
-      console.log(`GET request to ${urls.ship} failed: `, err)
-      return new Response(`File not found for ${path}`, {
-        status: 404,
-        headers: {
-          'Content-Type': 'text/plain',
-          'X-Response-URL': urls.ship,
-        },
-      })
-    }
+    })
   }
 }
 
@@ -118,35 +111,19 @@ async function get(path) {
  * @returns {Promise<Response|void>} - The response if successful
  */
 async function put(path, data) {
-  const urls = await findShipUrls(path)
+  const url = await findShipUrl(path)
 
-  if (!urls) {
+  if (!url) {
     console.error(`No URLs found for ${path.split('/').slice(0)}`)
     return
   }
 
   // TODO for development; remove
-  if (window.urbitID === '~sampel') {
-    return fetch(urls.ship, {
+  if (window.urbitID === '~sampel' || window.ship) {
+    return fetch(url, {
       method: 'PUT',
-      // TODO Authorization header
-      body: data,
-    })
-  }
-
-  if (window.ship) {
-    return fetch(urls.ship, {
-      method: 'PUT',
-      // TODO Authorization header
-      body: data,
-    })
-  }
-
-  if (window.urbitID) {
-    return fetch(urls.athens, {
-      method: 'PUT',
-      // TODO Authorization header
-      body: data,
+      credentials: 'include',
+      body: data
     })
   }
 }
@@ -158,34 +135,29 @@ async function put(path, data) {
  * @returns {Promise<Response|void>} - The response if successful
  */
 async function post(path, json) {
-  if (window.ship) {
-    //pokeSky({
-    //  method: "POST",
-    //  body: {
-    //    path: path,
-    //    json: json,
-    //  },
-    //})
-  } else {
-    const ship = path.split('/')[0].slice(1)
-    const endpoint = path.split('/').slice(1).join('/')
-    const url = `https://${ship}.urbit.org/${endpoint}`
+  const url = await findShipUrl(path)
 
+  if (!url) {
+    console.error(`No url found for ${path.split('/').slice(0)}`)
+    return
+  }
+
+  if (url && winodow.ship) {
     return fetch(url, {
       method: 'POST',
-      // TODO Authorization header
-      body: JSON.stringify(json),
+      credentials: 'include',
+      body: JSON.stringify(json)
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) {
           throw new Error(`Response not ok at ${url}`)
         }
         return res.json()
       })
-      .then(data => {
+      .then((data) => {
         return data
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(`POST request to ${url} failed:`, err)
       })
   }
@@ -197,38 +169,29 @@ async function post(path, json) {
  * @returns {Promise<Response|void>} - The response if successful
  */
 async function del(path) {
-  if (window.ship) {
-    //pokeSky({
-    //  method: "DELETE",
-    //  body: {
-    //    path: path,
-    //  },
-    //})
-  } else {
-    const ship = path.split('/')[0].slice(1)
-    const endpoint = path.split('/').slice(1).join('/')
-    const url = `https://${ship}.urbit.org/${endpoint}`
+  const url = await findShipUrl(path)
 
+  if (url) {
     return fetch(url, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
-        // TODO Authorization header
-      },
+        'Content-Type': 'application/json'
+      }
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) {
           throw new Error(`Response not ok at ${url}`)
         }
         return res.json()
       })
-      .then(data => {
+      .then((data) => {
         console.log('Delete successful:', data)
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(`DELETE request to ${url} failed:`, err)
       })
   }
 }
 
-export { get, put, post, del, findShipUrls, findShipDomain }
+export { get, put, post, del, auth, findShipUrl, findShipDomain }
