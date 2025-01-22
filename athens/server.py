@@ -7,6 +7,10 @@ import os
 # Import mimetypes to guess the MIME type of a file
 import mimetypes
 
+# Add markdown MIME type since it's not in Python's default types
+mimetypes.add_type('text/markdown', '.md')
+mimetypes.add_type('text/markdown', '.markdown')
+
 # Create an instance of the Flask application
 app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) for all routes
