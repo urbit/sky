@@ -251,7 +251,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     set({ maxWindow: id })
   },
 
-  // toggle "normal" view and file view in a window
+  // toggle "normal" view and file view for a window
   toggleFileView: (id: number) => {
     const fileViewArray = get().fileView
 
@@ -274,27 +274,26 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     }
   },
 
-  // toggle window id in and out of pathBarView array
+  // toggle path bar view for a window
   togglePathBarView: (id: number) => {
-    const windowArray = get().pathBarView
     const pathBarView = get().pathBarView
 
     if (!pathBarView.includes(id)) {
-      // add window id to the pathBarView array
-      sendWindowStateToNamespace(get(), {
-        key: 'pathBarView',
-        val: [...windowArray, id],
-      })
-      set({ pathBarView: [...windowArray, id] })
-    } else {
-      // remove window id from the pathBarView array
-      const updatedPathBarView = windowArray.filter(item => item !== id)
+      const newPathBarArray = [...pathBarView, id]
 
       sendWindowStateToNamespace(get(), {
         key: 'pathBarView',
-        val: updatedPathBarView,
+        val: newPathBarArray,
       })
-      set({ pathBarView: updatedPathBarView })
+      set({ pathBarView: newPathBarArray })
+    } else {
+      const newPathBarView = pathBarView.filter(item => item !== id)
+
+      sendWindowStateToNamespace(get(), {
+        key: 'pathBarView',
+        val: newPathBarView,
+      })
+      set({ pathBarView: newPathBarView })
     }
   },
 
