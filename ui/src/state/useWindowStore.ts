@@ -309,10 +309,12 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     set({ activeWindowPath: path })
   },
 
+  // set init window state from namespace
   setWindowState: (state: SerializedWindowStateObject) => {
     set({
       windowMap: new Map(state.windowMap),
       maxWindow: state.maxWindow,
+      fileView: state.fileView,
       pathBarView: state.pathBarView,
       activeWindowID: state.activeWindowID,
       activeWindowPath: state.activeWindowPath,
