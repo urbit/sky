@@ -71,26 +71,32 @@ export default function FileComposer(): JSX.Element {
         // First check temp path for any saved work
         const tempRes = await get(tempPath)
 
-        if (tempRes) {
-          if (tempRes.status !== 404) {
-            const content = await tempRes.text()
-            setEditorContent(content)
+        if (tempRes && tempRes.status !== 404) {
+          const content = await tempRes.text()
+          setEditorContent(content)
 
-            // If we found content in /tmp, check if it differs from published version
-            if (activeWindowPath) {
-              const publishedRes = await get(activeWindowPath)
+          // If we found content in /tmp, check if it differs from published version
+          if (activeWindowPath) {
+            const publishedRes = await get(activeWindowPath)
 
-              if (publishedRes && publishedRes.status !== 404) {
-                const publishedContent = await publishedRes.text()
-                // If content in /tmp differs from published, mark as edited
-                if (publishedContent !== content) {
-                  setIsEdited(true)
-                }
-              } else {
-                // If no published version exists but we have temp content, mark as edited
+            if (publishedRes && publishedRes.status !== 404) {
+              const publishedContent = await publishedRes.text()
+              // If content in /tmp differs from published, mark as edited
+              if (publishedContent !== content) {
                 setIsEdited(true)
               }
+            } else {
+              // If no published version exists but we have temp content, mark as edited
+              setIsEdited(true)
             }
+          }
+        } else if (activeWindowPath) {
+          const publishedRes = await get(activeWindowPath)
+          
+          if (publishedRes && publishedRes.status !== 404) {
+            const publishedContent = await publishedRes.text()
+            setEditorContent(publishedContent)
+            setIsEdited(false)
           }
         }
       } catch (err) {
