@@ -1,30 +1,114 @@
 import { create } from 'zustand'
-import WindowState from './windowState'
+import { put } from '../api/sky'
 
-const defaultPath = '~sampel/home'
-const defaultMap = new Map<number, string>([[1, defaultPath]])
+interface WindowStateObject {
+  windowMap: Map<number, string>
+  maxWindow: number
+  fileView: Array<number>
+  pathBarView: Array<number>
+  activeWindowID: number
+  activeWindowPath: string
+}
 
-const useWindowStore = create<WindowState>((set, get) => ({
-  // init default state values
+// window map must be serialized to an array in JSON
+interface SerializedWindowStateObject
+  extends Omit<WindowStateObject, 'windowMap'> {
+  windowMap: Array<[number, string]>
+}
+
+type WindowStateObjectAttribute = {
+  [k in keyof WindowStateObject]: {
+    key: k
+    val: WindowStateObject[k]
+  }
+}[keyof WindowStateObject]
+
+interface WindowStore extends WindowStateObject {
+  addWindow: (parentId: number, path: string) => void
+  delWindow: (id: number) => void
+  updateWindowPath: (id: number, path: string) => void
+  setMaxWindow: (id: number) => void
+  toggleFileView: (id: number) => void
+  togglePathBarView: (id: number) => void
+  setActiveWindowID: (id: number) => void
+  setActiveWindowPath: (path: string) => void
+  setWindowState: (state: SerializedWindowStateObject) => void
+}
+
+// helper to update window state in the namespace
+function sendWindowStateToNamespace(
+  state: WindowStateObject,
+  update: WindowStateObjectAttribute
+): void {
+  interface IntermediateWindowStateObject
+    extends Omit<WindowStateObject, 'windowMap'> {
+    windowMap: Map<number, string> | Array<[number, string]>
+  }
+
+  const oldWindowMap = state.windowMap
+
+  const updatedState: IntermediateWindowStateObject = {
+    ...state,
+    [update.key]: update.val,
+  }
+
+  if (update.key === 'windowMap') {
+    updatedState.windowMap = Array.from(update.val.entries())
+  } else {
+    updatedState.windowMap = Array.from(oldWindowMap.entries())
+  }
+
+  try {
+    const stateFile = new File(
+      [JSON.stringify(updatedState, null, 2)],
+      'windows.json',
+      { type: 'application/json' }
+    )
+
+    const formData = new FormData()
+    formData.append('file', stateFile)
+    // TODO remove ~sampel; API should accept relative paths
+    put('~sampel/sys/state/windows', formData)
+  } catch (err) {
+    console.log('Failed to save window state to namespace: ', err)
+  }
+}
+
+// default state values
+const defaultPath: string = '~sampel/home'
+const defaultMap: Map<number, string> = new Map<number, string>([
+  [1, defaultPath],
+])
+const defaultState: WindowStateObject = {
   windowMap: defaultMap,
   maxWindow: 0,
+  fileView: [],
   pathBarView: [],
   activeWindowID: 1,
   activeWindowPath: defaultPath,
+}
+
+const useWindowStore = create<WindowStore>((set, get) => ({
+  // init state values
+  windowMap: defaultState.windowMap,
+  maxWindow: defaultState.maxWindow,
+  fileView: defaultState.fileView,
+  pathBarView: defaultState.pathBarView,
+  activeWindowID: defaultState.activeWindowID,
+  activeWindowPath: defaultState.activeWindowPath,
 
   // add a new window to the tree
   addWindow: (parentId: number, path: string) => {
     const windowMap = get().windowMap
     const parentPath = windowMap.get(parentId) ?? defaultPath
 
-    // When splitting a window, the parent becomes a container window
-    windowMap.set(parentId * 2, parentPath)
-    windowMap.set(parentId * 2 + 1, path)
-    // TODO this is an awful concession to bad rendering logic
-    // inshallah we will fix it in another PR
-    windowMap.set(parentId, '')
+    const newWindowMap = new Map(windowMap)
+    newWindowMap.set(parentId * 2, parentPath)
+    newWindowMap.set(parentId * 2 + 1, path)
+    newWindowMap.set(parentId, '')
 
-    set({ windowMap })
+    sendWindowStateToNamespace(get(), { key: 'windowMap', val: newWindowMap })
+    set({ windowMap: newWindowMap })
   },
 
   // remove a node from the tree
@@ -134,15 +218,20 @@ const useWindowStore = create<WindowState>((set, get) => ({
     windowMap.delete(id)
 
     if (id === 1) {
+      sendWindowStateToNamespace(get(), { key: 'windowMap', val: defaultMap })
       set({ windowMap: defaultMap })
     } else {
       handleDelete(windowMap, id)
 
       // If no windows are left after deletion, reset to defaultMap
       if (windowMap.size === 0) {
+        sendWindowStateToNamespace(get(), { key: 'windowMap', val: defaultMap })
         set({ windowMap: defaultMap })
       } else {
-        set({ windowMap })
+        // TODO this relies on handleDelete mutating the
+        // windowMap directly, mutation isn't ideal imo
+        sendWindowStateToNamespace(get(), { key: 'windowMap', val: windowMap })
+        set({ windowMap: windowMap })
       }
     }
   },
@@ -150,37 +239,87 @@ const useWindowStore = create<WindowState>((set, get) => ({
   // update a window's path
   updateWindowPath: (id: number, path: string) => {
     const windowMap = get().windowMap
-    // If the window doesn't exist, create it with the provided path
-    windowMap.set(id, path)
-    set({ windowMap })
+    const newWindowMap = windowMap.set(id, path)
+
+    sendWindowStateToNamespace(get(), { key: 'windowMap', val: newWindowMap })
+    set({ windowMap: newWindowMap })
   },
 
   // maximise a window
-  setMaxWindow: (id: number) => set({ maxWindow: id }),
+  setMaxWindow: (id: number) => {
+    sendWindowStateToNamespace(get(), { key: 'maxWindow', val: id })
+    set({ maxWindow: id })
+  },
 
-  // toggle window id in and out of pathBarView array
-  togglePathBarView: (id: number) => {
-    const windowArray = get().pathBarView
-    const pathBarView = get().pathBarView
-    if (!pathBarView.includes(id)) {
-      // add window id to the pathBarView array
-      set({
-        pathBarView: [...windowArray, id],
+  // toggle "normal" view and file view for a window
+  toggleFileView: (id: number) => {
+    const fileViewArray = get().fileView
+
+    if (!fileViewArray.includes(id)) {
+      const newFileViewArray = [...fileViewArray, id]
+
+      sendWindowStateToNamespace(get(), {
+        key: 'fileView',
+        val: newFileViewArray,
       })
+      set({ fileView: newFileViewArray })
     } else {
-      // remove window id from the pathBarView array
-      const updatedPathBarView = windowArray.filter(item => item !== id)
-      set({
-        pathBarView: updatedPathBarView,
+      const newFileViewArray = fileViewArray.filter(item => item !== id)
+
+      sendWindowStateToNamespace(get(), {
+        key: 'fileView',
+        val: newFileViewArray,
       })
+      set({ fileView: newFileViewArray })
+    }
+  },
+
+  // toggle path bar view for a window
+  togglePathBarView: (id: number) => {
+    const pathBarView = get().pathBarView
+
+    if (!pathBarView.includes(id)) {
+      const newPathBarArray = [...pathBarView, id]
+
+      sendWindowStateToNamespace(get(), {
+        key: 'pathBarView',
+        val: newPathBarArray,
+      })
+      set({ pathBarView: newPathBarArray })
+    } else {
+      const newPathBarView = pathBarView.filter(item => item !== id)
+
+      sendWindowStateToNamespace(get(), {
+        key: 'pathBarView',
+        val: newPathBarView,
+      })
+      set({ pathBarView: newPathBarView })
     }
   },
 
   // track active window
-  setActiveWindowID: (id: number) => set({ activeWindowID: id }),
+  setActiveWindowID: (id: number) => {
+    sendWindowStateToNamespace(get(), { key: 'activeWindowID', val: id })
+    set({ activeWindowID: id })
+  },
 
   // track active window's path
-  setActiveWindowPath: (path: string) => set({ activeWindowPath: path }),
+  setActiveWindowPath: (path: string) => {
+    sendWindowStateToNamespace(get(), { key: 'activeWindowPath', val: path })
+    set({ activeWindowPath: path })
+  },
+
+  // set init window state from namespace
+  setWindowState: (state: SerializedWindowStateObject) => {
+    set({
+      windowMap: new Map(state.windowMap),
+      maxWindow: state.maxWindow,
+      fileView: state.fileView,
+      pathBarView: state.pathBarView,
+      activeWindowID: state.activeWindowID,
+      activeWindowPath: state.activeWindowPath,
+    })
+  },
 }))
 
 export default useWindowStore

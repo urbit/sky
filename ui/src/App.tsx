@@ -4,6 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
+import { get } from './api/sky.ts'
 
 function App() {
   const {
@@ -16,6 +17,7 @@ function App() {
     togglePathBarView,
     updateWindowPath,
     setActiveWindowID,
+    setWindowState,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
@@ -62,7 +64,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function() {
+        event.target.addEventListener('dragend', function () {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -120,9 +122,7 @@ function App() {
 
   // listen for keydown events
   useEffect(() => {
-    console.log(
-      `path: ${windowMap.get(activeWindowID)}`
-    )
+    console.log(`path: ${windowMap.get(activeWindowID)}`)
     console.log(`activeWindowID: ${activeWindowID}`)
     console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -219,7 +219,22 @@ function App() {
     setActiveWindowID,
   ])
 
+  // on mount, init window state
+  useEffect(() => {
+    async function init() {
+      const res = await get('~sampel/sys/state/windows')
+
+      if (res && res.ok) {
+        const data = await res.json()
+        setWindowState(data)
+      }
+    }
+
+    init()
+  }, [])
+
   // TODO handle real window.urbitID, not suitable for production
+  // on mount, set window.urbitID
   useEffect(() => {
     if (!window.urbitID) {
       window.urbitID = '~sampel'
@@ -227,13 +242,21 @@ function App() {
   }, [])
 
   return (
-    <div style={{ width: `calc(100vw - ${20}px)`, height: '100vh' }}>
+    <div
+      style={{
+        width: '100vw',
+        height: '100vh',
+        boxSizing: 'border-box',
+        padding: '5px 5px 0px 5px',
+      }}
+    >
       <StatusBar />
-      {/*
-        TODO this height calc is a kludge, fixes StatusBar
-        shoving the WindowContainer off the bottom of the screen
+      {/* 
+          TODO the calc is a hack to prevent the
+          StatusBar shoving the WindowContainer off
+          the bottom of the screen
       */}
-      <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
+      <div className="wf relative" style={{ height: 'calc(100% - 45px)' }}>
         {maxWindow !== 0 && (
           <div
             className="wf hf absolute p3"

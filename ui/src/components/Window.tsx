@@ -1,5 +1,5 @@
 import { Allotment } from 'allotment'
-import { get, findShipUrls } from '../api/sky'
+import { get, findPathUrls } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
@@ -12,7 +12,7 @@ import TextPlain from './renderers/TextPlain'
 
 export interface WindowProps {
   id: number
-  path: string 
+  path: string
   handleDrop: (event: React.DragEvent<HTMLDivElement>, id: number) => void
   handleDragStart: (event: React.DragEvent, id: number) => void
   dragWindow: number
@@ -38,7 +38,6 @@ export default function Window({
 
   const [windowContent, setWindowContent] = useState(defaultContent)
   const [windowBarOpen, setWindowBarOpen] = useState(false)
-  const [fileSystemView, setFileSystemView] = useState(false)
   const [openOptionsMenu, setOpenOptionsMenu] = useState(false)
   const [openVisibilityMenu, setOpenVisibilityMenu] = useState(false)
   const [published, setPublished] = useState('Personal')
@@ -47,10 +46,13 @@ export default function Window({
     'Urbit',
     'Public',
   ])
+
   const {
     maxWindow,
+    fileView,
     pathBarView,
     setMaxWindow,
+    toggleFileView,
     setActiveWindowID,
     setActiveWindowPath,
     delWindow,
@@ -127,7 +129,7 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
-          const urls = await findShipUrls(path || '~sampel/home')
+          const urls = await findPathUrls(path || '~sampel/home')
           if (urls) {
             return <TextHTML url={urls.ship} />
           }
@@ -245,7 +247,7 @@ export default function Window({
       // TODO nothing below this todo should be necessary;
       // get() should account for all of this
 
-      const urls = await findShipUrls(path)
+      const urls = await findPathUrls(path)
       if (!urls) {
         console.error(`No URLs found for ${path.split('/').slice(0)}`)
         return noURLcontent(path)
@@ -287,7 +289,7 @@ export default function Window({
 
   function handleFileView() {
     if (path && path.split('/')[0] === window.urbitID) {
-      setFileSystemView(!fileSystemView)
+      toggleFileView(id)
     }
   }
 
@@ -414,7 +416,7 @@ export default function Window({
                           handleFileView()
                         }}
                       >
-                        {fileSystemView ? 'View' : 'Edit'}
+                        {fileView.includes(id) ? 'View' : 'Edit'}
                       </button>
                     </div>
                   )}
@@ -444,7 +446,7 @@ export default function Window({
                 </div>
               )}
             </div>
-            {!fileSystemView ? windowContent : fileSystemContent}
+            {!fileView.includes(id) ? windowContent : fileSystemContent}
           </div>
         </div>
       </Allotment.Pane>

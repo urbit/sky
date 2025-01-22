@@ -8,6 +8,7 @@ export interface HTTPRequest {
 //
 // TODO authentication for urbit.org / Athens
 //
+
 async function findShipDomain(path: string) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
@@ -23,15 +24,30 @@ async function findShipDomain(path: string) {
   }
 }
 
-async function findShipUrls(path: string) {
-  const shipDomain = await findShipDomain(path)
+async function findPathUrls(
+  path: string
+): Promise<{ ship: string; athens: string } | null> {
+  let shipLocation
+  console.log('Attempting to find URLs for', path)
 
-  if (!shipDomain) {
-    console.error(`No URL found for ${path.split('/').slice(0)}`)
+  if (path.startsWith('/')) {
+    console.log('Path starts with /')
+    shipLocation = window.location.origin
+  }
+
+  // TODO support e.g. get('foo/bar') as well as get(/foo/bar)
+
+  if (path.startsWith('~')) {
+    console.log('Path starts with ~')
+    shipLocation = await findShipDomain(path)
+  }
+
+  if (!shipLocation) {
+    console.error(`No URLs found for ${path}`)
   } else {
     const ship = path.split('/')[0].slice(1)
     const endpoint = path.split('/').slice(1).join('/')
-    const shipUrl = `${shipDomain}/${endpoint}`
+    const shipUrl = `${shipLocation}/${endpoint}`
     const athensUrl = `https://${ship}.urbit.org/${endpoint}`
     console.log(shipUrl)
     console.log(athensUrl)
@@ -41,10 +57,13 @@ async function findShipUrls(path: string) {
       athens: athensUrl,
     }
   }
+
+  console.error('Unrecognized path:', path)
+  return null
 }
 
 async function get(path: string): Promise<Response | void> {
-  const urls = await findShipUrls(path)
+  const urls = await findPathUrls(path)
 
   if (!urls) {
     console.error(`File not found at ${path}`)
@@ -52,15 +71,6 @@ async function get(path: string): Promise<Response | void> {
       status: 404,
       headers: { 'Content-Type': 'text/plain' },
     })
-  }
-
-  // TODO remove this for production
-  if (path.split('/')[0] === '~sampel') {
-    if (urls) {
-      return fetch(urls.ship, {
-        method: 'GET',
-      })
-    }
   }
 
   try {
@@ -101,7 +111,7 @@ async function get(path: string): Promise<Response | void> {
 }
 
 async function put(path: string, data: FormData): Promise<Response | void> {
-  const urls = await findShipUrls(path)
+  const urls = await findPathUrls(path)
 
   if (!urls) {
     console.error(`No URLs found for ${path.split('/').slice(0)}`)
@@ -221,4 +231,4 @@ async function del(path: string): Promise<Response | void> {
 //  })
 //}
 
-export { del, get, post, put, findShipDomain, findShipUrls }
+export { del, get, post, put, findShipDomain, findPathUrls }
