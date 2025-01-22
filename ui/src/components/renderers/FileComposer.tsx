@@ -1,5 +1,5 @@
 import Editor from '@monaco-editor/react'
-import * as monaco from 'monaco-editor'
+import type * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
@@ -71,26 +71,34 @@ export default function FileComposer(): JSX.Element {
         // First check temp path for any saved work
         const tempRes = await get(tempPath)
 
-        if (tempRes) {
-          if (tempRes.status !== 404) {
-            const content = await tempRes.text()
-            setEditorContent(content)
+        if (tempRes && tempRes.status !== 404) {
+          const content = await tempRes.text()
+          setEditorContent(content)
+          setLanguage(detectLanguage(content))
 
-            // If we found content in /tmp, check if it differs from published version
-            if (activeWindowPath) {
-              const publishedRes = await get(activeWindowPath)
+          // If we found content in /tmp, check if it differs from published version
+          if (activeWindowPath) {
+            const publishedRes = await get(activeWindowPath)
 
-              if (publishedRes && publishedRes.status !== 404) {
-                const publishedContent = await publishedRes.text()
-                // If content in /tmp differs from published, mark as edited
-                if (publishedContent !== content) {
-                  setIsEdited(true)
-                }
-              } else {
-                // If no published version exists but we have temp content, mark as edited
+            if (publishedRes && publishedRes.status !== 404) {
+              const publishedContent = await publishedRes.text()
+              // If content in /tmp differs from published, mark as edited
+              if (publishedContent !== content) {
                 setIsEdited(true)
               }
+            } else {
+              // If no published version exists but we have temp content, mark as edited
+              setIsEdited(true)
             }
+          }
+        } else if (activeWindowPath) {
+          const publishedRes = await get(activeWindowPath)
+
+          if (publishedRes && publishedRes.status !== 404) {
+            const publishedContent = await publishedRes.text()
+            setEditorContent(publishedContent)
+            setIsEdited(false)
+            setLanguage(detectLanguage(publishedContent))
           }
         }
       } catch (err) {
@@ -125,48 +133,52 @@ export default function FileComposer(): JSX.Element {
     }
   }, [])
 
-  // Autosave to /tmp
-  const handleEditorChange = useCallback(
-    debounce(async (value: string | undefined) => {
-      if (value && activeWindowPath) {
-        setEditorContent(value)
-        setIsEdited(true)
-        const formData = new FormData()
-        const detectedLanguage = detectLanguage(value)
-        const mimeType =
-          languageToMimeType[
-            detectedLanguage as keyof typeof languageToMimeType
-          ] || 'text/plain'
-        const extension =
-          detectedLanguage === 'plaintext'
-            ? 'txt'
-            : detectedLanguage === 'javascript'
-              ? 'js'
-              : detectedLanguage === 'markdown'
-                ? 'md'
-                : detectedLanguage
-        const file = new File([value], `${pathArray.slice(-1)}.${extension}`, {
-          type: mimeType,
-        })
-        formData.append('file', file)
+  // Save content to temp path
+  const saveToTemp = async (content: string) => {
+    if (content && activeWindowPath) {
+      setEditorContent(content)
+      setIsEdited(true)
+      const formData = new FormData()
+      const detectedLanguage = detectLanguage(content)
+      const mimeType =
+        languageToMimeType[
+          detectedLanguage as keyof typeof languageToMimeType
+        ] || 'text/plain'
+      const extension =
+        detectedLanguage === 'plaintext'
+          ? 'txt'
+          : detectedLanguage === 'javascript'
+            ? 'js'
+            : detectedLanguage === 'markdown'
+              ? 'md'
+              : detectedLanguage
+      const file = new File([content], `${pathArray.slice(-1)}.${extension}`, {
+        type: mimeType,
+      })
+      formData.append('file', file)
 
-        try {
-          await put(tempPath, formData)
-          console.log('Upload successful')
-          if (showPreview && language === 'html') {
-            // Force iframe reload by updating its key
-            // Force iframe reload
-            const iframe = document.querySelector('iframe')
-            if (iframe && iframe instanceof HTMLIFrameElement) {
-              const currentSrc = iframe.src
-              iframe.src = 'about:blank'
-              iframe.src = currentSrc
-            }
+      try {
+        await put(tempPath, formData)
+        console.log('Upload successful')
+        if (showPreview && language === 'html') {
+          // Force iframe reload
+          const iframe = document.querySelector('iframe')
+          if (iframe && iframe instanceof HTMLIFrameElement) {
+            const currentSrc = iframe.src
+            iframe.src = 'about:blank'
+            iframe.src = currentSrc
           }
-        } catch (err) {
-          console.error('Upload failed:', err)
         }
+      } catch (err) {
+        console.error('Upload failed:', err)
       }
+    }
+  }
+
+  // Debounced save for regular typing
+  const handleEditorChange = useCallback(
+    debounce((value: string | undefined) => {
+      if (value) saveToTemp(value)
     }, 500),
     [activeWindowPath]
   )
@@ -233,7 +245,7 @@ export default function FileComposer(): JSX.Element {
           >
             <Editor
               height="100%"
-              defaultLanguage="html"
+              defaultLanguage={`${language}`}
               language={language}
               value={editorContent}
               options={editorConfig}
@@ -248,10 +260,10 @@ export default function FileComposer(): JSX.Element {
               onMount={editor => {
                 // Add content change listener directly to the editor's model
                 editor.getModel()?.onDidChangeContent(() => {
-                  // Force trigger onChange with current content
+                  // Get current content and save immediately for completions/snippets
                   const content = editor.getModel()?.getValue()
                   if (content !== undefined) {
-                    handleEditorChange(content)
+                    saveToTemp(content)
                   }
                 })
               }}
