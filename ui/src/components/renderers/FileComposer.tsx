@@ -74,6 +74,7 @@ export default function FileComposer(): JSX.Element {
         if (tempRes && tempRes.status !== 404) {
           const content = await tempRes.text()
           setEditorContent(content)
+          setLanguage(detectLanguage(content))
 
           // If we found content in /tmp, check if it differs from published version
           if (activeWindowPath) {
@@ -97,6 +98,7 @@ export default function FileComposer(): JSX.Element {
             const publishedContent = await publishedRes.text()
             setEditorContent(publishedContent)
             setIsEdited(false)
+            setLanguage(detectLanguage(publishedContent))
           }
         }
       } catch (err) {
@@ -243,7 +245,7 @@ export default function FileComposer(): JSX.Element {
           >
             <Editor
               height="100%"
-              defaultLanguage="html"
+              defaultLanguage={`${language}`}
               language={language}
               value={editorContent}
               options={editorConfig}
