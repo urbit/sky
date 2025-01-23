@@ -81,7 +81,7 @@
   ?>  ?=([%eyre %bound *] sign-arvo)
   ?:  accepted.sign-arvo
     `this
-  %-  (slog leaf+"Binding /api failed!" ~)
+  %-  (slog leaf+"Failed to bind to /api" ~)
   `this
 ++  on-leave  on-leave:def
 ++  on-agent  on-agent:def
