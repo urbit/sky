@@ -32,3 +32,9 @@ Use `init.js` to PUT the contents of the `/namespace` folder into the namespace.
 cd piraeus
 node init.js
 ```
+
+To make HTTP requests to a fakeship, include the fakeship URL in an `.env` file in `/ui`.
+
+```
+VITE_SHIP_URL=http://localhost:8080
+```
