@@ -73,7 +73,7 @@ function App() {
     containers.forEach(container => {
       // enabling iframes
       const iframe = container.querySelector('iframe') as HTMLElement
-      
+
       if (iframe) {
         iframe.style.pointerEvents = 'auto'
       }
@@ -173,7 +173,6 @@ function App() {
     console.log(`activeWindowID: ${activeWindowID}`)
     console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
-
       if (event.metaKey || event.ctrlKey) {
         holdingKey.current = true
         handleSwap()
