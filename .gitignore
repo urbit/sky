@@ -26,3 +26,4 @@ dist-ssr
 # Custom
 athens/**/
 ui/*.tsbuildinfo
+ui/.env

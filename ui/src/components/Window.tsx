@@ -1,5 +1,5 @@
 import { Allotment } from 'allotment'
-import { get, findPathUrls } from '../api/sky'
+import { get, findPathUrl } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
@@ -107,6 +107,7 @@ export default function Window({
   async function renderResponse(res: Response): Promise<JSX.Element> {
     console.log('Running renderResponse()')
     console.log(res)
+    console.log(res.status)
 
     // TODO remove?
     //if (res.type === 'cors') {
@@ -129,9 +130,10 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
-          const urls = await findPathUrls(path || '~sampel/home')
-          if (urls) {
-            return <TextHTML url={urls.ship} />
+          const url = await findPathUrl(path)
+
+          if (url) {
+            return <TextHTML url={url} />
           }
 
           return <div>{`No URLs found for ${path}`}</div>
@@ -213,6 +215,11 @@ export default function Window({
     }
 
     if (res.status === 404) {
+      console.log('Should render filesystem!')
+      console.log('path: ', path)
+      console.log('first segment: ', path.split('/')[0])
+      console.log('window.urbitID: ', window.urbitID)
+
       if (path && path.split('/')[0] === window.urbitID) {
         console.log('Rendering filesystem')
         return <FileSystem id={id} path={path} />
@@ -247,13 +254,12 @@ export default function Window({
       // TODO nothing below this todo should be necessary;
       // get() should account for all of this
 
-      const urls = await findPathUrls(path)
-      if (!urls) {
+      const url = await findPathUrl(path)
+
+      if (!url) {
         console.error(`No URLs found for ${path.split('/').slice(0)}`)
         return noURLcontent(path)
       }
-
-      const url = urls.athens || urls.ship
 
       if (url) {
         return <iframe src={url} className="hf wf" style={{ border: 'none' }} />

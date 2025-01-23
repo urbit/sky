@@ -4,7 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { get } from './api/sky.ts'
+import { auth, get, put, post, del } from './api/sky'
 
 function App() {
   const {
@@ -23,12 +23,57 @@ function App() {
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // TODO move this to .env
+        const resAuth = await auth('zod', 'lidlut-tabwed-pillex-ridrup')
+
+        if (resAuth) {
+          // TODO remove window.urbitID entirely
+          //window.urbitID = window.ship
+          const resGet = await get('~zod/api')
+
+          if (resGet) {
+            console.log('got response from GET request', resGet)
+          }
+          const formData = new FormData()
+          formData.append('name', 'John Doe')
+          const json = formData as unknown as JSON
+          const resPost = await post('~zod/api', json)
+
+          if (resPost) {
+            console.log('got response from POST request', resPost)
+          }
+          const resPut = await put('~zod/api', new FormData())
+
+          if (resPut) {
+            console.log('got response from PUT request', resPut)
+          }
+          const resDelete = await del('~zod/api/del')
+
+          if (resDelete) {
+            console.log('got response from DELETE request', resDelete)
+          }
+        }
+
+        if (!resAuth) {
+          window.urbitID = '~sampel'
+        }
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    }
+    fetchData()
+  }, [])
+
   function enableWindows() {
     setDragWindow(0)
     const containers = document.querySelectorAll('.container')
     containers.forEach(container => {
       // enabling iframes
       const iframe = container.querySelector('iframe') as HTMLElement
+
       if (iframe) {
         iframe.style.pointerEvents = 'auto'
       }
@@ -68,6 +113,7 @@ function App() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
+
           if (eventIframe) {
             //  removing appended data after event
             container.removeChild(dragImage)
@@ -113,6 +159,7 @@ function App() {
 
         //  disabling iframe
         const iframe = container.querySelector('iframe') as HTMLElement
+
         if (iframe) {
           iframe.style.pointerEvents = 'none'
         }

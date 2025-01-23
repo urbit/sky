@@ -1,7 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { urbitPlugin } from '@urbit/vite-plugin-urbit'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    urbitPlugin({
+      base: 'sky',
+      target: 'http://localhost:8080',
+      secure: false,
+    }),
+  ],
 })
