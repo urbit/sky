@@ -49,7 +49,8 @@
         (parse-request-line:server url.request.inbound-request)
       =+  send=(cury response:schooner eyre-id)
     ::
-      ?+    method.request.inbound-request  [(send [405 ~ [%stock ~]]) state]
+      ?+    method.request.inbound-request
+          [(send [405 ~ [%stock ~]]) state]
       ::
           %'DELETE'
         ~&  >  "Got DELETE!"
