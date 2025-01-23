@@ -185,22 +185,4 @@ async function del(path: string): Promise<Response | void> {
     })
 }
 
-// TODO make the type more specific than 'any' or 'JSON'
-// needs to be custom defined in /types folder
-//function pokeSky(json: HTTPRequest) {
-//  const api = new Urbit("", "", "sky")
-//  api.ship = window.ship
-//  return api.poke({
-//    app: "sky",
-//    mark: "handle-http-request",
-//    json: json,
-//    onError: () => {
-//      console.error(
-//        `Failed ${json.method} request to %sky with JSON `,
-//        json.body,
-//      )
-//    },
-//  })
-//}
-
 export { get, put, post, del, auth, findPathUrl, findShipDomain }
