@@ -33,6 +33,7 @@ function App() {
           // TODO remove window.urbitID entirely
           //window.urbitID = window.ship
           const resGet = await get('~zod/api')
+
           if (resGet) {
             console.log('got response from GET request', resGet)
           }
@@ -40,18 +41,22 @@ function App() {
           formData.append('name', 'John Doe')
           const json = formData as unknown as JSON
           const resPost = await post('~zod/api', json)
+
           if (resPost) {
             console.log('got response from POST request', resPost)
           }
           const resPut = await put('~zod/api', new FormData())
+
           if (resPut) {
             console.log('got response from PUT request', resPut)
           }
           const resDelete = await del('~zod/api/del')
+
           if (resDelete) {
             console.log('got response from DELETE request', resDelete)
           }
         }
+
         if (!resAuth) {
           window.urbitID = '~sampel'
         }
@@ -68,6 +73,7 @@ function App() {
     containers.forEach(container => {
       // enabling iframes
       const iframe = container.querySelector('iframe') as HTMLElement
+      
       if (iframe) {
         iframe.style.pointerEvents = 'auto'
       }
@@ -107,6 +113,7 @@ function App() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
+
           if (eventIframe) {
             //  removing appended data after event
             container.removeChild(dragImage)
@@ -152,6 +159,7 @@ function App() {
 
         //  disabling iframe
         const iframe = container.querySelector('iframe') as HTMLElement
+
         if (iframe) {
           iframe.style.pointerEvents = 'none'
         }
@@ -165,6 +173,7 @@ function App() {
     console.log(`activeWindowID: ${activeWindowID}`)
     console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
+
       if (event.metaKey || event.ctrlKey) {
         holdingKey.current = true
         handleSwap()
