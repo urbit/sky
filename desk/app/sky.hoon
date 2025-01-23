@@ -52,23 +52,19 @@
       ?+    method.request.inbound-request  [(send [405 ~ [%stock ~]]) state]
       ::
           %'DELETE'
-        ~&  >>  'got DELETE'
-        ~_  leaf/"DELETE failed successfully!"
+        ~&  >  "Got DELETE!"
         !!
       ::
           %'GET'
-        ~&  >>  'got GET'
-        ~_  leaf/"GET failed successfully!"
+        ~&  >  "Got GET!"
         !!
       ::
           %'POST'
-        ~&  >>  'got POST'
-        ~_  leaf/"POST failed successfully!"
+        ~&  >  "Got POST!"
         !!
       ::
           %'PUT'
-        ~&  >>  'got PUT'
-        ~_  leaf/"PUT failed successfully!"
+        ~&  >  'Got PUT'
         !!
       ==
     --
