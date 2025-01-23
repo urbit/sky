@@ -26,6 +26,7 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
+        // TODO move this to .env
         const resAuth = await auth('zod', 'lidlut-tabwed-pillex-ridrup')
 
         if (resAuth) {
