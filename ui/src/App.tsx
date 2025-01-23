@@ -17,6 +17,7 @@ function App() {
     togglePathBarView,
     updateWindowPath,
     setActiveWindowID,
+    setWindowState,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
@@ -28,7 +29,8 @@ function App() {
         const resAuth = await auth('zod', 'lidlut-tabwed-pillex-ridrup')
 
         if (resAuth) {
-          window.urbitID = window.ship
+          // TODO remove window.urbitID entirely
+          //window.urbitID = window.ship
           const resGet = await get('~zod/api')
           if (resGet) {
             console.log('got response from GET request', resGet)
@@ -255,14 +257,44 @@ function App() {
     setActiveWindowID,
   ])
 
+  // on mount, init window state
+  useEffect(() => {
+    async function init() {
+      const res = await get('~sampel/sys/state/windows')
+
+      if (res && res.ok) {
+        const data = await res.json()
+        setWindowState(data)
+      }
+    }
+
+    init()
+  }, [])
+
+  // TODO handle real window.urbitID, not suitable for production
+  // on mount, set window.urbitID
+  useEffect(() => {
+    if (!window.urbitID) {
+      window.urbitID = '~sampel'
+    }
+  }, [])
+
   return (
-    <div style={{ width: `calc(100vw - ${20}px)`, height: '100vh' }}>
+    <div
+      style={{
+        width: '100vw',
+        height: '100vh',
+        boxSizing: 'border-box',
+        padding: '5px 5px 0px 5px',
+      }}
+    >
       <StatusBar />
-      {/*
-        TODO this height calc is a kludge, fixes StatusBar
-        shoving the WindowContainer off the bottom of the screen
+      {/* 
+          TODO the calc is a hack to prevent the
+          StatusBar shoving the WindowContainer off
+          the bottom of the screen
       */}
-      <div className="wf relative" style={{ height: `calc(100% - ${65}px)` }}>
+      <div className="wf relative" style={{ height: 'calc(100% - 45px)' }}>
         {maxWindow !== 0 && (
           <div
             className="wf hf absolute p3"

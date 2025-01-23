@@ -2,17 +2,24 @@ import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, findShipDomain } from '../../api/sky'
 import FilePNG from './FilePNG'
-import FileMarkdown from './FileMarkdown'
-import FileHTML from './FileHTML'
 import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
-import FilePlain from './FilePlain'
-import FileCSS from './FileCSS'
 
 interface FileSystemProps {
   id: number
   path: string
 }
+
+// Content types that FileComposer can handle
+const composerContentTypes = new Set([
+  'text/plain',
+  'text/html',
+  'text/css',
+  'text/javascript',
+  'application/json',
+  'application/xml',
+  'text/markdown',
+])
 
 async function renderFile(res: Response): Promise<JSX.Element> {
   const contentType = res.headers.get('content-type')
@@ -22,38 +29,14 @@ async function renderFile(res: Response): Promise<JSX.Element> {
     return <p>No content type found</p>
   }
 
-  switch (contentType.split(';')[0]) {
-    case 'text/plain': {
-      console.log('Rendering text/plain')
-      return <FilePlain text={await res.text()} />
-    }
-    case 'text/html': {
-      console.log('Rendering text/html')
-      const html = await res.text()
-      return <FileHTML html={html} />
-    }
-    case 'text/css': {
-      console.log('Rendering text/css')
-      const content = await res.text()
-      return <FileCSS css={content} />
-    }
-    case 'text/javascript': {
-      console.log('Rendering text/javascript')
-      return <FilePlain text={await res.text()} />
-    }
-    case 'application/json': {
-      console.log('Rendering application/json')
-      return <FilePlain text={await res.text()} />
-    }
-    case 'application/xml': {
-      console.log('Rendering application/xml')
-      return <FilePlain text={await res.text()} />
-    }
-    case 'text/markdown': {
-      console.log('Rendering text/markdown')
-      const text = await res.text()
-      return <FileMarkdown md={text} />
-    }
+  const baseContentType = contentType.split(';')[0]
+
+  if (composerContentTypes.has(baseContentType)) {
+    console.log(`Rendering ${baseContentType} with FileComposer`)
+    return <FileComposer />
+  }
+
+  switch (baseContentType) {
     case 'image/png': {
       console.log('Rendering image/png')
       const blob = await res.blob()
@@ -192,7 +175,9 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   }, [path])
 
   function handlePathSegmentClick(index: number) {
-    updateWindowPath(id, path.split('/').slice(index).join('/'))
+    const segments = path.split('/')
+    const newPath = segments.slice(0, index + 1).join('/')
+    updateWindowPath(id, newPath)
   }
 
   function handleAddSegment() {

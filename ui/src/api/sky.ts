@@ -10,6 +10,7 @@ export interface HTTPRequest {
 //
 // TODO authentication for urbit.org
 //
+
 async function findShipDomain(path: string) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
@@ -23,18 +24,31 @@ async function findShipDomain(path: string) {
     console.log('domain', data[ship])
     return data[ship]
   } else {
-    console.error(`No domains found for ${ship}`)
+    console.error(`No domain found for ${ship}`)
   }
 }
 
-async function findShipUrl(path: string) {
-  const shipDomain = await findShipDomain(path)
+async function findPathUrl(path: string): Promise<string | void> {
+  let shipLocation
+  console.log('Attempting to find URLs for', path)
 
-  if (!shipDomain) {
-    console.error(`No URL found for ${path.split('/').slice(0)}`)
+  if (path.startsWith('/')) {
+    console.log('Path starts with /')
+    shipLocation = window.location.origin
+  }
+
+  // TODO support e.g. get('foo/bar') as well as get(/foo/bar)
+
+  if (path.startsWith('~')) {
+    console.log('Path starts with ~')
+    shipLocation = await findShipDomain(path)
+  }
+
+  if (!shipLocation) {
+    console.error(`No URL found for ${path}`)
   } else {
     const endpoint = path.split('/').slice(1).join('/')
-    const url = `${shipDomain}/${endpoint}`
+    const url = `${shipLocation}/${endpoint}`
     return url
   }
 }
@@ -51,10 +65,13 @@ async function auth(ship: string, code: string) {
       verbose: true,
     })
   }
+
+  console.error('Failed to authenticate ship')
+  return null
 }
 
 async function get(path: string): Promise<Response | void> {
-  const url = await findShipUrl(path)
+  const url = await findPathUrl(path)
 
   if (!url) {
     console.error(`File not found at ${path}`)
@@ -64,17 +81,12 @@ async function get(path: string): Promise<Response | void> {
     })
   }
 
-  // TODO remove this for production
-  if (path.split('/')[0] === '~sampel' && url) {
-    return fetch(url, {
-      method: 'GET',
-    })
-  }
-
   try {
     const res = await fetch(url, {
       method: 'GET',
-      credentials: 'include',
+      // TODO breaks normal functionality for some reason
+      // cors error from the Python dev server
+      //credentials: 'include',
     })
     if (!res.ok) {
       throw new Error(`Response not ok at ${url}`)
@@ -93,7 +105,7 @@ async function get(path: string): Promise<Response | void> {
 }
 
 async function put(path: string, data: FormData): Promise<Response | void> {
-  const url = await findShipUrl(path)
+  const url = await findPathUrl(path)
 
   if (!url) {
     console.error(`No url found for ${path.split('/').slice(0)}`)
@@ -103,7 +115,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
   // TODO for development; remove
   return fetch(url, {
     method: 'PUT',
-    credentials: 'include',
+    //credentials: 'include',
     body: data,
   })
     .then(res => {
@@ -121,7 +133,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
 }
 
 async function post(path: string, json: JSON): Promise<Response | void> {
-  const url = await findShipUrl(path)
+  const url = await findPathUrl(path)
 
   if (!url) {
     console.error(`No url found for ${path.split('/').slice(0)}`)
@@ -130,7 +142,7 @@ async function post(path: string, json: JSON): Promise<Response | void> {
 
   return fetch(url, {
     method: 'POST',
-    credentials: 'include',
+    //credentials: 'include',
     body: JSON.stringify(json),
   })
     .then(res => {
@@ -148,7 +160,7 @@ async function post(path: string, json: JSON): Promise<Response | void> {
 }
 
 async function del(path: string): Promise<Response | void> {
-  const url = await findShipUrl(path)
+  const url = await findPathUrl(path)
   if (!url) {
     console.error(`No url found for ${path.split('/').slice(0)}`)
     return
@@ -156,7 +168,7 @@ async function del(path: string): Promise<Response | void> {
 
   return fetch(url, {
     method: 'DELETE',
-    credentials: 'include',
+    //credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -193,4 +205,4 @@ async function del(path: string): Promise<Response | void> {
 //  })
 //}
 
-export { get, put, post, del, auth, findShipUrl, findShipDomain }
+export { get, put, post, del, auth, findPathUrl, findShipDomain }

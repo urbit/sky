@@ -1,5 +1,5 @@
 import { Allotment } from 'allotment'
-import { get, findShipUrl } from '../api/sky'
+import { get, findPathUrl } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
@@ -38,7 +38,6 @@ export default function Window({
 
   const [windowContent, setWindowContent] = useState(defaultContent)
   const [windowBarOpen, setWindowBarOpen] = useState(false)
-  const [fileSystemView, setFileSystemView] = useState(false)
   const [openOptionsMenu, setOpenOptionsMenu] = useState(false)
   const [openVisibilityMenu, setOpenVisibilityMenu] = useState(false)
   const [published, setPublished] = useState('Personal')
@@ -47,10 +46,13 @@ export default function Window({
     'Urbit',
     'Public',
   ])
+
   const {
     maxWindow,
+    fileView,
     pathBarView,
     setMaxWindow,
+    toggleFileView,
     setActiveWindowID,
     setActiveWindowPath,
     delWindow,
@@ -105,6 +107,7 @@ export default function Window({
   async function renderResponse(res: Response): Promise<JSX.Element> {
     console.log('Running renderResponse()')
     console.log(res)
+    console.log(res.status)
 
     // TODO remove?
     //if (res.type === 'cors') {
@@ -113,7 +116,7 @@ export default function Window({
 
     if (res.status >= 200 && res.status <= 300) {
       const contentType = res.headers.get('Content-Type')
-      console.log(`Content-Type: ${contentType}`)
+      console.log(`Content-Type: ${contentType && contentType.split(';')[0]}`)
 
       if (!contentType) {
         return notRecognizedContent
@@ -127,7 +130,8 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
-          const url = await findShipUrl(path || '~sampel/home')
+          const url = await findPathUrl(path)
+
           if (url) {
             return <TextHTML url={url} />
           }
@@ -144,7 +148,7 @@ export default function Window({
           const txt = await res.text()
           return <TextPlain text={txt} />
         }
-        case 'application/javascript': {
+        case 'text/javascript': {
           console.log('Processing JavaScript data...')
           const txt = await res.text()
           return <TextPlain text={txt} />
@@ -211,6 +215,11 @@ export default function Window({
     }
 
     if (res.status === 404) {
+      console.log('Should render filesystem!')
+      console.log('path: ', path)
+      console.log('first segment: ', path.split('/')[0])
+      console.log('window.urbitID: ', window.urbitID)
+
       if (path && path.split('/')[0] === window.urbitID) {
         console.log('Rendering filesystem')
         return <FileSystem id={id} path={path} />
@@ -245,7 +254,8 @@ export default function Window({
       // TODO nothing below this todo should be necessary;
       // get() should account for all of this
 
-      const url = await findShipUrl(path)
+      const url = await findPathUrl(path)
+
       if (!url) {
         console.error(`No URLs found for ${path.split('/').slice(0)}`)
         return noURLcontent(path)
@@ -285,7 +295,7 @@ export default function Window({
 
   function handleFileView() {
     if (path && path.split('/')[0] === window.urbitID) {
-      setFileSystemView(!fileSystemView)
+      toggleFileView(id)
     }
   }
 
@@ -412,7 +422,7 @@ export default function Window({
                           handleFileView()
                         }}
                       >
-                        {fileSystemView ? 'View' : 'Edit'}
+                        {fileView.includes(id) ? 'View' : 'Edit'}
                       </button>
                     </div>
                   )}
@@ -442,7 +452,7 @@ export default function Window({
                 </div>
               )}
             </div>
-            {!fileSystemView ? windowContent : fileSystemContent}
+            {!fileView.includes(id) ? windowContent : fileSystemContent}
           </div>
         </div>
       </Allotment.Pane>
