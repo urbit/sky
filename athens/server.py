@@ -13,8 +13,8 @@ mimetypes.add_type('text/markdown', '.markdown')
 
 # Create an instance of the Flask application
 app = Flask(__name__)
-# Enable Cross-Origin Resource Sharing (CORS) for all routes
-CORS(app)
+# Enable Cross-Origin Resource Sharing (CORS) for all routes with credentials support
+CORS(app, supports_credentials=True)
 
 # Define the directory where uploaded files will be saved
 UPLOAD_FOLDER = './namespace'

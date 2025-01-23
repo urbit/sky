@@ -84,9 +84,7 @@ async function get(path: string): Promise<Response | void> {
   try {
     const res = await fetch(url, {
       method: 'GET',
-      // TODO breaks normal functionality for some reason
-      // cors error from the Python dev server
-      //credentials: 'include',
+      credentials: 'include',
     })
     if (!res.ok) {
       throw new Error(`Response not ok at ${url}`)
@@ -115,7 +113,7 @@ async function put(path: string, data: FormData): Promise<Response | void> {
   // TODO for development; remove
   return fetch(url, {
     method: 'PUT',
-    //credentials: 'include',
+    credentials: 'include',
     body: data,
   })
     .then(res => {
@@ -142,7 +140,7 @@ async function post(path: string, json: JSON): Promise<Response | void> {
 
   return fetch(url, {
     method: 'POST',
-    //credentials: 'include',
+    credentials: 'include',
     body: JSON.stringify(json),
   })
     .then(res => {
@@ -168,7 +166,7 @@ async function del(path: string): Promise<Response | void> {
 
   return fetch(url, {
     method: 'DELETE',
-    //credentials: 'include',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
