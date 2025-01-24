@@ -1,5 +1,4 @@
 import '@urbit/sigil-js'
-import { useState, useEffect } from 'react';
 import bellIcon from '../assets/images/bell.png'
 import closeIcon from '../assets/images/close.png'
 import AuthButton from './AuthButton'
@@ -18,7 +17,6 @@ const sigilConfig = {
 }
 
 export default function StatusBar() {
-
   return (
     <div className="fr ac jb" style={{ height: '50px' }}>
       <div
@@ -40,7 +38,7 @@ export default function StatusBar() {
         </div>
       </div>
       <div className="fr ac jb g2" style={{ height: '30px' }}>
-        <AuthButton/>
+        <AuthButton />
         <div
           className="fr ac jc br1 b1"
           style={{ width: '30px', height: '30px' }}
@@ -51,10 +49,7 @@ export default function StatusBar() {
             style={{ height: '20px' }}
           />
         </div>
-        <div
-          className="br1 scroll-hidden"
-          style={{ height: '30px' }}
-        >
+        <div className="br1 scroll-hidden" style={{ height: '30px' }}>
           <urbit-sigil {...sigilConfig} />
         </div>
       </div>
