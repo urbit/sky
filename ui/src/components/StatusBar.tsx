@@ -23,15 +23,17 @@ export default function StatusBar() {
   const [state] = useState(window.crypto.randomUUID());
   const [code, setCode] = useState<string | null>(null);
   const [returnedState, setReturnedState] = useState<string | null>(null);
+  const SSO_URL = import.meta.env.VITE_SSO_URL
+  const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI
+  const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
+
+  console.log('token', localStorage.getItem('auth_token'))
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     setCode(urlParams.get("code"));
     setReturnedState(urlParams.get("state"));
   }, [window.location.search]);
-  const SSO_URL = import.meta.env.SSO_URL
-  const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI
-  const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
 
   useEffect(() => {
     if (code && returnedState === sessionStorage.getItem('oauth_state')) {
@@ -41,7 +43,6 @@ export default function StatusBar() {
         method: 'POST',
         credentials: 'include',
         headers: {
-          //'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
@@ -81,7 +82,7 @@ export default function StatusBar() {
 
 
   function handleLogin() {
-    
+    console.log('sso url', SSO_URL)
     // Store state to verify when SSO redirects back
     generateCodeChallenge().then(({ codeChallenge, codeVerifier }) => {
       sessionStorage.setItem('code_verifier', codeVerifier);
@@ -90,6 +91,34 @@ export default function StatusBar() {
       window.location.href = `${SSO_URL}/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
     });
   };
+
+  function handleLogout (){
+    console.log('sso url', SSO_URL)
+    const token = localStorage.getItem('auth_token')
+    setLoading(true)
+    
+    fetch(`${SSO_URL}/oauth/revoke`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token: token,
+        client_id: CLIENT_ID
+      })
+    })
+    .then((data) => {
+      console.log('Revoke response:', data);
+      if (data.ok === true) {
+        localStorage.removeItem('auth_token')
+      }
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error('Auth error:', error);
+      setLoading(false);
+    })
+   }
 
   async function generateCodeChallenge() {
     // Generate random string
@@ -113,9 +142,6 @@ export default function StatusBar() {
     return {codeVerifier, codeChallenge}
    }
 
-   function handleLogout (){
-    return
-   }
 
   return (
     <div className="fr ac jb" style={{ height: '50px' }}>
@@ -143,7 +169,7 @@ export default function StatusBar() {
             <div>Loading</div>
           ) : error ? (
             <div>Error: {error}</div>
-          ) : localStorage.getItem('token') ? (
+          ) : localStorage.getItem('auth_token') ? (
             <button onClick={handleLogout}>Log out</button>
           ) : (
             <button onClick={handleLogin}>Login with Urbit</button>
