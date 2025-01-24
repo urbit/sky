@@ -23,6 +23,8 @@ function App() {
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
 
+  // NOTE for testing purposes only
+  // on mount, send test requests to fakeship
   useEffect(() => {
     async function fetchData() {
       try {
@@ -32,34 +34,34 @@ function App() {
         if (resAuth) {
           // TODO remove window.urbitID entirely
           //window.urbitID = window.ship
-          const resGet = await get('~zod/api')
+          //const resGet = await get('~zod/api')
+          //
+          //if (resGet) {
+          //  console.log('got response from GET request', resGet)
+          //}
+          //
+          //const resPost = await post('~zod/api', JSON.parse(''))
+          //
+          //if (resPost) {
+          //  console.log('got response from POST request', resPost)
+          //}
 
-          if (resGet) {
-            console.log('got response from GET request', resGet)
-          }
           const formData = new FormData()
-          formData.append('name', 'John Doe')
-          const json = formData as unknown as JSON
-          const resPost = await post('~zod/api', json)
-
-          if (resPost) {
-            console.log('got response from POST request', resPost)
-          }
-          const resPut = await put('~zod/api', new FormData())
+          const txtFile = new File(['This is plaintext'], 'test.txt', { type: 'text/plain' })
+          formData.append('file', txtFile)
+          const resPut = await put('~zod/api/plaintext', formData)
 
           if (resPut) {
             console.log('got response from PUT request', resPut)
           }
-          const resDelete = await del('~zod/api/del')
 
-          if (resDelete) {
-            console.log('got response from DELETE request', resDelete)
-          }
+          //const resDelete = await del('~zod/api/del')
+          //
+          //if (resDelete) {
+          //  console.log('got response from DELETE request', resDelete)
+          //}
         }
 
-        if (!resAuth) {
-          window.urbitID = '~sampel'
-        }
       } catch (error) {
         console.error('Error:', error)
       }
@@ -109,7 +111,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function () {
+        event.target.addEventListener('dragend', function() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement

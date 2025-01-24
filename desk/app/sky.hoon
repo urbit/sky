@@ -3,11 +3,7 @@
 +$  versioned-state
   $%  state-0
   ==
-::  XX dummy state
-+$  state-0
-  $:  %0
-      values=(list @)
-  ==
++$  state-0  [%0 ~]
 +$  card  $+(card card:agent:gall)
 --
 %+  verb  &
@@ -42,6 +38,7 @@
         (handle-http !<([@ta =inbound-request:eyre] vase))
       [cards this]
     ==
+    ::
     ++  handle-http
       |=  [eyre-id=@ta =inbound-request:eyre]
       ^-  (quip card _state)
@@ -54,19 +51,31 @@
       ::
           %'DELETE'
         ~&  >  "Got DELETE!"
-        !!
+        `state
       ::
           %'GET'
         ~&  >  "Got GET!"
-        !!
+        `state
       ::
           %'POST'
         ~&  >  "Got POST!"
-        !!
+        `state
       ::
           %'PUT'
-        ~&  >  'Got PUT'
-        !!
+        ~&  >  "Got PUT!"
+        ::  XX authenticate this ship, on this path, for this request type
+        ::  XX make file in clay at appropriate path
+        ::  XX %set-response to the appropriate URL in +on-arvo
+        =/  data          body.request.inbound-request
+        =/  headers       header-list.request.inbound-request
+        =/  content-type  (get-header:http 'content-type' headers)
+        =/  target-url  url.request.inbound-request
+        ~&  >  "Target URL: {<target-url>}"
+        ?~  data
+          [(send [400 ~ [%plain "No data received"]]) state]
+        ~&  >  "Content-Type: {<content-type>}"
+        ~&  >  "Received data: {<data>}"
+        [(send [200 ~ [%plain "Data received"]]) state]
       ==
     --
 ::
