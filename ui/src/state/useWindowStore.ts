@@ -1,19 +1,22 @@
 import { create } from 'zustand'
 //import { put } from '../api/sky'
 
+type Path = string
+type WindowID = number
+
 interface WindowStateObject {
-  windowMap: Map<number, string>
-  maxWindow: number
-  fileView: Array<number>
-  pathBarView: Array<number>
-  activeWindowID: number
-  activeWindowPath: string
+  windowMap: Map<WindowID, Path>
+  maxWindow: WindowID
+  fileView: Array<WindowID>
+  pathBarView: Array<WindowID>
+  activeWindowID: WindowID
+  activeWindowPath: Path
 }
 
 // window map must be serialized to an array in JSON
 interface SerializedWindowStateObject
   extends Omit<WindowStateObject, 'windowMap'> {
-  windowMap: Array<[number, string]>
+  windowMap: Array<[WindowID, Path]>
 }
 
 type WindowStateObjectAttribute = {
@@ -24,14 +27,14 @@ type WindowStateObjectAttribute = {
 }[keyof WindowStateObject]
 
 interface WindowStore extends WindowStateObject {
-  addWindow: (parentId: number, path: string) => void
-  delWindow: (id: number) => void
-  updateWindowPath: (id: number, path: string) => void
-  setMaxWindow: (id: number) => void
-  toggleFileView: (id: number) => void
-  togglePathBarView: (id: number) => void
-  setActiveWindowID: (id: number) => void
-  setActiveWindowPath: (path: string) => void
+  addWindow: (parentId: WindowID, path: Path) => void
+  delWindow: (id: WindowID) => void
+  updateWindowPath: (id: WindowID, path: Path) => void
+  setMaxWindow: (id: WindowID) => void
+  toggleFileView: (id: WindowID) => void
+  togglePathBarView: (id: WindowID) => void
+  setActiveWindowID: (id: WindowID) => void
+  setActiveWindowPath: (path: Path) => void
   setWindowState: (state: SerializedWindowStateObject) => void
 }
 
@@ -42,7 +45,7 @@ function sendWindowStateToNamespace(
 ): void {
   interface IntermediateWindowStateObject
     extends Omit<WindowStateObject, 'windowMap'> {
-    windowMap: Map<number, string> | Array<[number, string]>
+    windowMap: Map<WindowID, Path> | Array<[WindowID, Path]>
   }
 
   const oldWindowMap = state.windowMap
@@ -75,7 +78,7 @@ function sendWindowStateToNamespace(
 
 // default state values
 const defaultPath: string = '~zod/home'
-const defaultMap: Map<number, string> = new Map<number, string>([
+const defaultMap: Map<WindowID, Path> = new Map<WindowID, Path>([
   [1, defaultPath],
 ])
 const defaultState: WindowStateObject = {
@@ -97,7 +100,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   activeWindowPath: defaultState.activeWindowPath,
 
   // add a new window to the tree
-  addWindow: (parentId: number, path: string) => {
+  addWindow: (parentId: WindowID, path: Path) => {
     const windowMap = get().windowMap
     const parentPath = windowMap.get(parentId) ?? defaultPath
 
@@ -111,7 +114,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   // remove a node from the tree
-  delWindow: (id: number) => {
+  delWindow: (id: WindowID) => {
     const windowMap = get().windowMap
 
     // If this is the last window (defaultMap), don't allow deletion
@@ -119,14 +122,14 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return
     }
 
-    function isEven(num: number): boolean {
+    function isEven(num: WindowID): boolean {
       return num % 2 === 0
     }
 
     function findKids(
-      map: Map<number, string | null>,
-      id: number,
-      sequence: Set<number>
+      map: Map<WindowID, Path | null>,
+      id: WindowID,
+      sequence: Set<WindowID>
     ) {
       const leftChild = id * 2
       const rightChild = id * 2 + 1
@@ -145,17 +148,17 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       }
     }
 
-    function hasKids(kids: Set<number>): boolean {
+    function hasKids(kids: Set<WindowID>): boolean {
       return kids.size !== 0 ? true : false
     }
 
-    function delKids(map: Map<number, string | null>, kids: Set<number>) {
+    function delKids(map: Map<WindowID, Path | null>, kids: Set<WindowID>) {
       kids.forEach(key => {
         map.delete(key)
       })
     }
 
-    function findValidParent(map: Map<number, string | null>, id: number) {
+    function findValidParent(map: Map<WindowID, Path | null>, id: WindowID) {
       let currentId = id
 
       while (currentId !== 1) {
@@ -173,13 +176,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return 1
     }
 
-    function handleDelete(map: Map<number, string | null>, id: number) {
+    function handleDelete(map: Map<WindowID, Path | null>, id: WindowID) {
       const siblingId = isEven(id) ? id + 1 : id - 1
       const siblingPath = map.get(siblingId) ?? null
-      const kids = new Set<number>()
+      const kids = new Set<WindowID>()
       findKids(map, id, kids)
       const idHasKids = hasKids(kids)
-      const siblingKids = new Set<number>()
+      const siblingKids = new Set<WindowID>()
       findKids(map, siblingId, siblingKids)
       const siblingHasKids = hasKids(siblingKids)
 
@@ -188,7 +191,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         //  if window doesn't have kids, sibling doesn't have kids and null(doesn't have sibling)
         //  delete nested parent windows till first window that has sibling
         const validParent = findValidParent(map, siblingId)
-        const parentKids = new Set<number>()
+        const parentKids = new Set<WindowID>()
         findKids(map, validParent, parentKids)
         delKids(windowMap, parentKids)
         windowMap.delete(validParent)
@@ -207,7 +210,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       }
       //  otherwise keep sibling window state
       //console.log('map', new Map(map))
-      const newMap = new Map<number, string>()
+      const newMap = new Map<WindowID, Path>()
       map.forEach((value, key) => {
         newMap.set(key, value ?? defaultPath)
       })
@@ -236,7 +239,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   // update a window's path
-  updateWindowPath: (id: number, path: string) => {
+  updateWindowPath: (id: WindowID, path: Path) => {
     const windowMap = get().windowMap
     const newWindowMap = windowMap.set(id, path)
 
@@ -245,13 +248,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   // maximise a window
-  setMaxWindow: (id: number) => {
+  setMaxWindow: (id: WindowID) => {
     sendWindowStateToNamespace(get(), { key: 'maxWindow', val: id })
     set({ maxWindow: id })
   },
 
   // toggle "normal" view and file view for a window
-  toggleFileView: (id: number) => {
+  toggleFileView: (id: WindowID) => {
     const fileViewArray = get().fileView
 
     if (!fileViewArray.includes(id)) {
@@ -274,7 +277,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   // toggle path bar view for a window
-  togglePathBarView: (id: number) => {
+  togglePathBarView: (id: WindowID) => {
     const pathBarView = get().pathBarView
 
     if (!pathBarView.includes(id)) {
@@ -297,13 +300,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   // track active window
-  setActiveWindowID: (id: number) => {
+  setActiveWindowID: (id: WindowID) => {
     sendWindowStateToNamespace(get(), { key: 'activeWindowID', val: id })
     set({ activeWindowID: id })
   },
 
   // track active window's path
-  setActiveWindowPath: (path: string) => {
+  setActiveWindowPath: (path: Path) => {
     sendWindowStateToNamespace(get(), { key: 'activeWindowPath', val: path })
     set({ activeWindowPath: path })
   },
