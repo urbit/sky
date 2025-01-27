@@ -26,7 +26,17 @@ type WindowStateObjectAttribute = {
   }
 }[keyof WindowStateObject]
 
-interface WindowStore extends WindowStateObject {
+interface Workspace {
+  name: string,
+  windowState: WindowStateObject
+}
+
+type WorkspaceID = number
+type WorkspaceMap = Map<WorkspaceID, Workspace>
+
+interface WindowStore {
+  workspaces: WorkspaceMap
+  activeWorkspaceID: WorkspaceID,
   addWindow: (parentId: WindowID, path: Path) => void
   delWindow: (id: WindowID) => void
   updateWindowPath: (id: WindowID, path: Path) => void
@@ -39,6 +49,7 @@ interface WindowStore extends WindowStateObject {
 }
 
 // helper to update window state in the namespace
+// TODO update for workspaces
 function sendWindowStateToNamespace(
   state: WindowStateObject,
   update: WindowStateObjectAttribute
@@ -81,7 +92,8 @@ const defaultPath: string = '~zod/home'
 const defaultMap: Map<WindowID, Path> = new Map<WindowID, Path>([
   [1, defaultPath],
 ])
-const defaultState: WindowStateObject = {
+
+const defaultWindowStateObject: WindowStateObject = {
   windowMap: defaultMap,
   maxWindow: 0,
   fileView: [],
@@ -90,27 +102,47 @@ const defaultState: WindowStateObject = {
   activeWindowPath: defaultPath,
 }
 
+const defaultWorkspace: Workspace = {
+  name: 'Home',
+  windowState: defaultWindowStateObject
+}
+
+const defaultWorkspaceMap: WorkspaceMap = new Map<WorkspaceID, Workspace>([
+  [1, defaultWorkspace],
+])
+
 const useWindowStore = create<WindowStore>((set, get) => ({
   // init state values
-  windowMap: defaultState.windowMap,
-  maxWindow: defaultState.maxWindow,
-  fileView: defaultState.fileView,
-  pathBarView: defaultState.pathBarView,
-  activeWindowID: defaultState.activeWindowID,
-  activeWindowPath: defaultState.activeWindowPath,
+  workspaces: defaultWorkspaceMap,
+  activeWorkspaceID: 0,
 
   // add a new window to the tree
   addWindow: (parentId: WindowID, path: Path) => {
-    const windowMap = get().windowMap
-    const parentPath = windowMap.get(parentId) ?? defaultPath
+    const currentWorkspaces = get().workspaces
+    const activeWorkspace = currentWorkspaces.get(get().activeWorkspaceID)
+
+    if (!activeWorkspace) {
+      console.error(`No workspace for ${get().activeWorkspaceID}`)
+      return;
+    }
+
+    const windowMap = activeWorkspace.windowState.windowMap
+    const parentPath = windowMap.get(parentId)
+
+    if (!parentPath) {
+      console.error(`No parent at ${parentId}`)
+      return;
+    }
 
     const newWindowMap = new Map(windowMap)
     newWindowMap.set(parentId * 2, parentPath)
     newWindowMap.set(parentId * 2 + 1, path)
     newWindowMap.set(parentId, '')
 
-    sendWindowStateToNamespace(get(), { key: 'windowMap', val: newWindowMap })
-    set({ windowMap: newWindowMap })
+    activeWorkspace.windowState.windowMap = newWindowMap
+
+    //sendWindowStateToNamespace(activeWorkspace.windowState, { key: 'windowMap', val: newWindowMap })
+    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
   },
 
   // remove a node from the tree
