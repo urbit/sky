@@ -73,6 +73,7 @@
         ~&  >  "Target URL: {<target-url>}"
         ?~  data
           [(send [400 ~ [%plain "No data received"]]) state]
+        ~&  >  "Headers: {<headers>}"
         ~&  >  "Content-Type: {<content-type>}"
         ~&  >  "Received data: {<data>}"
         [(send [200 ~ [%plain "Data received"]]) state]
