@@ -107,44 +107,14 @@
           (turn mime-wains |=(a=wain (@ta (crip a))))
         =/  file-card
           ?+    mim
-              !!
-              [%image * ~]
-            !!
-          ::
-              [%audio * ~]
-            !!
-          ::
-              [%video * ~]
-            !!
+              ::  XX bad; remove in prod.
+              (head (send [501 ~ [%plain "501 - Not Implemented"]]))
           ::
               [%text %plain ~]
             :*  %pass  ~
                 %arvo  %c  %info  %sky  %&
                 [fil+(weld pax nym) %ins %txt !>(~[(@t q.u.body)])]~
             ==
-          ::
-              [%text %html ~]
-            ::  cord
-            !!
-          ::
-              [%text %css ~]
-            !!
-          ::
-              [%text %markdown ~]
-            !!
-          ::
-              [%text %javascript ~]
-            !!
-          ::
-              [%application %json ~]
-            !!
-          ::
-              [%application %pdf ~]
-            !!
-          ::
-              [%application %xml ~]
-            !!
-          ::
           ==
         ~&  >>  file-card
         :_  state
