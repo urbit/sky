@@ -1,4 +1,5 @@
 /+  dbug, default-agent, verb, schooner, server
+/$  txt  %noun  %txt
 |%
 +$  versioned-state
   $%  state-0
@@ -65,18 +66,73 @@
         ~&  >  "Got PUT!"
         ::  XX authenticate this ship, on this path, for this request type
         ::  XX make file in clay at appropriate path
-        ::  XX %set-response to the appropriate URL in +on-arvo
-        =/  data          body.request.inbound-request
-        =/  headers       header-list.request.inbound-request
-        =/  content-type  (get-header:http 'content-type' headers)
-        =/  target-url  url.request.inbound-request
+        ::  XX %set-response to the appropriate URL
+        ::  XX subscribe to changes on this file, update response
+        =/  body                 body.request.inbound-request
+        =/  headers              header-list.request.inbound-request
+        =/  content-type         (need (get-header:http 'content-type' headers))
+        =/  content-disposition  (need (get-header:http 'content-disposition' headers))
+        =/  last-modified        (need (get-header:http 'last-modified' headers))
+        =/  target-url           url.request.inbound-request
         ~&  >  "Target URL: {<target-url>}"
-        ?~  data
+        ?~  body
+          ~&  >  "No data received"
           [(send [400 ~ [%plain "No data received"]]) state]
         ~&  >  "Headers: {<headers>}"
         ~&  >  "Content-Type: {<content-type>}"
-        ~&  >  "Received data: {<data>}"
-        [(send [200 ~ [%plain "Data received"]]) state]
+        ~&  >  "Content-Disposition: {<content-disposition>}"
+        ~&  >  "Last-Modified: {<last-modified>}"
+        ~&  >  "Received body: {<body>}"
+        =/  wains
+          p:(need q:((cook |=(a=(list wain) a) (more (jest '/') (star ;~(less (jest '/') next)))) [[1 1] (trip content-type)]))
+        =/  mim
+          (turn wains |=(a=wain (@ta (crip a))))
+        =/  file-card
+          ?+    mim
+              !!
+              [%image * ~]
+            !!
+          ::
+              [%audio * ~]
+            !!
+          ::
+              [%video * ~]
+            !!
+          ::
+              [%text %plain ~]
+            :*  %pass  ~
+                %arvo  %c  %info  %sky  %&
+                ::  XX hard-coded filename
+                [/plaintext/txt %ins %txt !>(~[(@t q.u.body)])]~
+            ==
+          ::
+              [%text %html ~]
+            ::  cord
+            !!
+          ::
+              [%text %css ~]
+            !!
+          ::
+              [%text %markdown ~]
+            !!
+          ::
+              [%text %javascript ~]
+            !!
+          ::
+              [%application %json ~]
+            !!
+          ::
+              [%application %pdf ~]
+            !!
+          ::
+              [%application %xml ~]
+            !!
+          ::
+          ==
+        ~&  >>  file-card
+        :_  state
+        :-  file-card
+        (send [200 ~ [%plain "Data received"]])
       ==
     --
 ::

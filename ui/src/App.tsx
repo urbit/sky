@@ -4,7 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { auth, get, put, post, del } from './api/sky'
+import { auth, get } from './api/sky'
 
 function App() {
   const {
@@ -46,14 +46,20 @@ function App() {
           //  console.log('got response from POST request', resPost)
           //}
 
-          const formData = new FormData()
-          const txtFile = new File(['This is plaintext'], 'test.txt', { type: 'text/plain' })
-          formData.append('file', txtFile)
-          const resPut = await put('~zod/api/plaintext', formData)
+          const file = new File(['This is plaintext'], 'note.txt', { type: 'text/plain' });
 
-          if (resPut) {
-            console.log('got response from PUT request', resPut)
-          }
+          return fetch(`http://localhost:8080/api/plaintext`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+              'Content-Type': file.type,
+              'Content-Disposition': `filename="${file.name}"`,
+              'Last-Modified': file.lastModified
+                ? file.lastModified.toString()
+                : Date.now().toString()
+            },
+            body: file
+          })
 
           //const resDelete = await del('~zod/api/del')
           //
