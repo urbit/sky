@@ -51,21 +51,28 @@
           [(send [405 ~ [%stock ~]]) state]
       ::
           %'DELETE'
+        ::  XX %set-response [/url ~] to unbind URL
         ~&  >  "Got DELETE!"
         `state
       ::
           %'GET'
+        ::  XX a GET request to an existing endpoint will
+        ::     be served by Eyre, so this endpoint should
+        ::     only respond to requests to empty point in
+        ::     the namespace, so only sends a 404
+        ::  XX should have different responses for
+        ::     authenticated / non-authenticated requests
         ~&  >  "Got GET!"
         `state
       ::
           %'POST'
+        ::  XX CRDT for text files?
         ~&  >  "Got POST!"
         `state
       ::
           %'PUT'
         ~&  >  "Got PUT!"
         ::  XX authenticate this ship, on this path, for this request type
-        ::  XX make file in clay at appropriate path
         ::  XX %set-response to the appropriate URL
         ::  XX subscribe to changes on this file, update response
         =/  body                 body.request.inbound-request
