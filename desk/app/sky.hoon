@@ -88,6 +88,14 @@
         ~&  >  "Content-Type: {<content-type>}"
         ~&  >  "Content-Disposition: {<content-disposition>}"
         ~&  >  "Received body: {<body>}"
+        ~!  target-url
+        ~!  (trip target-url)
+        =/  path-wains
+          p:(need q:((cook |=(a=(list wain) a) (more (jest '/') (star ;~(less (jest '/') next)))) [[1 1] (trip target-url)]))
+        =/  pax
+          ::  XX +turn output is //api/foobar; handle in cord-path converter
+          (tail (tail (turn path-wains |=(a=wain (@ta (crip a))))))
+        ~&  >>  pax
         =/  file-wains
           p:(need q:((cook |=(a=(list wain) a) (more (jest '.') (star ;~(less (jest '.') next)))) [[1 1] (trip content-disposition)]))
         =/  nym
@@ -112,7 +120,7 @@
               [%text %plain ~]
             :*  %pass  ~
                 %arvo  %c  %info  %sky  %&
-                [nym %ins %txt !>(~[(@t q.u.body)])]~
+                [fil+(weld pax nym) %ins %txt !>(~[(@t q.u.body)])]~
             ==
           ::
               [%text %html ~]
