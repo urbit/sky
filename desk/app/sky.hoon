@@ -79,7 +79,6 @@
         =/  headers              header-list.request.inbound-request
         =/  content-type         (need (get-header:http 'content-type' headers))
         =/  content-disposition  (need (get-header:http 'content-disposition' headers))
-        =/  last-modified        (need (get-header:http 'last-modified' headers))
         =/  target-url           url.request.inbound-request
         ~&  >  "Target URL: {<target-url>}"
         ?~  body
@@ -88,12 +87,16 @@
         ~&  >  "Headers: {<headers>}"
         ~&  >  "Content-Type: {<content-type>}"
         ~&  >  "Content-Disposition: {<content-disposition>}"
-        ~&  >  "Last-Modified: {<last-modified>}"
         ~&  >  "Received body: {<body>}"
-        =/  wains
+        =/  file-wains
+          p:(need q:((cook |=(a=(list wain) a) (more (jest '.') (star ;~(less (jest '.') next)))) [[1 1] (trip content-disposition)]))
+        =/  nym
+          (turn file-wains |=(a=wain (@ta (crip a))))
+        ~&  >>  nym
+        =/  mime-wains
           p:(need q:((cook |=(a=(list wain) a) (more (jest '/') (star ;~(less (jest '/') next)))) [[1 1] (trip content-type)]))
         =/  mim
-          (turn wains |=(a=wain (@ta (crip a))))
+          (turn mime-wains |=(a=wain (@ta (crip a))))
         =/  file-card
           ?+    mim
               !!
@@ -109,8 +112,7 @@
               [%text %plain ~]
             :*  %pass  ~
                 %arvo  %c  %info  %sky  %&
-                ::  XX hard-coded filename
-                [/plaintext/txt %ins %txt !>(~[(@t q.u.body)])]~
+                [nym %ins %txt !>(~[(@t q.u.body)])]~
             ==
           ::
               [%text %html ~]

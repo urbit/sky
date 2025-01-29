@@ -53,10 +53,7 @@ function App() {
             credentials: 'include',
             headers: {
               'Content-Type': file.type,
-              'Content-Disposition': `filename="${file.name}"`,
-              'Last-Modified': file.lastModified
-                ? file.lastModified.toString()
-                : Date.now().toString()
+              'Content-Disposition': `${file.name}`,
             },
             body: file
           })
