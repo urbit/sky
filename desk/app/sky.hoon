@@ -79,16 +79,12 @@
         =/  content-type         (need (get-header:http 'content-type' headers))
         =/  content-disposition  (need (get-header:http 'content-disposition' headers))
         =/  target-url           url.request.inbound-request
-        ~&  >  "Target URL: {<target-url>}"
         ?~  body
           ~&  >  "No data received"
           [(send [400 ~ [%plain "No data received"]]) state]
-        ~&  >  "Headers: {<headers>}"
         ~&  >  "Content-Type: {<content-type>}"
         ~&  >  "Content-Disposition: {<content-disposition>}"
         ~&  >  "Received body: {<body>}"
-        ~!  target-url
-        ~!  (trip target-url)
         =/  pax
           (tail (cut-path target-url '/'))
         ~&  >>  pax
