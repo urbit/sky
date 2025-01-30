@@ -46,6 +46,13 @@ function App() {
           //  console.log('got response from POST request', resPost)
           //}
 
+          const getRes = await fetch('http://localhost:8080/api/plaintext')
+
+          if (getRes) {
+            console.log('GET request successful!')
+            console.log(getRes)
+          }
+
           const file = new File(['This is plaintext'], 'note.txt', { type: 'text/plain' });
 
           return fetch(`http://localhost:8080/api/plaintext`, {

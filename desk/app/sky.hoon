@@ -66,15 +66,18 @@
         =/  pax  (tail (cut-path dst '/'))
         =/  hed  header-list.request.inbound-request
         =/  res  .^((list path) %ct fil+pax)
+        ~&  >>  res
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
-        ::  XX get %mime type from tail of only path in has
-        ::  XX run result through the correct mark
-        =/  ext  (head (flop (head res)))
-        =/  mim  (mime-from-file ext)
-        ::  !! can't use +send; response:schooner doesn't
-        ::     handle all the mime types we want
-        (send [200 ~ [mim (ext res)]])
+        ~&  >>  "About to run mim"
+        =/  mim  .^(mime %cx (weld /=/sky/=/fil (head res)))
+        ^-  (list card)
+        %+  give-simple-payload:app:server
+          eyre-id
+        ^-  simple-payload:http
+        :-  :-  200
+            ['content-type'^'text/html']~
+        (some +.mim)
       ::
           %'POST'
         ::  XX CRDT for text files?
