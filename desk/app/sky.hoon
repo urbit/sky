@@ -16,6 +16,7 @@
     def   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
+  ::  XX %connect to /sky, not /api
   :_  this
     [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
 ++  on-save   !>(state)
@@ -55,12 +56,11 @@
         `state
       ::
           %'GET'
-        ::  XX a GET request to an existing endpoint will
-        ::     be served by Eyre, so this endpoint should
-        ::     only respond to requests to empty point in
-        ::     the namespace, so only sends a 404
-        ::  XX should have different responses for
-        ::     authenticated / non-authenticated requests
+        ::  XX think about authentication
+        ::  XX send response
+        ::  XX handle 404s for empty part of the namspace
+        ::  XX %set-response
+        ::  XX subscribe to this file in clay
         ~&  >  "Got GET!"
         `state
       ::
@@ -113,10 +113,12 @@
     --
 ::
 ++  on-peek   on-peek:def
-++  on-watch  
+++  on-watch
   |=  =path
   `this
-++  on-arvo   
+++  on-arvo
+  ::  XX handle changes to clay file we're subscribed to;
+  ::     %set-response for the new file
   |=  [=wire =sign-arvo]
   ?.  ?=([%eyre %connect ~] wire)
     (on-arvo:def [wire sign-arvo])
