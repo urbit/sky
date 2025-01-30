@@ -56,13 +56,25 @@
         `state
       ::
           %'GET'
-        ::  XX think about authentication
         ::  XX send response
-        ::  XX handle 404s for empty part of the namspace
         ::  XX %set-response
         ::  XX subscribe to this file in clay
+        ::  XX think about authentication
         ~&  >  "Got GET!"
-        `state
+        :_  state
+        =/  dst  url.request.inbound-request
+        =/  pax  (tail (cut-path dst '/'))
+        =/  hed  header-list.request.inbound-request
+        =/  res  .^((list path) %ct fil+pax)
+        ?~  res
+          (send [404 ~ [%plain "404 - Not Found"]])
+        ::  XX get %mime type from tail of only path in has
+        ::  XX run result through the correct mark
+        =/  ext  (head (flop (head res)))
+        =/  mim  (mime-from-file ext)
+        ::  !! can't use +send; response:schooner doesn't
+        ::     handle all the mime types we want
+        (send [200 ~ [mim (ext res)]])
       ::
           %'POST'
         ::  XX CRDT for text files?
@@ -72,27 +84,25 @@
           %'PUT'
         ~&  >  "Got PUT!"
         ::  XX authenticate this ship, on this path, for this request type
-        ::  XX %set-response to the appropriate URL
-        ::  XX subscribe to changes on this file, update response
-        =/  body                 body.request.inbound-request
-        =/  headers              header-list.request.inbound-request
-        =/  content-type         (need (get-header:http 'content-type' headers))
-        =/  content-disposition  (need (get-header:http 'content-disposition' headers))
-        =/  target-url           url.request.inbound-request
+        =/  body  body.request.inbound-request
+        =/  hed   header-list.request.inbound-request
+        =/  typ   (need (get-header:http 'content-type' hed))
+        =/  dis   (need (get-header:http 'content-disposition' hed))
+        =/  dst   url.request.inbound-request
         ?~  body
           ~&  >  "No data received"
           [(send [400 ~ [%plain "No data received"]]) state]
-        ~&  >  "Content-Type: {<content-type>}"
-        ~&  >  "Content-Disposition: {<content-disposition>}"
+        ~&  >  "Content-Type: {<typ>}"
+        ~&  >  "Content-Disposition: {<dis>}"
         ~&  >  "Received body: {<body>}"
         =/  pax
-          (tail (cut-path target-url '/'))
+          (tail (cut-path dst '/'))
         ~&  >>  pax
         =/  nym
-          (cut-path content-disposition '.')
+          (cut-path dis '.')
         ~&  >>  nym
         =/  mim
-          (cut-path content-type '/')
+          (cut-path typ '/')
         ~&  >>  mim
         =/  file-card
           ?+    mim
