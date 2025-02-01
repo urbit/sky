@@ -1,4 +1,5 @@
 /+  *sky, dbug, verb, server, schooner, default-agent
+/$  txt-to-mime  %txt  %mime
 |%
 +$  versioned-state
   $%  state-0
@@ -65,12 +66,19 @@
         =/  dst  url.request.inbound-request
         =/  pax  (tail (cut-path dst '/'))
         =/  hed  header-list.request.inbound-request
-        =/  res  .^((list path) %ct fil+pax)
+        =/  res  .^((list path) %ct (weld /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil pax))
+        ~&  >>  dst
+        ~&  >>  pax
+        ~&  >>  hed
         ~&  >>  res
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
         ~&  >>  "About to run mim"
-        =/  mim  .^(mime %cx (weld /=/sky/=/fil (head res)))
+        ::  =/  mim  .^(mime:txt %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) (head res)))
+        =/  txt  .^(wain %cx /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil/plaintext/note/txt)
+        =/  mim  (txt-to-mime txt)
+        ~&  >>  mim
+        ::  (send [200 ~ [%plain "200 - Response OK"]])
         ^-  (list card)
         %+  give-simple-payload:app:server
           eyre-id
