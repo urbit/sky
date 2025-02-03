@@ -70,17 +70,18 @@
           (send [404 ~ [%plain "404 - Not Found"]])
         =/  fil  (head res)
         ~&  >  "Getting {<fil>}"
-        =/  typ  `term`(head (flop fil))
+        =/  typ  (head (flop fil))
         =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))
-        =/  to-mime  .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/[typ]/mime)
-        ::  XX should be able to clam non through type of sample of mark?
-        ::     shouldn't need +ext-to-sample gate
-        ~&  >>  "typ: {<typ>}"
-        ~&  >>  "non: {<non>}"
-        ~&  >>  "+ext-to-sample result: {<(ext-to-sample typ)>}"
-        ~&  >>  "to-mime: {<to-mime>}"
-        =/  mim  !<(mime (to-mime !>((wain non))))
-        ~&  >>  "MIME: {<mim>}"
+        ::  noun-to-whatever converter
+        =/  to-type
+          .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/noun/[typ])
+        ::  whatever-to-mime converter
+        =/  to-mime
+          .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/[typ]/mime)
+        ::  convert noun to whatever to mime
+        =/  mim
+          !<(mime (to-mime (to-type !>(non))))
+        ~&  >  "MIME: {<mim>}"
         ::  XX other cards: %set-response, %warp %next
         ^-  (list card)
         %+  give-simple-payload:app:server
