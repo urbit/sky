@@ -89,7 +89,7 @@
         :-  :-  200
         ::  XX need to convert typ to MIME string; use
         ::     a new gate in library called +ext-to-mime
-            ['content-type'^'text/html']~
+            ['content-type'^(ext-to-mime typ)]~
         (some +.mim)
       ::
           %'POST'
