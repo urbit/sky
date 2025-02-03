@@ -13,7 +13,13 @@
   |=  =term
   ^-  cord
   ?+  term  !!
-    %txt  'text/html'
+    %css   'text/css'
+    %html  'text/html'
+    %txt   'text/plain'
+    %md    'text/markdown'
+    %js    'text/javascript'
+    %xml   'application/xml'
+    %json  'application/json'
   ==
 ::
 +|  %parsers

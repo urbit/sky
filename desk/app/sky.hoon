@@ -87,8 +87,6 @@
           eyre-id
         ^-  simple-payload:http
         :-  :-  200
-        ::  XX need to convert typ to MIME string; use
-        ::     a new gate in library called +ext-to-mime
             ['content-type'^(ext-to-mime typ)]~
         (some +.mim)
       ::
