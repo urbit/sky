@@ -12,7 +12,9 @@
 ++  ext-to-mime
   |=  =term
   ^-  cord
-  ?+  term  !!
+  ?+    term
+      ~_  leaf/"Unsupported filetype {<term>}"
+      !!
     %css   'text/css'
     %html  'text/html'
     %txt   'text/plain'
