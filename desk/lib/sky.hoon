@@ -2,10 +2,18 @@
 ::
 +|  %types
 ::
-++  foobar
+::  XX feels bad; remove
+++  ext-to-sample
   |=  =term
   ?+  term  !!
     %txt  wain
+  ==
+::
+++  ext-to-mime
+  |=  =term
+  ^-  cord
+  ?+  term  !!
+    %txt  'text/html'
   ==
 ::
 +|  %parsers

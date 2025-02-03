@@ -78,8 +78,8 @@
         =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))
         =/  to-mime  .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/[typ]/mime)
         ::  XX should be able to clam non through type of sample of mark?
-        ::     shouldn't need +foobar gate
-        =/  mim  !<(mime (to-mime !>(((foobar typ) non))))
+        ::     shouldn't need +ext-to-sample gate
+        =/  mim  !<(mime (to-mime !>(((ext-to-sample typ) non))))
         ~&  >>  mim
         ::  XX other cards: %set-response, %warp %next
         ^-  (list card)
