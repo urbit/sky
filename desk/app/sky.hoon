@@ -116,17 +116,16 @@
         =/  mim
           (cut-path typ '/')
         ~&  >>  mim
+        =/  ext  (head (flop nym))
+        ~&  >>  ext
+        ::  noun-to-whatever converter
+        =/  to-type
+          .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/noun/[ext])
         =/  file-card
-          ?+    mim
-              ::  XX bad; remove in prod.
-              ~&  >>>  "Unsupported MIME type {<mim>}"
-              (head (send [501 ~ [%plain "501 - Not Implemented"]]))
-          ::
-              [%text %plain ~]
-            :*  %pass  ~
-                %arvo  %c  %info  %sky  %&
-                [fil+(weld pax nym) %ins %txt !>(~[(@t q.u.body)])]~
-            ==
+          ^-  card
+          :*  %pass  ~
+              %arvo  %c  %info  %sky  %&
+              [fil+(weld pax nym) %ins ext (to-type !>(q.u.body))]~
           ==
         ~&  >>  file-card
         :_  state

@@ -12,7 +12,13 @@
 ++  grab                                                ::  convert from
   |%
   ++  mime  |=((pair mite octs) (to-wain q.q))
-  ++  noun  wain                                        ::  clam from %noun
+  ::  ++  noun  wain                                        ::  clam from %noun
+  ++  noun
+    |=  n=*
+    ^-  wain
+    ?^  n
+      (wain n)
+    (to-wain n)
   --
 ++  grow
   =>  v=.

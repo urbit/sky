@@ -47,7 +47,7 @@ function App() {
           //}
 
           try {
-            const file = new File(['This is plaintext two'], 'note.txt', { type: 'text/plain' })
+            const file = new File(['This is plaintext three'], 'note.txt', { type: 'text/plain' })
 
             const putRes = await fetch('http://localhost:8080/api/plaintext', {
               method: 'PUT',
