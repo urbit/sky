@@ -66,21 +66,21 @@
         =/  pax  (tail (cut-path dst '/'))
         =/  hed  header-list.request.inbound-request
         =/  res  .^((list path) %ct (weld /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil pax))
-        ~&  >>  dst
-        ~&  >>  pax
-        ~&  >>  hed
-        ~&  >>  res
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
-        ~&  >>  "About to run mim"
         =/  fil  (head res)
-        =/  typ  (head (flop fil))
+        ~&  >  "Getting {<fil>}"
+        =/  typ  `term`(head (flop fil))
         =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))
         =/  to-mime  .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/[typ]/mime)
         ::  XX should be able to clam non through type of sample of mark?
         ::     shouldn't need +ext-to-sample gate
-        =/  mim  !<(mime (to-mime !>(((ext-to-sample typ) non))))
-        ~&  >>  mim
+        ~&  >>  "typ: {<typ>}"
+        ~&  >>  "non: {<non>}"
+        ~&  >>  "+ext-to-sample result: {<(ext-to-sample typ)>}"
+        ~&  >>  "to-mime: {<to-mime>}"
+        =/  mim  !<(mime (to-mime !>((wain non))))
+        ~&  >>  "MIME: {<mim>}"
         ::  XX other cards: %set-response, %warp %next
         ^-  (list card)
         %+  give-simple-payload:app:server
@@ -106,9 +106,6 @@
         ?~  body
           ~&  >  "No data received"
           [(send [400 ~ [%plain "No data received"]]) state]
-        ~&  >  "Content-Type: {<typ>}"
-        ~&  >  "Content-Disposition: {<dis>}"
-        ~&  >  "Received body: {<body>}"
         =/  pax
           (tail (cut-path dst '/'))
         ~&  >>  pax
@@ -121,6 +118,7 @@
         =/  file-card
           ?+    mim
               ::  XX bad; remove in prod.
+              ~&  >>>  "Unsupported MIME type {<mim>}"
               (head (send [501 ~ [%plain "501 - Not Implemented"]]))
           ::
               [%text %plain ~]

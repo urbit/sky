@@ -46,27 +46,38 @@ function App() {
           //  console.log('got response from POST request', resPost)
           //}
 
-          const getRes = await fetch('http://localhost:8080/api/plaintext', {
-            credentials: 'include'
-          })
+          try {
+            const file = new File(['This is plaintext two'], 'note.txt', { type: 'text/plain' })
 
-          if (getRes) {
+            const putRes = await fetch('http://localhost:8080/api/plaintext', {
+              method: 'PUT',
+              credentials: 'include',
+              headers: {
+                'Content-Type': file.type,
+                'Content-Disposition': `${file.name}`
+              },
+              body: file
+            })
+
+            if (!putRes.ok) {
+              throw new Error(`PUT failed with status: ${putRes.status}`)
+            }
+
+            const getRes = await fetch('http://localhost:8080/api/plaintext', {
+              credentials: 'include'
+            })
+
+            if (!getRes.ok) {
+              throw new Error(`GET failed with status: ${getRes.status}`)
+            }
+
             const data = await getRes.text()
-            console.log('GET request successful!')
+            console.log('GET successful!')
             console.log(data)
+
+          } catch (error) {
+            console.error('GET failed:', error)
           }
-
-          const file = new File(['This is plaintext'], 'note.txt', { type: 'text/plain' });
-
-          return fetch(`http://localhost:8080/api/plaintext`, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-              'Content-Type': file.type,
-              'Content-Disposition': `${file.name}`,
-            },
-            body: file
-          })
 
           //const resDelete = await del('~zod/api/del')
           //
