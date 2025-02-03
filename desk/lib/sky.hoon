@@ -1,5 +1,13 @@
 |%
 ::
++|  %types
+::
+++  foobar
+  |=  =term
+  ?+  term  !!
+    %txt  wain
+  ==
+::
 +|  %parsers
 ::
 ++  cut-path

@@ -73,17 +73,22 @@
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
         ~&  >>  "About to run mim"
-        ::  XX remove hard-coded path
-        =/  txt  .^(wain %cx /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil/plaintext/note/txt)
-        =/  txt-to-mime  .^($-(wain mime) %cf /(scot %p our.bowl)/sky/(scot %da now.bowl)/txt/mime)
-        =/  mim  (txt-to-mime txt)
+        =/  fil  (head res)
+        =/  typ  (head (flop fil))
+        =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))
+        =/  to-mime  .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/[typ]/mime)
+        ::  XX should be able to clam non through type of sample of mark?
+        ::     shouldn't need +foobar gate
+        =/  mim  !<(mime (to-mime !>(((foobar typ) non))))
         ~&  >>  mim
-        ::  (send [200 ~ [%plain "200 - Response OK"]])
+        ::  XX other cards: %set-response, %warp %next
         ^-  (list card)
         %+  give-simple-payload:app:server
           eyre-id
         ^-  simple-payload:http
         :-  :-  200
+        ::  XX need to convert typ to MIME string; use
+        ::     a new gate in library called +ext-to-mime
             ['content-type'^'text/html']~
         (some +.mim)
       ::
