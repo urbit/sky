@@ -1,5 +1,4 @@
 /+  *sky, dbug, verb, server, schooner, default-agent
-/$  txt-to-mime  %txt  %mime
 |%
 +$  versioned-state
   $%  state-0
@@ -74,8 +73,9 @@
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
         ~&  >>  "About to run mim"
-        ::  =/  mim  .^(mime:txt %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) (head res)))
+        ::  XX remove hard-coded path
         =/  txt  .^(wain %cx /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil/plaintext/note/txt)
+        =/  txt-to-mime  .^($-(wain mime) %cf /(scot %p our.bowl)/sky/(scot %da now.bowl)/txt/mime)
         =/  mim  (txt-to-mime txt)
         ~&  >>  mim
         ::  (send [200 ~ [%plain "200 - Response OK"]])
