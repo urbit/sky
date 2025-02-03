@@ -5,8 +5,24 @@
 ::  XX feels bad; remove
 ++  ext-to-sample
   |=  =term
-  ?+  term  !!
-    %txt  wain
+  ?+    term
+      ~_  leaf/"Unsupported filetype {<term>}"
+      !!
+    %txt   wain
+    %js    atom
+    %md    wain
+    %css   cord
+    %html  cord
+    %json  json
+    %xml   cord
+    %pdf   atom
+    %gif   atom
+    %png   atom
+    %jpg   atom
+    %jpeg  atom
+    %mp3   atom
+    %mpeg  atom
+    %mp4   atom
   ==
 ::
 ++  ext-to-mime
