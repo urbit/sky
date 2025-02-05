@@ -65,10 +65,8 @@ function sendWindowStateToNamespace(
       { type: 'application/json' }
     )
 
-    const formData = new FormData()
-    formData.append('file', stateFile)
     // TODO remove ~sampel; API should accept relative paths
-    put('~sampel/sys/state/windows', formData)
+    put('~sampel/sys/state', stateFile)
   } catch (err) {
     console.log('Failed to save window state to namespace: ', err)
   }
