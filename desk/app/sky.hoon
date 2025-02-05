@@ -69,7 +69,7 @@
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
         =/  fil  (head res)
-        ~&  >  "Getting {<fil>}"
+        ::  ~&  >  "Getting {<fil>}"
         =/  typ  (head (flop fil))
         =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))
         ::  noun-to-whatever converter
@@ -81,7 +81,7 @@
         ::  convert noun to whatever to mime
         =/  mim
           !<(mime (to-mime (to-type !>(non))))
-        ~&  >  "MIME: {<mim>}"
+        ::  ~&  >  "MIME: {<mim>}"
         ::  XX other cards: %set-response, %warp %next
         ^-  (list card)
         %+  give-simple-payload:app:server
@@ -109,15 +109,15 @@
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  pax
           (tail (cut-path dst '/'))
-        ~&  >>  pax
+        ::  ~&  >>  pax
         =/  nym
           (cut-path dis '.')
-        ~&  >>  nym
+        ::  ~&  >>  nym
         =/  mim
           (cut-path typ '/')
-        ~&  >>  mim
+        ::  ~&  >>  mim
         =/  ext  (head (flop nym))
-        ~&  >>  ext
+        ::  ~&  >>  ext
         ::  noun-to-whatever converter
         =/  to-type
           .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/noun/[ext])
@@ -127,7 +127,7 @@
               %arvo  %c  %info  %sky  %&
               [fil+(weld pax nym) %ins ext (to-type !>(q.u.body))]~
           ==
-        ~&  >>  file-card
+        ::  ~&  >>  file-card
         :_  state
         :-  file-card
         (send [200 ~ [%plain "Data received"]])
