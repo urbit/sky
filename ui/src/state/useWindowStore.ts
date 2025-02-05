@@ -65,15 +65,15 @@ function sendWindowStateToNamespace(
       { type: 'application/json' }
     )
 
-    // TODO remove ~sampel; API should accept relative paths
-    put('~sampel/sys/state', stateFile)
+    // TODO remove @p; API should accept relative paths
+    put(`${window.ship}/sys/state`, stateFile)
   } catch (err) {
     console.log('Failed to save window state to namespace: ', err)
   }
 }
 
 // default state values
-const defaultPath: string = '~sampel/home'
+const defaultPath: string = '~zod/home'
 const defaultMap: Map<number, string> = new Map<number, string>([
   [1, defaultPath],
 ])

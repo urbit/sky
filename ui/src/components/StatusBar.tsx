@@ -10,7 +10,7 @@ const sigilConfig = {
   // changing size in sigilConfig upsets layout
   size: '30px',
   // TODO remove hard-coded ship
-  point: '~sampel-palnet',
+  point: `${window.ship}`,
   // TODO get colors from tlon/landscape user preferences
   foreground: '#FFF',
   background: '#c10c31',
@@ -22,7 +22,7 @@ export default function StatusBar() {
   const { setActiveWindowID } = useWindowStore()
   // TODO don't redeclare defaultPath and defaultMap,
   // should only be set in useWindowStore
-  const defaultPath = '~sampel/home'
+  const defaultPath = '~zod/home'
   const defaultMap = new Map<number, string>([[1, defaultPath]])
 
   const handleHomeClick = () => {

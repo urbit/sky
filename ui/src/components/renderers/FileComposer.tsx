@@ -57,7 +57,7 @@ export default function FileComposer(): JSX.Element {
 
   const pathArray = activeWindowPath
     ? activeWindowPath.split('/')
-    : `${window.ship || window.urbitID}/home`.split('/')
+    : `${window.ship}/home`.split('/')
   const ship = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
   const tempPath = `${ship}/sys/tmp/${endpoint}`
@@ -138,11 +138,10 @@ export default function FileComposer(): JSX.Element {
     if (content && activeWindowPath) {
       setEditorContent(content)
       setIsEdited(true)
-      const formData = new FormData()
       const detectedLanguage = detectLanguage(content)
       const mimeType =
         languageToMimeType[
-          detectedLanguage as keyof typeof languageToMimeType
+        detectedLanguage as keyof typeof languageToMimeType
         ] || 'text/plain'
       const extension =
         detectedLanguage === 'plaintext'
@@ -155,11 +154,11 @@ export default function FileComposer(): JSX.Element {
       const file = new File([content], `${pathArray.slice(-1)}.${extension}`, {
         type: mimeType,
       })
-      formData.append('file', file)
 
       try {
-        await put(tempPath, formData)
-        console.log('Upload successful')
+        await put(tempPath, file)
+        console.log(`Uploaded to ${tempPath}`)
+
         if (showPreview && language === 'html') {
           // Force iframe reload
           const iframe = document.querySelector('iframe')
@@ -185,11 +184,10 @@ export default function FileComposer(): JSX.Element {
 
   const handlePublish = async () => {
     if (activeWindowPath && editorContent) {
-      const formData = new FormData()
       const detectedLanguage = detectLanguage(editorContent)
       const mimeType =
         languageToMimeType[
-          detectedLanguage as keyof typeof languageToMimeType
+        detectedLanguage as keyof typeof languageToMimeType
         ] || 'text/plain'
       const extension =
         detectedLanguage === 'plaintext'
@@ -206,14 +204,16 @@ export default function FileComposer(): JSX.Element {
           type: mimeType,
         }
       )
-      formData.append('file', file)
 
       try {
-        await put(activeWindowPath, formData)
-        console.log('Publish successful')
-        setIsEdited(false)
+        const res = await put(activeWindowPath, file)
+
+        if (res && res.ok) {
+          setIsEdited(false)
+          console.log(`Published to ${activeWindowPath}`)
+        }
       } catch (err) {
-        console.error('Publish failed:', err)
+        console.error(`Published failed to ${activeWindowPath}: `, err)
       }
     }
   }
@@ -274,7 +274,7 @@ export default function FileComposer(): JSX.Element {
               <iframe
                 className="hf wf"
                 // TODO remove hard-coded domain
-                src={`http://localhost:8000/sys/tmp/${endpoint}`}
+                src={`http://localhost:8080/sys/tmp/${endpoint}`}
                 style={{ border: 'none', borderRadius: '2.5px' }}
                 sandbox="allow-scripts"
               ></iframe>

@@ -32,8 +32,7 @@ function App() {
         const resAuth = await auth('zod', 'lidlut-tabwed-pillex-ridrup')
 
         if (resAuth) {
-          // TODO remove window.urbitID entirely
-          //window.urbitID = window.ship
+          window.ship = '~zod'
           //const resGet = await get('~zod/api')
           //
           //if (resGet) {
@@ -288,7 +287,7 @@ function App() {
   // on mount, init window state
   useEffect(() => {
     async function init() {
-      const res = await get('~sampel/sys/state/windows')
+      const res = await get('~zod/sys/state/windows')
 
       if (res && res.ok) {
         const data = await res.json()
@@ -297,14 +296,6 @@ function App() {
     }
 
     init()
-  }, [])
-
-  // TODO handle real window.urbitID, not suitable for production
-  // on mount, set window.urbitID
-  useEffect(() => {
-    if (!window.urbitID) {
-      window.urbitID = '~sampel'
-    }
   }, [])
 
   return (

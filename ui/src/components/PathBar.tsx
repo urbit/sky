@@ -90,7 +90,7 @@ export default function PathBar({
         className="wf b3 br2 p1"
         value={inputValue}
         onChange={handleInputChange}
-        placeholder="~sampel/home"
+        placeholder={`~${window.ship}/home`}
       />
     </form>
   )
