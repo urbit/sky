@@ -80,10 +80,20 @@ function App() {
           //}
 
           try {
-            const htmlContent = '<html><body><h1>This is HTML</h1></body></html>'
-            const file = new File([htmlContent], 'note.html', { type: 'text/html' })
+            const cssContent = `.example {
+      color: blue;
+      font-size: 16px;
+      margin: 20px;
+    }
+    .test {
+      background-color: #eee;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }`
 
-            const putRes = await fetch('http://localhost:8080/api/html', {
+            const file = new File([cssContent], 'styles.css', { type: 'text/css' })
+
+            const putRes = await fetch('http://localhost:8080/api/css', {
               method: 'PUT',
               credentials: 'include',
               headers: {
@@ -97,7 +107,7 @@ function App() {
               throw new Error(`PUT failed with status: ${putRes.status}`)
             }
 
-            const getRes = await fetch('http://localhost:8080/api/html', {
+            const getRes = await fetch('http://localhost:8080/api/css', {
               credentials: 'include'
             })
 
