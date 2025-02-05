@@ -46,10 +46,44 @@ function App() {
           //  console.log('got response from POST request', resPost)
           //}
 
-          try {
-            const file = new File(['This is plaintext three'], 'note.txt', { type: 'text/plain' })
+          //try {
+          //  const file = new File(['This is plaintext three'], 'note.txt', { type: 'text/plain' })
+          //
+          //  const putRes = await fetch('http://localhost:8080/api/plaintext', {
+          //    method: 'PUT',
+          //    credentials: 'include',
+          //    headers: {
+          //      'Content-Type': file.type,
+          //      'Content-Disposition': `${file.name}`
+          //    },
+          //    body: file
+          //  })
+          //
+          //  if (!putRes.ok) {
+          //    throw new Error(`PUT failed with status: ${putRes.status}`)
+          //  }
+          //
+          //  const getRes = await fetch('http://localhost:8080/api/plaintext', {
+          //    credentials: 'include'
+          //  })
+          //
+          //  if (!getRes.ok) {
+          //    throw new Error(`GET failed with status: ${getRes.status}`)
+          //  }
+          //
+          //  const data = await getRes.text()
+          //  console.log('GET successful!')
+          //  console.log(data)
+          //
+          //} catch (error) {
+          //  console.error('GET failed:', error)
+          //}
 
-            const putRes = await fetch('http://localhost:8080/api/plaintext', {
+          try {
+            const htmlContent = '<html><body><h1>This is HTML</h1></body></html>'
+            const file = new File([htmlContent], 'note.html', { type: 'text/html' })
+
+            const putRes = await fetch('http://localhost:8080/api/html', {
               method: 'PUT',
               credentials: 'include',
               headers: {
@@ -63,7 +97,7 @@ function App() {
               throw new Error(`PUT failed with status: ${putRes.status}`)
             }
 
-            const getRes = await fetch('http://localhost:8080/api/plaintext', {
+            const getRes = await fetch('http://localhost:8080/api/html', {
               credentials: 'include'
             })
 
