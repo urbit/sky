@@ -218,10 +218,10 @@ export default function Window({
       console.log('path: ', path)
       console.log('first segment: ', path.split('/')[0])
 
-      if (path && path.split('/')[0] === window.ship) {
+      if (path && path.split('/')[0].slice(1) === window.ship) {
         console.log('Rendering filesystem')
         return <FileSystem id={id} path={path} />
-      } else if (path && path.split('/')[0] !== window.ship) {
+      } else if (path && path.split('/')[0].slice(1) !== window.ship) {
         // Last-ditch attempt to load something
         console.log(
           `Attempting to load a page from ${res.headers.get('X-Response-URL')}`
@@ -292,7 +292,7 @@ export default function Window({
   }
 
   function handleFileView() {
-    if (path && path.split('/')[0] === window.ship) {
+    if (path && path.split('/')[0].slice(1) === window.ship) {
       toggleFileView(id)
     }
   }
@@ -410,7 +410,7 @@ export default function Window({
                       <button
                         className="wf"
                         onMouseEnter={() => setOpenVisibilityMenu(true)}
-                        disabled={path?.split('/')[0] !== window.ship}
+                        disabled={path?.split('/')[0].slice(1) !== window.ship}
                       >
                         Visibility
                       </button>
@@ -424,7 +424,7 @@ export default function Window({
                       </button>
                     </div>
                   )}
-                  {!(path === '' || path?.split('/')[0] !== window.ship) && (
+                  {!(path === '' || path?.split('/')[0].slice(1) !== window.ship) && (
                     <button
                       className="fr ac jc"
                       style={{ pointerEvents: 'visible' }}
