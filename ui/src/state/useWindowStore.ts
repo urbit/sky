@@ -58,18 +58,19 @@ function sendWindowStateToNamespace(
     updatedState.windowMap = Array.from(oldWindowMap.entries())
   }
 
-  try {
-    const stateFile = new File(
-      [JSON.stringify(updatedState, null, 2)],
-      'windows.json',
-      { type: 'application/json' }
-    )
-
-    // TODO remove @p; API should accept relative paths
-    put(`${window.ship}/sys/state`, stateFile)
-  } catch (err) {
-    console.log('Failed to save window state to namespace: ', err)
-  }
+  // TODO restore
+  //try {
+  //  const stateFile = new File(
+  //    [JSON.stringify(updatedState, null, 2)],
+  //    'windows.json',
+  //    { type: 'application/json' }
+  //  )
+  //
+  //  // TODO remove @p; API should accept relative paths
+  //  //put(`${window.ship}/sys/state`, stateFile)
+  //} catch (err) {
+  //  console.log('Failed to save window state to namespace: ', err)
+  //}
 }
 
 // default state values

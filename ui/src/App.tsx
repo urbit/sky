@@ -284,19 +284,20 @@ function App() {
     setActiveWindowID,
   ])
 
+  // TODO restore
   // on mount, init window state
-  useEffect(() => {
-    async function init() {
-      const res = await get('~zod/sys/state/windows')
-
-      if (res && res.ok) {
-        const data = await res.json()
-        setWindowState(data)
-      }
-    }
-
-    init()
-  }, [])
+  //useEffect(() => {
+  //  async function init() {
+  //    const res = await get('~zod/sys/state/windows')
+  //
+  //    if (res && res.ok) {
+  //      const data = await res.json()
+  //      setWindowState(data)
+  //    }
+  //  }
+  //
+  //  init()
+  //}, [])
 
   return (
     <div
