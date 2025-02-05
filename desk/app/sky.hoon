@@ -56,7 +56,6 @@
         [(send [501 ~ [%plain "501 - Not Implemented"]]) state]
       ::
           %'GET'
-        ::  XX send response
         ::  XX %set-response
         ::  XX subscribe to this file in clay
         ::  XX think about authentication

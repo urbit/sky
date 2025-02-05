@@ -9,8 +9,7 @@ const sigilConfig = {
   // TODO don't hard-code height all over this component
   // changing size in sigilConfig upsets layout
   size: '30px',
-  // TODO remove hard-coded ship
-  point: `${window.ship}`,
+  point: `~${window.ship}`,
   // TODO get colors from tlon/landscape user preferences
   foreground: '#FFF',
   background: '#c10c31',
