@@ -26,9 +26,14 @@ function App() {
 
   // on mount, authenticate ship
   useEffect(() => {
-    const urbit = new Urbit('')
-    urbit.ship = window.ship
-    console.log('window.ship on init: ', window.ship)
+    // TODO getting session.js but not applied here?
+    window.ship = 'zod'
+    // TODO non-standard, not sure why necessary
+    Urbit.authenticate({
+      ship: 'zod',
+      url: 'http://localhost:8080',
+      code: 'lidlut-tabwed-pillex-ridrup'
+    })
   }, [])
 
   // NOTE for testing purposes only
