@@ -53,7 +53,7 @@
           %'DELETE'
         ::  XX %set-response [/url ~] to unbind URL
         ~&  >  "Got DELETE!"
-        `state
+        [(send [501 ~ [%plain "501 - Not Implemented"]]) state]
       ::
           %'GET'
         ::  XX send response
@@ -94,7 +94,7 @@
           %'POST'
         ::  XX CRDT for text files?
         ~&  >  "Got POST!"
-        `state
+        [(send [501 ~ [%plain "501 - Not Implemented"]]) state]
       ::
           %'PUT'
         ~&  >  "Got PUT!"

@@ -134,59 +134,8 @@ async function put(path: string, file: File): Promise<Response | void> {
   }
 }
 
-async function post(path: string, json: JSON): Promise<Response | void> {
-  const url = await findPathUrl(path)
+// TODO post()
 
-  if (!url) {
-    console.error(`No url found for ${path.split('/').slice(0)}`)
-    return
-  }
+// TODO del()
 
-  return fetch(url, {
-    method: 'POST',
-    credentials: 'include',
-    body: JSON.stringify(json),
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${url}`)
-      }
-      return res.json()
-    })
-    .then(data => {
-      return data
-    })
-    .catch(err => {
-      console.error(`POST request to ${url} failed:`, err)
-    })
-}
-
-async function del(path: string): Promise<Response | void> {
-  const url = await findPathUrl(path)
-  if (!url) {
-    console.error(`No url found for ${path.split('/').slice(0)}`)
-    return
-  }
-
-  return fetch(url, {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${url}`)
-      }
-      return res.json()
-    })
-    .then(data => {
-      console.log('Delete successful:', data)
-    })
-    .catch(err => {
-      console.error(`DELETE request to ${url} failed:`, err)
-    })
-}
-
-export { get, put, post, del, auth, findPathUrl, findShipDomain }
+export { get, put, auth, findPathUrl, findShipDomain }
