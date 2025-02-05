@@ -21,7 +21,7 @@ export default function StatusBar() {
   const { setActiveWindowID } = useWindowStore()
   // TODO don't redeclare defaultPath and defaultMap,
   // should only be set in useWindowStore
-  const defaultPath = '~zod/home'
+  const defaultPath = `~${window.ship}/home`
   const defaultMap = new Map<number, string>([[1, defaultPath]])
 
   const handleHomeClick = () => {
