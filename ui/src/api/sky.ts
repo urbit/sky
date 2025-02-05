@@ -44,7 +44,7 @@ async function findPathUrl(path: string): Promise<string | void> {
 
 async function auth(ship: string, code: string) {
   const url = await findShipDomain(`~${ship}`)
-  
+
   console.log('url', url)
 
   if (url) {
@@ -87,7 +87,7 @@ async function get(path: string): Promise<Response | void> {
 
     return res
   } catch (err) {
-    console.log(`GET request to ${url} failed: `, err)
+    console.error(`GET request failed at ${url}`, err)
 
     return new Response(`File not found for ${path}`, {
       status: 404,
@@ -99,32 +99,39 @@ async function get(path: string): Promise<Response | void> {
   }
 }
 
-async function put(path: string, data: FormData): Promise<Response | void> {
-  const url = await findPathUrl(path)
+async function put(path: string, file: File): Promise<Response | void> {
+  const pathArray = path.split('/')
+  const endpoint = pathArray.slice(1).join('/')
+  const url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
 
   if (!url) {
-    console.error(`No url found for ${path.split('/').slice(0)}`)
-    return
+    console.error(`No URL found for ${path}`)
+
+    return new Response(`No URL found for ${path}`, {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain' },
+    })
   }
 
-  // TODO for development; remove
-  return fetch(url, {
-    method: 'PUT',
-    credentials: 'include',
-    body: data,
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${url}`)
-      }
-      return res.json()
+  try {
+    const res = await fetch(url, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': file.type,
+        'Content-Disposition': file.name
+      },
+      body: file
     })
-    .then(data => {
-      return data
-    })
-    .catch(err => {
-      console.error(`PUT request to ${url} failed:`, err)
-    })
+
+    if (!res.ok) {
+      throw new Error(`Response not ok for ${url}`)
+    }
+
+    return res
+  } catch (err) {
+    console.error(`PUT request failed at ${url}`, err)
+  }
 }
 
 async function post(path: string, json: JSON): Promise<Response | void> {

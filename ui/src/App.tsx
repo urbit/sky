@@ -4,7 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { auth, get } from './api/sky'
+import { auth, get, put } from './api/sky'
 
 function App() {
   const {
@@ -47,32 +47,26 @@ function App() {
           //}
 
           try {
-            const file = new File(['This is plaintext three'], 'note.txt', { type: 'text/plain' })
+            const file = new File(['This is plaintext four'], 'note.txt', { type: 'text/plain' })
 
-            const putRes = await fetch('http://localhost:8080/api/plaintext', {
-              method: 'PUT',
-              credentials: 'include',
-              headers: {
-                'Content-Type': file.type,
-                'Content-Disposition': `${file.name}`
-              },
-              body: file
-            })
+            const putRes = await put('~zod/text', file)
 
-            if (!putRes.ok) {
+            if (putRes && !putRes.ok) {
               throw new Error(`PUT failed with status: ${putRes.status}`)
             }
 
-            const getRes = await get('~zod/plaintext')
+            if (putRes && putRes.ok) {
+              const getRes = await get('~zod/text')
 
-            if (getRes && !getRes.ok) {
-              throw new Error(`GET failed with status: ${getRes.status}`)
-            }
+              if (getRes && !getRes.ok) {
+                throw new Error(`GET failed with status: ${getRes.status}`)
+              }
 
-            if (getRes && getRes.ok) {
-              const data = await getRes.text()
-              console.log('GET successful!')
-              console.log(data)
+              if (getRes && getRes.ok) {
+                const data = await getRes.text()
+                console.log('GET successful!')
+                console.log(data)
+              }
             }
           } catch (error) {
             console.error('GET failed:', error)
