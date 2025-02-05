@@ -1,5 +1,3 @@
-import Urbit from '@urbit/http-api'
-
 async function findShipDomain(path: string) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
@@ -40,25 +38,6 @@ async function findPathUrl(path: string): Promise<string | void> {
     const url = `${shipLocation}/${endpoint}`
     return url
   }
-}
-
-async function auth(ship: string, code: string) {
-  const url = await findShipDomain(`~${ship}`)
-
-  console.log('url', url)
-
-  if (url) {
-    console.log('Authenticating ', `~${ship}`)
-    return await Urbit.authenticate({
-      ship: ship,
-      url: url,
-      code: code,
-      verbose: true,
-    })
-  }
-
-  console.error('Failed to authenticate ship')
-  return null
 }
 
 async function get(path: string): Promise<Response | void> {
@@ -138,4 +117,4 @@ async function put(path: string, file: File): Promise<Response | void> {
 
 // TODO del()
 
-export { get, put, auth, findPathUrl, findShipDomain }
+export { get, put, findPathUrl, findShipDomain }

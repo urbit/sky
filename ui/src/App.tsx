@@ -4,7 +4,8 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { auth, get, put } from './api/sky'
+import { get, put } from './api/sky'
+import Urbit from '@urbit/http-api'
 
 function App() {
   const {
@@ -17,70 +18,54 @@ function App() {
     togglePathBarView,
     updateWindowPath,
     setActiveWindowID,
-    setWindowState,
+    //setWindowState,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
+
+  // on mount, authenticate ship
+  useEffect(() => {
+    const urbit = new Urbit('')
+    urbit.ship = window.ship
+    console.log('window.ship on init: ', window.ship)
+  }, [])
 
   // NOTE for testing purposes only
   // on mount, send test requests to fakeship
   useEffect(() => {
     async function fetchData() {
       try {
-        // TODO move this to .env
-        const resAuth = await auth('zod', 'lidlut-tabwed-pillex-ridrup')
+        const file = new File(['This is plaintext four'], 'note.txt', { type: 'text/plain' })
 
-        if (resAuth) {
-          window.ship = '~zod'
-          //const resGet = await get('~zod/api')
-          //
-          //if (resGet) {
-          //  console.log('got response from GET request', resGet)
-          //}
-          //
-          //const resPost = await post('~zod/api', JSON.parse(''))
-          //
-          //if (resPost) {
-          //  console.log('got response from POST request', resPost)
-          //}
+        const putRes = await put('~zod/text', file)
 
-          try {
-            const file = new File(['This is plaintext four'], 'note.txt', { type: 'text/plain' })
-
-            const putRes = await put('~zod/text', file)
-
-            if (putRes && !putRes.ok) {
-              throw new Error(`PUT failed with status: ${putRes.status}`)
-            }
-
-            if (putRes && putRes.ok) {
-              const getRes = await get('~zod/text')
-
-              if (getRes && !getRes.ok) {
-                throw new Error(`GET failed with status: ${getRes.status}`)
-              }
-
-              if (getRes && getRes.ok) {
-                const data = await getRes.text()
-                console.log('GET successful!')
-                console.log(data)
-              }
-            }
-          } catch (error) {
-            console.error('GET failed:', error)
-          }
-
-          //const resDelete = await del('~zod/api/del')
-          //
-          //if (resDelete) {
-          //  console.log('got response from DELETE request', resDelete)
-          //}
+        if (putRes && !putRes.ok) {
+          throw new Error(`PUT failed with status: ${putRes.status}`)
         }
 
+        if (putRes && putRes.ok) {
+          const getRes = await get('~zod/text')
+
+          if (getRes && !getRes.ok) {
+            throw new Error(`GET failed with status: ${getRes.status}`)
+          }
+
+          if (getRes && getRes.ok) {
+            const data = await getRes.text()
+            console.log('GET successful!')
+            console.log(data)
+          }
+        }
       } catch (error) {
-        console.error('Error:', error)
+        console.error('GET failed:', error)
       }
+
+      //const resDelete = await del('~zod/api/del')
+      //
+      //if (resDelete) {
+      //  console.log('got response from DELETE request', resDelete)
+      //}
     }
     fetchData()
   }, [])

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { put } from '../api/sky'
+//import { put } from '../api/sky'
 
 interface WindowStateObject {
   windowMap: Map<number, string>
