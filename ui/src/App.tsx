@@ -80,17 +80,11 @@ function App() {
           //}
 
           try {
-            const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-<note>
-  <to>Reader</to>
-  <from>Sender</from>
-  <heading>Test Note</heading>
-  <body>This is a test XML document</body>
-</note>`
+            const file = new File(['# Test Heading\n\nThis is markdown content'], 'note.md', {
+              type: 'text/markdown'
+            })
 
-            const file = new File([xmlContent], 'note.xml', { type: 'application/xml' })
-
-            const putRes = await fetch('http://localhost:8080/api/xml', {
+            const putRes = await fetch('http://localhost:8080/api/markdown', {
               method: 'PUT',
               credentials: 'include',
               headers: {
@@ -104,7 +98,7 @@ function App() {
               throw new Error(`PUT failed with status: ${putRes.status}`)
             }
 
-            const getRes = await fetch('http://localhost:8080/api/xml', {
+            const getRes = await fetch('http://localhost:8080/api/markdown', {
               credentials: 'include'
             })
 
