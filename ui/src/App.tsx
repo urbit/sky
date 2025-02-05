@@ -80,10 +80,17 @@ function App() {
           //}
 
           try {
-            const jsContent = 'console.log("Hello from uploaded JS file")'
-            const file = new File([jsContent], 'script.js', { type: 'application/javascript' })
+            const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Reader</to>
+  <from>Sender</from>
+  <heading>Test Note</heading>
+  <body>This is a test XML document</body>
+</note>`
 
-            const putRes = await fetch('http://localhost:8080/api/javascript', {
+            const file = new File([xmlContent], 'note.xml', { type: 'application/xml' })
+
+            const putRes = await fetch('http://localhost:8080/api/xml', {
               method: 'PUT',
               credentials: 'include',
               headers: {
@@ -97,7 +104,7 @@ function App() {
               throw new Error(`PUT failed with status: ${putRes.status}`)
             }
 
-            const getRes = await fetch('http://localhost:8080/api/javascript', {
+            const getRes = await fetch('http://localhost:8080/api/xml', {
               credentials: 'include'
             })
 
