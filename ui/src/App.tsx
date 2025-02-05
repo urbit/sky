@@ -24,24 +24,20 @@ function App() {
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
 
-  // on mount, authenticate ship
+  // on mount, authenticate and send test requests to fakeship
   useEffect(() => {
-    // TODO getting session.js but not applied here?
-    window.ship = 'zod'
-    // TODO non-standard, not sure why necessary
-    Urbit.authenticate({
-      ship: 'zod',
-      url: 'http://localhost:8080',
-      code: 'lidlut-tabwed-pillex-ridrup'
-    })
-  }, [])
+    async function init() {
+      // TODO getting session.js but not applied here?
+      window.ship = 'zod'
+      // TODO non-standard, not sure why necessary
+      Urbit.authenticate({
+        ship: 'zod',
+        url: 'http://localhost:8080',
+        code: 'lidlut-tabwed-pillex-ridrup'
+      })
 
-  // NOTE for testing purposes only
-  // on mount, send test requests to fakeship
-  useEffect(() => {
-    async function fetchData() {
       try {
-        const file = new File(['This is plaintext four'], 'note.txt', { type: 'text/plain' })
+        const file = new File([`${Date.now()}`], 'date.txt', { type: 'text/plain' })
 
         const putRes = await put('~zod/text', file)
 
@@ -72,7 +68,7 @@ function App() {
       //  console.log('got response from DELETE request', resDelete)
       //}
     }
-    fetchData()
+    init()
   }, [])
 
   function enableWindows() {

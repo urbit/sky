@@ -55,6 +55,7 @@ async function get(path: string): Promise<Response | void> {
   }
 
   try {
+    console.log('GETting ', url)
     const res = await fetch(url, {
       method: 'GET',
       credentials: 'include'
@@ -93,6 +94,7 @@ async function put(path: string, file: File): Promise<Response | void> {
   }
 
   try {
+    console.log('PUTting to ', url)
     const res = await fetch(url, {
       method: 'PUT',
       credentials: 'include',
