@@ -1,16 +1,5 @@
 import Urbit from '@urbit/http-api'
 
-export interface HTTPRequest {
-  url: string
-  method: string
-  headers: Record<string, string>
-  body: string
-}
-
-//
-// TODO authentication for urbit.org
-//
-
 async function findShipDomain(path: string) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
@@ -55,7 +44,9 @@ async function findPathUrl(path: string): Promise<string | void> {
 
 async function auth(ship: string, code: string) {
   const url = await findShipDomain(`~${ship}`)
+  
   console.log('url', url)
+
   if (url) {
     console.log('Authenticating ', `~${ship}`)
     return await Urbit.authenticate({
@@ -71,11 +62,14 @@ async function auth(ship: string, code: string) {
 }
 
 async function get(path: string): Promise<Response | void> {
-  const url = await findPathUrl(path)
+  const pathArray = path.split('/')
+  const endpoint = pathArray.slice(1).join('/')
+  const url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
 
   if (!url) {
-    console.error(`File not found at ${path}`)
-    return new Response(`File not found for ${path}`, {
+    console.error(`No URL found for ${path}`)
+
+    return new Response(`No URL found for ${path}`, {
       status: 404,
       headers: { 'Content-Type': 'text/plain' },
     })
@@ -84,14 +78,17 @@ async function get(path: string): Promise<Response | void> {
   try {
     const res = await fetch(url, {
       method: 'GET',
-      credentials: 'include',
+      credentials: 'include'
     })
+
     if (!res.ok) {
-      throw new Error(`Response not ok at ${url}`)
+      throw new Error(`Response not ok for ${url}`)
     }
+
     return res
   } catch (err) {
     console.log(`GET request to ${url} failed: `, err)
+
     return new Response(`File not found for ${path}`, {
       status: 404,
       headers: {

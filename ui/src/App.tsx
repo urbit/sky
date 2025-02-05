@@ -46,45 +46,10 @@ function App() {
           //  console.log('got response from POST request', resPost)
           //}
 
-          //try {
-          //  const file = new File(['This is plaintext three'], 'note.txt', { type: 'text/plain' })
-          //
-          //  const putRes = await fetch('http://localhost:8080/api/plaintext', {
-          //    method: 'PUT',
-          //    credentials: 'include',
-          //    headers: {
-          //      'Content-Type': file.type,
-          //      'Content-Disposition': `${file.name}`
-          //    },
-          //    body: file
-          //  })
-          //
-          //  if (!putRes.ok) {
-          //    throw new Error(`PUT failed with status: ${putRes.status}`)
-          //  }
-          //
-          //  const getRes = await fetch('http://localhost:8080/api/plaintext', {
-          //    credentials: 'include'
-          //  })
-          //
-          //  if (!getRes.ok) {
-          //    throw new Error(`GET failed with status: ${getRes.status}`)
-          //  }
-          //
-          //  const data = await getRes.text()
-          //  console.log('GET successful!')
-          //  console.log(data)
-          //
-          //} catch (error) {
-          //  console.error('GET failed:', error)
-          //}
-
           try {
-            const file = new File(['# Test Heading\n\nThis is markdown content'], 'note.md', {
-              type: 'text/markdown'
-            })
+            const file = new File(['This is plaintext three'], 'note.txt', { type: 'text/plain' })
 
-            const putRes = await fetch('http://localhost:8080/api/markdown', {
+            const putRes = await fetch('http://localhost:8080/api/plaintext', {
               method: 'PUT',
               credentials: 'include',
               headers: {
@@ -98,18 +63,17 @@ function App() {
               throw new Error(`PUT failed with status: ${putRes.status}`)
             }
 
-            const getRes = await fetch('http://localhost:8080/api/markdown', {
-              credentials: 'include'
-            })
+            const getRes = await get('~zod/plaintext')
 
-            if (!getRes.ok) {
+            if (getRes && !getRes.ok) {
               throw new Error(`GET failed with status: ${getRes.status}`)
             }
 
-            const data = await getRes.text()
-            console.log('GET successful!')
-            console.log(data)
-
+            if (getRes && getRes.ok) {
+              const data = await getRes.text()
+              console.log('GET successful!')
+              console.log(data)
+            }
           } catch (error) {
             console.error('GET failed:', error)
           }
