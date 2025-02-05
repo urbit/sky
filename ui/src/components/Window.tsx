@@ -130,10 +130,9 @@ export default function Window({
         }
         case 'text/html': {
           console.log('Processing HTML document...')
-          const url = await findPathUrl(path)
 
-          if (url) {
-            return <TextHTML url={url} />
+          if (res.url) {
+            return <TextHTML url={res.url} />
           }
 
           return <div>{`No URLs found for ${path}`}</div>

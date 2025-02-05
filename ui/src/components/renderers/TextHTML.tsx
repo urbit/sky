@@ -4,13 +4,15 @@ interface TextHTMLProps {
 
 export default function TextHTML({ url }: TextHTMLProps) {
   if (url) {
+    console.log(`TextHTML rendering ${url}`)
+
     return (
       <div className="hf wf fr as jc">
         <iframe
           className="hf wf"
           src={url}
           style={{ border: 'none', borderRadius: '2.5px' }}
-          sandbox="allow-scripts"
+          sandbox="allow-scripts allow-same-origin"
         />
       </div>
     )
