@@ -23,11 +23,11 @@
   ?+  typ
       ~_  leaf/"Unsupported type {<typ>}"
       !!
-    ::  %md    noun-md
+    %md    noun-md
     %js    noun-js
     %css   noun-css
     ::  %txt   noun-txt
-    ::  %xml   noun-xml
+    %xml   noun-xml
     %html  noun-html
     ::  %json  noun-json
   ==
@@ -37,11 +37,11 @@
   ?+  typ
       ~_  leaf/"Unsupported type {<typ>}"
       !!
-    ::  %md    md-mime
+    %md    md-mime
     %js    js-mime
     %css   css-mime
     ::  %txt   txt-mime
-    ::  %xml   xml-mime
+    %xml   xml-mime
     %html  html-mime
     ::  %json  json-mime
   ==
