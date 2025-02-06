@@ -26,7 +26,7 @@
     %md    noun-md
     %js    noun-js
     %css   noun-css
-    ::  %txt   noun-txt
+    %txt   noun-txt
     %xml   noun-xml
     %html  noun-html
     ::  %json  noun-json
@@ -40,7 +40,7 @@
     %md    md-mime
     %js    js-mime
     %css   css-mime
-    ::  %txt   txt-mime
+    %txt   txt-mime
     %xml   xml-mime
     %html  html-mime
     ::  %json  json-mime
