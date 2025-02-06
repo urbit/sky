@@ -17,8 +17,37 @@
 ++  on-init
   ^-  (quip card _this)
   ::  XX %connect to /sky, not /api
+  =/  init-paths
+    ::  XX add /fil/app-data/json until we're scrying
+    ::     apps for the homescreen out of landscape
+    %+  weld
+      [/fil/home/html]~
+    .^((list path) %ct /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil/sys)
+  =/  eyre-cards
+    ^-  (list card)
+    %+  turn
+      init-paths
+    |=  =path
+    ^-  card
+    =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
+    =/  mim
+      ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
+    ~&  >>  mim
+    =/  pax-cord
+      (crip (weld "/" (tape (join '/' (turn (snip (oust [0 2] path)) |=(=term (cord term)))))))
+    :*  %pass  /eyre/cache
+        %arvo  %e
+        %set-response  pax-cord
+        ~  %.y  %payload
+        :-  200
+        :~  ['Content-Type' (ext-to-mime (rear path))]
+            ['Access-Control-Allow-Origin' '*']
+        ==
+        (some +.mim)
+    ==
   :_  this
-    [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
+  ::  XX eyre cards
+  [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
@@ -56,9 +85,9 @@
         [(send [501 ~ [%plain "501 - Not Implemented"]]) state]
       ::
           %'GET'
-        ::  XX %set-response
         ::  XX subscribe to this file in clay
-        ::  XX think about authentication
+        ::  XX think about authenticaing before anything else
+        ::     this API agent should just be for us
         ~&  >  "Got GET!"
         ::  ~&  >  "GET is from {<request.inbound-request>}"
         :_  state
@@ -71,37 +100,29 @@
         =/  fil  (head res)
         ::  ~&  >  "Getting {<fil>}"
         =/  typ  (head (flop fil))
-        =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))
-        ::  noun-to-whatever converter
-        =/  to-type
-          .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/noun/[typ])
-        ::  whatever-to-mime converter
-        =/  to-mime
-          .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/[typ]/mime)
-        ::  convert noun to whatever to mime
+        =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) pax))
         =/  mim
-          !<(mime (to-mime (to-type !>(non))))
+          ((type-to-mime typ) ((noun-to-type typ) non))
         ::  ~&  >  "MIME: {<mim>}"
         ::  XX other cards: %set-response, %warp %next
         =/  pax-cord
           (crip (weld "/" (tape (join '/' (turn pax |=(=term (cord term)))))))
         =/  mim-cord
-          (crip (tape (join '/' (turn p.mim |=(=term (cord term))))))
+          (crip (tape (join '/' (turn -.mim |=(=term (cord term))))))
         =/  eyre-card
           ^-  card
-          :*  %pass  ~
+          :*  %pass  /eyre/cache
               %arvo  %e
               %set-response  pax-cord
-              ::  XX figure out auth policy
-              ::     %.n = everything is public
-              ~  %.n  %payload
-              ::  XX more headers? what would be some
-              ::     sensible defaults?
-              [200 ['Content-Type' mim-cord]~]
+              ~  %.y  %payload
+              :-  200
+              :~  ['Content-Type' mim-cord]
+                  ['Access-Control-Allow-Origin' '*']
+              ==
               (some +.mim)
           ==
         ::  ~&  >>  file-card
-        ~&  >  "Cacheing to {<pax-cord>}"
+        ::  ~&  >  "Cacheing to {<pax-cord>}"
         :-  eyre-card
         ^-  (list card)
         %+  give-simple-payload:app:server
@@ -129,23 +150,15 @@
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  pax
           (tail (cut-path dst '/'))
-        ::  ~&  >>  pax
         =/  nym
           (cut-path dis '.')
-        ::  ~&  >>  nym
-        =/  mim
-          (cut-path typ '/')
-        ::  ~&  >>  mim
-        =/  ext  (head (flop nym))
-        ::  ~&  >>  ext
-        ::  noun-to-whatever converter
-        =/  to-type
-          .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/noun/[ext])
+        =/  ext  (rear nym)
         =/  file-card
           ^-  card
+          ::  *card
           :*  %pass  ~
               %arvo  %c  %info  %sky  %&
-              [fil+(weld pax nym) %ins ext (to-type !>(q.u.body))]~
+              [fil+(weld pax nym) %ins ext !>(((noun-to-type ext) q.u.body))]~
           ==
         :_  state
         :-  file-card
@@ -161,13 +174,22 @@
   ::  XX handle changes to clay file we're subscribed to;
   ::     %set-response for the new file
   |=  [=wire =sign-arvo]
-  ?.  ?=([%eyre %connect ~] wire)
-    (on-arvo:def [wire sign-arvo])
-  ?>  ?=([%eyre %bound *] sign-arvo)
-  ?:  accepted.sign-arvo
+  ^-  (quip card _this)
+  ?+    wire
+      ~_  leaf/"sky: unrecognized wire {<wire>}"
+      !!
+      [%eyre %connect ~]
+    ?>  ?=([%eyre %bound *] sign-arvo)
+    ?:  accepted.sign-arvo
+      `this
+    %-  (slog leaf/"sky: failed to bind {<dap.bowl>} to /api" ~)
     `this
-  %-  (slog leaf+"Failed to bind to /api" ~)
-  `this
+  ::
+      [%eyre %cache ~]
+    ?>  ?=([%eyre %grow *] sign-arvo)
+    %-  (slog leaf/"sky: cached path {<path.sign-arvo>}" ~)
+    `this
+  ==
 ++  on-leave  on-leave:def
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
