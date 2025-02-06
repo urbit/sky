@@ -27,14 +27,22 @@ function App() {
   // on mount, authenticate and send test requests to fakeship
   useEffect(() => {
     async function init() {
-      // TODO getting session.js but not applied here?
-      window.ship = 'zod'
-      // TODO non-standard, not sure why necessary
-      Urbit.authenticate({
-        ship: 'zod',
-        url: 'http://localhost:8080',
-        code: 'lidlut-tabwed-pillex-ridrup'
-      })
+      // TODO all of this causes the refresh bug
+      //      find out why we can't use regular method
+
+      // regular method
+      //const newUrbit = new Urbit('', '')
+      //newUrbit.ship = window.ship
+
+      // non-standard method
+      //// TODO getting session.js but not applied here?
+      //window.ship = 'zod'
+      //// TODO non-standard, not sure why necessary
+      //Urbit.authenticate({
+      //  ship: 'zod',
+      //  url: 'http://localhost:8080',
+      //  code: 'lidlut-tabwed-pillex-ridrup'
+      //})
 
       //try {
       //  const file = new File([`${Date.now()}`], 'date.txt', { type: 'text/plain' })
