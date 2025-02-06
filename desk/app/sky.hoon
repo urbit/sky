@@ -104,7 +104,6 @@
         =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))
         =/  mim
           ((type-to-mime typ) ((noun-to-type typ) non))
-        ~&  >  "MIME: {<mim>}"
         ::  XX other cards: %set-response, %warp %next
         =/  pax-cord
           (crip (weld "/" (tape (join '/' (turn pax |=(=term (cord term)))))))
