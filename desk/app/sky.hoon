@@ -60,6 +60,7 @@
         ::  XX subscribe to this file in clay
         ::  XX think about authentication
         ~&  >  "Got GET!"
+        ::  ~&  >  "GET is from {<request.inbound-request>}"
         :_  state
         =/  dst  url.request.inbound-request
         =/  pax  (tail (cut-path dst '/'))

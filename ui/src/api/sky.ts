@@ -40,10 +40,12 @@ async function findPathUrl(path: string): Promise<string | void> {
   }
 }
 
+// NOTE provisional; will change with remote scry support
 async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
+  const pathShip = pathArray[0].slice(1)
   const endpoint = pathArray.slice(1).join('/')
-  const url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
+  const url = await findPathUrl(`${pathArray[0]}/${endpoint}`)
 
   if (!url) {
     console.error(`No URL found for ${path}`)
@@ -68,6 +70,45 @@ async function get(path: string): Promise<Response | void> {
     return res
   } catch (err) {
     console.error(`GET request failed at ${url}`, err)
+    console.log(`pathShip is ${pathShip}`)
+    console.log(`API thinks window.ship is ${window.ship}`)
+
+    if (pathShip === window.ship) {
+      const apiUrl = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
+
+      if (!apiUrl) {
+        console.error(`No URL found for ${path}`)
+
+        return new Response(`No URL found for ${path}`, {
+          status: 404,
+          headers: { 'Content-Type': 'text/plain' },
+        })
+      }
+
+      try {
+        console.log('GETting ', apiUrl)
+        const res = await fetch(apiUrl, {
+          method: 'GET',
+          credentials: 'include'
+        })
+
+        if (!res.ok) {
+          throw new Error(`Response not ok for ${apiUrl}`)
+        }
+
+        return res
+      } catch (err) {
+        console.error(`GET request failed at ${apiUrl}`, err)
+
+        return new Response(`File not found for ${path}`, {
+          status: 404,
+          headers: {
+            'Content-Type': 'text/plain',
+            'X-Response-URL': apiUrl,
+          },
+        })
+      }
+    }
 
     return new Response(`File not found for ${path}`, {
       status: 404,
