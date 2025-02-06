@@ -36,31 +36,31 @@ function App() {
         code: 'lidlut-tabwed-pillex-ridrup'
       })
 
-      try {
-        const file = new File([`${Date.now()}`], 'date.txt', { type: 'text/plain' })
-
-        const putRes = await put('~zod/text', file)
-
-        if (putRes && !putRes.ok) {
-          throw new Error(`PUT failed with status: ${putRes.status}`)
-        }
-
-        if (putRes && putRes.ok) {
-          const getRes = await get('~zod/text')
-
-          if (getRes && !getRes.ok) {
-            throw new Error(`GET failed with status: ${getRes.status}`)
-          }
-
-          if (getRes && getRes.ok) {
-            const data = await getRes.text()
-            console.log('GET successful!')
-            console.log(data)
-          }
-        }
-      } catch (error) {
-        console.error('GET failed:', error)
-      }
+      //try {
+      //  const file = new File([`${Date.now()}`], 'date.txt', { type: 'text/plain' })
+      //
+      //  const putRes = await put('~zod/text', file)
+      //
+      //  if (putRes && !putRes.ok) {
+      //    throw new Error(`PUT failed with status: ${putRes.status}`)
+      //  }
+      //
+      //  if (putRes && putRes.ok) {
+      //    const getRes = await get('~zod/text')
+      //
+      //    if (getRes && !getRes.ok) {
+      //      throw new Error(`GET failed with status: ${getRes.status}`)
+      //    }
+      //
+      //    if (getRes && getRes.ok) {
+      //      const data = await getRes.text()
+      //      console.log('GET successful!')
+      //      console.log(data)
+      //    }
+      //  }
+      //} catch (error) {
+      //  console.error('GET failed:', error)
+      //}
 
       //const resDelete = await del('~zod/api/del')
       //
