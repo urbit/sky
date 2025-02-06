@@ -82,6 +82,26 @@
           !<(mime (to-mime (to-type !>(non))))
         ::  ~&  >  "MIME: {<mim>}"
         ::  XX other cards: %set-response, %warp %next
+        =/  pax-cord
+          (crip (weld "/" (tape (join '/' (turn pax |=(=term (cord term)))))))
+        =/  mim-cord
+          (crip (tape (join '/' (turn p.mim |=(=term (cord term))))))
+        =/  eyre-card
+          ^-  card
+          :*  %pass  ~
+              %arvo  %e
+              %set-response  pax-cord
+              ::  XX figure out auth policy
+              ::     %.n = everything is public
+              ~  %.n  %payload
+              ::  XX more headers? what would be some
+              ::     sensible defaults?
+              [200 ['Content-Type' mim-cord]~]
+              (some +.mim)
+          ==
+        ::  ~&  >>  file-card
+        ~&  >  "Cacheing to {<pax-cord>}"
+        :-  eyre-card
         ^-  (list card)
         %+  give-simple-payload:app:server
           eyre-id
@@ -120,38 +140,14 @@
         ::  noun-to-whatever converter
         =/  to-type
           .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/noun/[ext])
-        ::  whatever-to-mime converter
-        =/  to-mime
-          .^(tube:clay %cc /(scot %p our.bowl)/sky/(scot %da now.bowl)/[ext]/mime)
-        ::  convert noun to whatever to mime
-        =/  mim
-          !<(mime (to-mime (to-type !>(q.u.body))))
         =/  file-card
           ^-  card
           :*  %pass  ~
               %arvo  %c  %info  %sky  %&
               [fil+(weld pax nym) %ins ext (to-type !>(q.u.body))]~
           ==
-        =/  pax-cord
-          (crip (weld "/" (tape (join '/' (turn pax |=(=term (cord term)))))))
-        =/  eyre-card
-          ^-  card
-          :*  %pass  ~
-              %arvo  %e
-              %set-response  pax-cord
-              ::  XX figure out auth policy
-              ::     %.n = everything is public
-              ~  %.n  %payload
-              ::  XX more headers? what would be some
-              ::     sensible defaults?
-              [200 ['Content-Type' dis]~]
-              (some +.mim)
-          ==
-        ::  ~&  >>  file-card
-        ~&  >  "Cacheing to {<pax-cord>}"
         :_  state
         :-  file-card
-        :-  eyre-card
         (send [200 ~ [%plain "Data received"]])
       ==
     --
