@@ -32,9 +32,10 @@
     =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
     =/  mim
       ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
-    ~&  >>  mim
+    ::  ~&  >>  mim
     =/  pax-cord
-      (crip (weld "/" (tape (join '/' (turn (snip (oust [0 2] path)) |=(=term (cord term)))))))
+      (crip (weld "/" (tape (join '/' (turn (snip (oust [0 1] path)) |=(=term (cord term)))))))
+    ~&  >>  pax-cord
     :*  %pass  /eyre/cache
         %arvo  %e
         %set-response  pax-cord
@@ -46,8 +47,9 @@
         (some +.mim)
     ==
   :_  this
-  ::  XX eyre cards
-  [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
+  ::  ~&  >>  eyre-cards
+  :_  eyre-cards
+  [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
@@ -175,6 +177,7 @@
   ::     %set-response for the new file
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
+  ~&  >>  wire
   ?+    wire
       ~_  leaf/"sky: unrecognized wire {<wire>}"
       !!
