@@ -5,24 +5,24 @@ import bellIcon from '../assets/images/bell.png'
 import closeIcon from '../assets/images/close.png'
 import useWindowStore from '../state/useWindowStore'
 
-const sigilConfig = {
-  // TODO don't hard-code height all over this component
-  // changing size in sigilConfig upsets layout
-  size: '30px',
-  point: `~${window.ship}`,
-  // TODO get colors from tlon/landscape user preferences
-  foreground: '#FFF',
-  background: '#c10c31',
-  detail: 'none',
-  space: 'default',
-}
-
 export default function StatusBar() {
   const { setActiveWindowID } = useWindowStore()
   // TODO don't redeclare defaultPath and defaultMap,
   // should only be set in useWindowStore
   const defaultPath = `~${window.ship}/home`
   const defaultMap = new Map<number, string>([[1, defaultPath]])
+
+  const sigilConfig = {
+    // TODO don't hard-code height all over this component
+    // changing size in sigilConfig upsets layout
+    size: '30px',
+    point: `~${window.ship}`,
+    // TODO get colors from tlon/landscape user preferences
+    foreground: '#FFF',
+    background: '#c10c31',
+    detail: 'none',
+    space: 'default',
+  }
 
   const handleHomeClick = () => {
     useWindowStore.setState({ windowMap: defaultMap })
