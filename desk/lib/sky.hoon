@@ -2,6 +2,7 @@
 /$  noun-md    %noun  %md
 /$  noun-css   %noun  %css
 /$  noun-pdf   %noun  %pdf
+/$  noun-png   %noun  %png
 /$  noun-txt   %noun  %txt
 /$  noun-xml   %noun  %xml
 /$  noun-html  %noun  %html
@@ -11,6 +12,7 @@
 /$  md-mime    %md    %mime
 /$  css-mime   %css   %mime
 /$  pdf-mime   %pdf   %mime
+/$  png-mime   %png   %mime
 /$  txt-mime   %txt   %mime
 /$  xml-mime   %xml   %mime
 /$  html-mime  %html  %mime
@@ -29,6 +31,7 @@
     %js    noun-js
     %css   noun-css
     %pdf   noun-pdf
+    %png   noun-png
     %txt   noun-txt
     %xml   noun-xml
     %html  noun-html
@@ -44,6 +47,7 @@
     %js    js-mime
     %css   css-mime
     %pdf   pdf-mime
+    %png   png-mime
     %txt   txt-mime
     %xml   xml-mime
     %html  html-mime
@@ -63,6 +67,7 @@
     %txt   'text/plain'
     %md    'text/markdown'
     %js    'text/javascript'
+    %png   'image/png'
     %pdf   'application/pdf'
     %xml   'application/xml'
     %json  'application/json'
