@@ -4,8 +4,8 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { get, put } from './api/sky'
-import Urbit from '@urbit/http-api'
+//import { get, put } from './api/sky'
+//import Urbit from '@urbit/http-api'
 
 function App() {
   const {
