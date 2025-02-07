@@ -83,6 +83,27 @@ describe('detectLanguage', () => {
   })
 
   // Additional Edge Cases
+  describe('HTML with embedded JavaScript', () => {
+    it('should detect HTML when it contains embedded JavaScript', () => {
+      const content = `<!DOCTYPE html>
+<html>
+<body>
+  <h1>Test Page</h1>
+  <script>
+    document.querySelector("iframe").onload = function() {
+      const iframe = document.querySelector("iframe").contentWindow.document;
+      const stylesheet = document.createElement("link");
+      stylesheet.rel = "stylesheet";
+      stylesheet.href = "./style.css";
+      iframe.head.appendChild(stylesheet);
+    };
+  </script>
+</body>
+</html>`
+      expect(detectLanguage(content)).toBe('html')
+    })
+  })
+
   describe('HTML vs XML edge cases', () => {
     it('should detect HTML even with XML-like custom elements', () => {
       const content = '<custom-element><div>This is HTML</div></custom-element>'

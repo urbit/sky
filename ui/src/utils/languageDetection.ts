@@ -30,6 +30,17 @@ export const detectLanguage = (content: string): string => {
     return 'markdown'
   }
 
+  // Check for HTML at the start since it's the most specific
+  if (
+    trimmedContent.startsWith('<!DOCTYPE html>') ||
+    trimmedContent.startsWith('<html') ||
+    /<(div|span|p|h[1-6]|body|head|link|meta|script|style)\b/.test(
+      trimmedContent
+    )
+  ) {
+    return 'html'
+  }
+
   // Then check for JavaScript keywords and patterns
   if (
     /(^|\s)(const|let|var|function|class|import|export)\s/.test(
