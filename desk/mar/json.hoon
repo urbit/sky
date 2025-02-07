@@ -2,7 +2,7 @@
 ++  grow                                                ::  convert to
   ^?
   |%                                                    ::
-  ++  mime  [/text/markdown (met 3 json) json]                ::  to %mime
+  ++  mime  [/application/json (met 3 json) json]                ::  to %mime
   --                                                    ::
 ++  grab  ^?
           |%                                            ::  convert from
