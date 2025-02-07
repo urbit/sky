@@ -1,12 +1,5 @@
 {
   "Tlon": "/apps/groups",
-  "Uqbar": "/apps/uqbar",
-  "Orbis Tertius": "/bookmarks/orbis-tertius",
-  "Pals": "/apps/pals",
-  "Hits": "/apps/hits",
-  "Common Blog": "/apps/blog",
-  "Hawk": "/apps/hawk",
-  "Circle": "/apps/circle",
-  "Rumors": "/apps/rumors",
-  "Chess": "/apps/chess"
+  "Landscape": "/apps/landscape",
+  "Terminal": "/apps/webterm"
 }
