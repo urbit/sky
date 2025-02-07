@@ -151,15 +151,35 @@
         =/  nym
           (cut-path dis '.')
         =/  ext  (rear nym)
+        =/  fil  ((noun-to-type ext) q.u.body)
         =/  file-card
           ^-  card
           ::  *card
           :*  %pass  ~
               %arvo  %c  %info  %sky  %&
-              [fil+(weld pax nym) %ins ext !>(((noun-to-type ext) q.u.body))]~
+              [fil+(weld pax nym) %ins ext !>(fil)]~
+          ==
+        =/  pax-cord
+          (crip (weld "/" (tape (join '/' (turn pax |=(=term (cord term)))))))
+        =/  mim
+          ((type-to-mime ext) fil)
+        =/  mim-cord
+          (crip (tape (join '/' (turn -.mim |=(=term (cord term))))))
+        =/  eyre-card
+          ^-  card
+          :*  %pass  /eyre/cache
+              %arvo  %e
+              %set-response  pax-cord
+              ~  %.y  %payload
+              :-  200
+              :~  ['Content-Type' mim-cord]
+                  ['Access-Control-Allow-Origin' '*']
+              ==
+              (some +.mim)
           ==
         :_  state
         :-  file-card
+        :-  eyre-card
         (send [200 ~ [%plain "Data received"]])
       ==
     --
