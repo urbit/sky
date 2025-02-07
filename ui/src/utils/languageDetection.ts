@@ -1,7 +1,17 @@
 export const detectLanguage = (content: string): string => {
   const trimmedContent = content.trim()
 
-  // First check for Markdown since we want it to have highest precedence
+  // Check CSS first with very specific patterns
+  const hasCssAtRule = /^[\s]*@(font-face|media|keyframes|import|charset)\b/.test(trimmedContent)
+  const hasCssSelector = /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) || /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
+  const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
+  const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
+  
+  if (hasCssAtRule || (hasCssSelector && hasCssProperty) || (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))) {
+    return 'css'
+  }
+
+  // Then check for Markdown since we want it to have high precedence for other cases
   if (
     // Headers (at start of line or after newline)
     /^#+ /.test(trimmedContent) ||
@@ -42,9 +52,9 @@ export const detectLanguage = (content: string): string => {
   }
 
   // Check CSS first with very specific patterns
-  const hasCssSelector = /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) || /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
-  const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
-  const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
+  //const hasCssSelector = /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) || /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
+  //const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
+  //const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
   
   if ((hasCssSelector && hasCssProperty) || (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))) {
     return 'css'

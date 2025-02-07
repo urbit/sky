@@ -168,6 +168,12 @@ describe('detectLanguage', () => {
         '/*TODO add fallback colors*/\n.b0 { background-color: var(--b0); }'
       expect(detectLanguage(content)).toBe('css')
     })
+
+    it('should detect CSS with @font-face rule', () => {
+      const content = 
+        '@font-face {\n  font-family: "Example";\n  src: url("example.woff2");\n}'
+      expect(detectLanguage(content)).toBe('css')
+    })
   })
 
   describe('Markdown edge cases', () => {
