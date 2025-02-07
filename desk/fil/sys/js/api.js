@@ -1,9 +1,3 @@
-import Urbit from '@urbit/http-api'
-
-//
-// TODO authentication for urbit.org
-//
-
 async function findShipDomain(path) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
@@ -17,7 +11,7 @@ async function findShipDomain(path) {
     console.log('domain', data[ship])
     return data[ship]
   } else {
-    console.error(`No domains found for ${ship}`)
+    console.error(`No domain found for ${ship}`)
   }
 }
 
@@ -38,7 +32,7 @@ async function findPathUrl(path) {
   }
 
   if (!shipLocation) {
-    console.error(`No URLs found for ${path}`)
+    console.error(`No URL found for ${path}`)
   } else {
     const endpoint = path.split('/').slice(1).join('/')
     const url = `${shipLocation}/${endpoint}`
@@ -46,45 +40,76 @@ async function findPathUrl(path) {
   }
 }
 
-async function auth(ship, code) {
-  const url = await findShipDomain(`~${ship}`)
-  console.log('url', url)
-  if (url) {
-    console.log('Authenticating ', `~${ship}`)
-    return await Urbit.authenticate({
-      ship: ship,
-      url: url,
-      code: code,
-      verbose: true,
-    })
-  }
-
-  console.error('Failed to authenticate ship')
-  return null
-}
-
+// NOTE provisional; will change with remote scry support
 async function get(path) {
-  const url = await findPathUrl(path)
+  const pathArray = path.split('/')
+  const pathShip = pathArray[0].slice(1)
+  const endpoint = pathArray.slice(1).join('/')
+  const url = await findPathUrl(`${pathArray[0]}/${endpoint}`)
 
   if (!url) {
-    console.error(`File not found at ${path}`)
-    return new Response(`File not found for ${path}`, {
+    console.error(`No URL found for ${path}`)
+
+    return new Response(`No URL found for ${path}`, {
       status: 404,
       headers: { 'Content-Type': 'text/plain' },
     })
   }
 
   try {
+    console.log('GETting ', url)
     const res = await fetch(url, {
       method: 'GET',
-      credentials: 'include',
+      credentials: 'include'
     })
+
     if (!res.ok) {
-      throw new Error(`Response not ok at ${url}`)
+      throw new Error(`Response not ok for ${url}`)
     }
+
     return res
   } catch (err) {
-    console.log(`GET request to ${url} failed: `, err)
+    console.error(`GET request failed at ${url}`, err)
+    console.log(`pathShip is ${pathShip}`)
+    console.log(`API thinks window.ship is ${window.ship}`)
+
+    if (pathShip === window.ship) {
+      const apiUrl = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
+
+      if (!apiUrl) {
+        console.error(`No URL found for ${path}`)
+
+        return new Response(`No URL found for ${path}`, {
+          status: 404,
+          headers: { 'Content-Type': 'text/plain' },
+        })
+      }
+
+      try {
+        console.log('GETting ', apiUrl)
+        const res = await fetch(apiUrl, {
+          method: 'GET',
+          credentials: 'include'
+        })
+
+        if (!res.ok) {
+          throw new Error(`Response not ok for ${apiUrl}`)
+        }
+
+        return res
+      } catch (err) {
+        console.error(`GET request failed at ${apiUrl}`, err)
+
+        return new Response(`File not found for ${path}`, {
+          status: 404,
+          headers: {
+            'Content-Type': 'text/plain',
+            'X-Response-URL': apiUrl,
+          },
+        })
+      }
+    }
+
     return new Response(`File not found for ${path}`, {
       status: 404,
       headers: {
@@ -95,87 +120,44 @@ async function get(path) {
   }
 }
 
-async function put(path, data) {
-  const url = await findPathUrl(path)
+async function put(path, file) {
+  const pathArray = path.split('/')
+  const endpoint = pathArray.slice(1).join('/')
+  const url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
 
   if (!url) {
-    console.error(`No url found for ${path.split('/').slice(0)}`)
-    return
+    console.error(`No URL found for ${path}`)
+
+    return new Response(`No URL found for ${path}`, {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain' },
+    })
   }
 
-  // TODO for development; remove
-  return fetch(url, {
-    method: 'PUT',
-    credentials: 'include',
-    body: data,
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${url}`)
-      }
-      return res.json()
+  try {
+    console.log('PUTting to ', url)
+    const res = await fetch(url, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': file.type,
+        'Content-Disposition': file.name
+      },
+      body: file
     })
-    .then(data => {
-      return data
-    })
-    .catch(err => {
-      console.error(`PUT request to ${url} failed:`, err)
-    })
-}
 
-async function post(path, json) {
-  const url = await findPathUrl(path)
+    if (!res.ok) {
+      throw new Error(`Response not ok for ${url}`)
+    }
 
-  if (!url) {
-    console.error(`No url found for ${path.split('/').slice(0)}`)
-    return
+    return res
+  } catch (err) {
+    console.error(`PUT request failed at ${url}`, err)
   }
-
-  return fetch(url, {
-    method: 'POST',
-    credentials: 'include',
-    body: JSON.stringify(json),
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${url}`)
-      }
-      return res.json()
-    })
-    .then(data => {
-      return data
-    })
-    .catch(err => {
-      console.error(`POST request to ${url} failed:`, err)
-    })
 }
 
-async function del(path) {
-  const url = await findPathUrl(path)
-  if (!url) {
-    console.error(`No url found for ${path.split('/').slice(0)}`)
-    return
-  }
+// TODO post()
 
-  return fetch(url, {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Response not ok at ${url}`)
-      }
-      return res.json()
-    })
-    .then(data => {
-      console.log('Delete successful:', data)
-    })
-    .catch(err => {
-      console.error(`DELETE request to ${url} failed:`, err)
-    })
-}
+// TODO del()
 
-export { get, put, post, del, auth, findPathUrl, findShipDomain }
+export { get, put, findPathUrl, findShipDomain }
