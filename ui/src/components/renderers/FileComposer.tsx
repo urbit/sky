@@ -278,7 +278,7 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
                 // TODO remove hard-coded domain
                 src={`http://localhost:8080/sys/tmp/${endpoint}`}
                 style={{ border: 'none', borderRadius: '2.5px' }}
-                sandbox="allow-scripts"
+                sandbox="allow-scripts allow-same-origin"
               ></iframe>
             </div>
           )}
