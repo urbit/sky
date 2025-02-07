@@ -1,7 +1,6 @@
 import Editor from '@monaco-editor/react'
 import type * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
-import useWindowStore from '../../state/useWindowStore'
 import { debounce } from 'lodash'
 import { get, put } from '../../api/sky'
 import { emmetHTML, registerCustomSnippets } from 'emmet-monaco-es'
@@ -48,15 +47,18 @@ const languageToMimeType = {
   plaintext: 'text/plain',
 }
 
-export default function FileComposer(): JSX.Element {
+interface FileComposerProps {
+  path: string
+}
+
+export default function FileComposer({ path }: FileComposerProps): JSX.Element {
   const [theme, setTheme] = useState('vs-light')
   const [language, setLanguage] = useState('plaintext')
   const [isEdited, setIsEdited] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
-  const { activeWindowPath } = useWindowStore()
 
-  const pathArray = activeWindowPath
-    ? activeWindowPath.split('/')
+  const pathArray = path
+    ? path.split('/')
     : `${window.ship}/home`.split('/')
   const ship = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
@@ -77,8 +79,8 @@ export default function FileComposer(): JSX.Element {
           setLanguage(detectLanguage(content))
 
           // If we found content in /tmp, check if it differs from published version
-          if (activeWindowPath) {
-            const publishedRes = await get(activeWindowPath)
+          if (path) {
+            const publishedRes = await get(path)
 
             if (publishedRes && publishedRes.status !== 404) {
               const publishedContent = await publishedRes.text()
@@ -91,8 +93,8 @@ export default function FileComposer(): JSX.Element {
               setIsEdited(true)
             }
           }
-        } else if (activeWindowPath) {
-          const publishedRes = await get(activeWindowPath)
+        } else if (path) {
+          const publishedRes = await get(path)
 
           if (publishedRes && publishedRes.status !== 404) {
             const publishedContent = await publishedRes.text()
@@ -106,10 +108,10 @@ export default function FileComposer(): JSX.Element {
       }
     }
 
-    if (activeWindowPath) {
+    if (path) {
       fetchContent()
     }
-  }, [activeWindowPath])
+  }, [path])
 
   // Update language when content changes
   useEffect(() => {
@@ -135,7 +137,7 @@ export default function FileComposer(): JSX.Element {
 
   // Save content to temp path
   const saveToTemp = async (content: string) => {
-    if (content && activeWindowPath) {
+    if (content && path) {
       setEditorContent(content)
       setIsEdited(true)
       const detectedLanguage = detectLanguage(content)
@@ -179,11 +181,11 @@ export default function FileComposer(): JSX.Element {
     debounce((value: string | undefined) => {
       if (value) saveToTemp(value)
     }, 500),
-    [activeWindowPath]
+    [path]
   )
 
   const handlePublish = async () => {
-    if (activeWindowPath && editorContent) {
+    if (path && editorContent) {
       const detectedLanguage = detectLanguage(editorContent)
       const mimeType =
         languageToMimeType[
@@ -206,14 +208,14 @@ export default function FileComposer(): JSX.Element {
       )
 
       try {
-        const res = await put(activeWindowPath, file)
+        const res = await put(path, file)
 
         if (res && res.ok) {
           setIsEdited(false)
-          console.log(`Published to ${activeWindowPath}`)
+          console.log(`Published to ${path}`)
         }
       } catch (err) {
-        console.error(`Published failed to ${activeWindowPath}: `, err)
+        console.error(`Published failed to ${path}: `, err)
       }
     }
   }

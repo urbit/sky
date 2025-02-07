@@ -21,7 +21,7 @@ const composerContentTypes = new Set([
   'text/markdown',
 ])
 
-async function renderFile(res: Response): Promise<JSX.Element> {
+async function renderFile(path: string, res: Response): Promise<JSX.Element> {
   const contentType = res.headers.get('content-type')
 
   if (!contentType) {
@@ -33,7 +33,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
 
   if (composerContentTypes.has(baseContentType)) {
     console.log(`Rendering ${baseContentType} with FileComposer`)
-    return <FileComposer />
+    return <FileComposer path={path} />
   }
 
   switch (baseContentType) {
@@ -65,7 +65,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   }
 
   function handleComposerClick() {
-    setFileViewerContent(<FileComposer />)
+    setFileViewerContent(<FileComposer path={path} />)
   }
 
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +84,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
         const newResponse = await get(path)
 
         if (newResponse) {
-          const newEndpointContent = await renderFile(newResponse)
+          const newEndpointContent = await renderFile(path, newResponse)
           setFileViewerContent(newEndpointContent)
         }
       } catch (error) {
@@ -152,7 +152,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       const res = await get(path)
 
       if (res && res.status >= 200 && res.status <= 300) {
-        const content = await renderFile(res)
+        const content = await renderFile(path, res)
         setFileViewerContent(content)
       }
 
