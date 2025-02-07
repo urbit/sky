@@ -87,6 +87,7 @@ export default function PathBar({
     <form className="wf" onSubmit={handleSubmit}>
       <input
         type="text"
+        autoFocus={true}
         className="wf b3 br2 p1"
         value={inputValue}
         onChange={handleInputChange}
