@@ -67,6 +67,26 @@ async function get(path) {
       throw new Error(`Response not ok for ${url}`)
     }
 
+    // TODO remove hard-coded URL
+    const redirectedToGrid =
+      endpoint !== '/apps/landscape' &&
+      res.url === `http://localhost:8080/apps/landscape/`
+
+    console.log(window.location.origin)
+    console.log('res.url', res.url)
+
+    // NOTE handle Landscape redirect
+    // TODO change this behaviour in Landscape
+    if (redirectedToGrid) {
+      return new Response(`File not found for ${path}`, {
+        status: 404,
+        headers: {
+          'Content-Type': 'text/plain',
+          'X-Response-URL': url,
+        },
+      })
+    }
+
     return res
   } catch (err) {
     console.error(`GET request failed at ${url}`, err)
