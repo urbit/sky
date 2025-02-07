@@ -162,6 +162,12 @@ describe('detectLanguage', () => {
         '.box { -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); }'
       expect(detectLanguage(content)).toBe('css')
     })
+
+    it('should detect CSS with comments', () => {
+      const content = 
+        '/*TODO add fallback colors*/\n.b0 { background-color: var(--b0); }'
+      expect(detectLanguage(content)).toBe('css')
+    })
   })
 
   describe('Markdown edge cases', () => {
