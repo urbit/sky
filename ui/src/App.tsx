@@ -36,7 +36,7 @@ function App() {
 
       // non-standard method
       //// TODO getting session.js but not applied here?
-      //window.ship = 'zod'
+      window.ship = 'zod'
       //// TODO non-standard, not sure why necessary
       //Urbit.authenticate({
       //  ship: 'zod',
