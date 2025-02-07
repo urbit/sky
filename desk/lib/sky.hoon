@@ -29,7 +29,7 @@
     %txt   noun-txt
     %xml   noun-xml
     %html  noun-html
-    ::  %json  noun-json
+    %json  noun-json
   ==
 ::
 ++  type-to-mime
@@ -43,7 +43,7 @@
     %txt   txt-mime
     %xml   xml-mime
     %html  html-mime
-    ::  %json  json-mime
+    %json  json-mime
   ==
 ::
 +|  %types

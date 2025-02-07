@@ -18,10 +18,8 @@
   ^-  (quip card _this)
   ::  XX %connect to /sky, not /api
   =/  init-paths
-    ::  XX add /fil/app-data/json until we're scrying
-    ::     apps for the homescreen out of landscape
     %+  weld
-      [/fil/home/html]~
+      ~[/fil/home/html /fil/app-data/json]
     .^((list path) %ct /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil/sys)
   =/  eyre-cards
     ^-  (list card)
