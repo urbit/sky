@@ -93,7 +93,11 @@
         :_  state
         =/  dst  url.request.inbound-request
         =/  pax  (tail (cut-path dst '/'))
-        =/  hed  header-list.request.inbound-request
+        ::  XX check if path is a directory
+        ::  XX handle directory case (stub for now)
+        ::  XX check if no files /foo/txt and /foo/jpg
+        ::     at dst /foo; serve directory if so
+        ::  XX should handle GET requests for e.g. /sys/css/spine.css
         =/  res  .^((list path) %ct (weld /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil pax))
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
