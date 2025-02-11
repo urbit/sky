@@ -139,25 +139,25 @@
         ~&  >  "Got PUT!"
         ::  XX authenticate this ship, on this path, for this request type
         =/  body  body.request.inbound-request
-        =/  hed   header-list.request.inbound-request
-        =/  typ   (need (get-header:http 'content-type' hed))
-        =/  dis   (need (get-header:http 'content-disposition' hed))
-        =/  dst   url.request.inbound-request
+        =/  line  (parse-request-line:server url.request.inbound-request)
+        =/  mime  (~(get by (malt args.line)) 'mime')
+        =/  name  (~(get by (malt args.line)) 'name')
         ?~  body
-          ~&  >  "No data received"
           [(send [400 ~ [%plain "No data received"]]) state]
-        =/  pax
-          (tail (cut-path dst '/'))
-        =/  nym
-          (cut-path dis '.')
+        ?~  mime
+          [(send [400 ~ [%plain "No MIME type provided"]]) state]
+        ?~  name
+          [(send [400 ~ [%plain "No filename provided"]]) state]
+        =/  pax  (tail site.line)
+        ::  XX incorrectly parses filenames with '.' before extension
+        =/  nym  (cut-path value.u.name '.')
         =/  ext  (rear nym)
         =/  fil  ((noun-to-type ext) q.u.body)
         =/  file-card
           ^-  card
-          ::  *card
           :*  %pass  ~
               %arvo  %c  %info  %sky  %&
-              [fil+(weld pax nym) %ins ext !>(fil)]~
+              [(weld /fil (weld pax nym)) %ins ext !>(fil)]~
           ==
         =/  pax-cord
           (crip (weld "/" (tape (join '/' (turn pax |=(=term (cord term)))))))

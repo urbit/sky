@@ -143,7 +143,7 @@ async function get(path: string): Promise<Response | void> {
 async function put(path: string, file: File): Promise<Response | void> {
   const pathArray = path.split('/')
   const endpoint = pathArray.slice(1).join('/')
-  const url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
+  let url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
 
   if (!url) {
     console.error(`No URL found for ${path}`)
@@ -154,15 +154,13 @@ async function put(path: string, file: File): Promise<Response | void> {
     })
   }
 
+  url = `${url}?mime=${file.type}&name=${file.name}`
+
   try {
     console.log('PUTting to ', url)
     const res = await fetch(url, {
       method: 'PUT',
       credentials: 'include',
-      headers: {
-        'Content-Type': file.type,
-        'Content-Disposition': file.name
-      },
       body: file
     })
 
