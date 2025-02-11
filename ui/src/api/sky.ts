@@ -176,6 +176,34 @@ async function put(path: string, file: File): Promise<Response | void> {
 
 // TODO post()
 
-// TODO del()
+async function del(path: string): Promise<Response | void> {
+  const pathArray = path.split('/')
+  const endpoint = pathArray.slice(1).join('/')
+  const url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
 
-export { get, put, findPathUrl, findShipDomain }
+  if (!url) {
+    console.error(`No URL found for ${path}`)
+    return new Response(`No URL found for ${path}`, {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain' },
+    })
+  }
+
+  try {
+    console.log('DELETE-ing ', url)
+    const res = await fetch(url, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+
+    if (!res.ok) {
+      throw new Error(`Response not ok for ${url}`)
+    }
+
+    return res
+  } catch (err) {
+    console.error(`DELETE request failed at ${url}`, err)
+  }
+}
+
+export { del, get, put, findPathUrl, findShipDomain }

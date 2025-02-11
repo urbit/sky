@@ -82,7 +82,18 @@
           %'DELETE'
         ::  XX %set-response [/url ~] to unbind URL
         ~&  >  "Got DELETE!"
-        [(send [501 ~ [%plain "501 - Not Implemented"]]) state]
+        ::  [(send [501 ~ [%plain "501 - Not Implemented"]]) state]
+        :_  state
+        =/  dst  url.request.inbound-request
+        =/  pax  (tail (cut-path dst '/'))
+        =/  pax-cord
+          (crip (weld "/" (tape (join '/' (turn pax |=(=term (cord term)))))))
+        :~  [%pass /eyre/cache %arvo %e %set-response pax-cord ~]
+            :*  %pass  ~
+                %arvo  %c  %info  %sky  %&
+                [(weld /fil pax) %del ~]~
+            ==
+        ==
       ::
           %'GET'
         ::  XX subscribe to this file in clay
