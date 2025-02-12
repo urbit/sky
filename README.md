@@ -7,20 +7,32 @@ Urbit namespace browser, spiritual successor to the [urbit/shrub](https://github
 Use Vite to preview frontend changes.
 
 ```
-cd piraeus/ui
-pnpm install
-pnpm dev
+$ cd piraeus/ui
+$ pnpm install
+$ pnpm dev
 ```
 
 Run [json-server](https://github.com/typicode/json-server) on `localhost:3000` to run a JSON API for resolving `@p`s to top-level domains.
 
 ```
-cd piraeus/athens
-npx json-server dns.json --port 3000
+$ cd piraeus/athens
+$ npx json-server dns.json --port 3000
 ```
 
-To make HTTP requests to a fakeship, include the fakeship URL in an `.env` file in `/ui`.
+Boot up a fake ~zod on localhost:8080 and copy the contents of `/desk` to the ship.
 
 ```
-VITE_SHIP_URL=http://localhost:8080
+$ ./urbit -F zod --http-port 8080
+> |new-desk %sky
+> |mount %sky
+```
+
+```
+$ cd /piraeus
+$ cp -r desk/* path/to/pier/sky
+```
+
+```
+> |commit %sky
+> |install our %sky
 ```
