@@ -41,6 +41,7 @@
         :-  200
         :~  ['Content-Type' (ext-to-mime (rear path))]
             ['Access-Control-Allow-Origin' '*']
+            ['X-Urbit-Desk' 'Sky']
         ==
         (some +.mim)
     ==
@@ -169,6 +170,7 @@
               :-  200
               :~  ['Content-Type' mim-cord]
                   ['Access-Control-Allow-Origin' '*']
+                  ['X-Urbit-Desk' 'Sky']
               ==
               (some +.mim)
           ==
@@ -227,6 +229,7 @@
               :-  200
               :~  ['Content-Type' mim-cord]
                   ['Access-Control-Allow-Origin' '*']
+                  ['X-Urbit-Desk' 'Sky']
               ==
               (some +.mim)
           ==
