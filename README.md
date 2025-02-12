@@ -15,7 +15,7 @@ $ pnpm dev
 Run [json-server](https://github.com/typicode/json-server) on `localhost:3000` to run a JSON API for resolving `@p`s to top-level domains.
 
 ```
-$ cd piraeus/athens
+$ cd piraeus
 $ npx json-server dns.json --port 3000
 ```
 
@@ -28,7 +28,7 @@ $ ./urbit -F zod --http-port 8080
 ```
 
 ```
-$ cd /piraeus
+$ cd piraeus
 $ cp -r desk/* path/to/pier/sky
 ```
 
