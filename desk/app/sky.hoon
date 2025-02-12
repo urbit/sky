@@ -67,8 +67,8 @@
     [%pass /eyre/cache %arvo %e %set-response url ~]
   :_  this
   ;:  weld
-      eyre-cards
       clear-cache-cards
+      eyre-cards
       ^-  (list card)
       [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
   ==
