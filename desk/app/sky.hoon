@@ -44,10 +44,33 @@
         ==
         (some +.mim)
     ==
+  ::
+  ::  in case we're |reviving sky, clear
+  ::  paths that sky cached in eyre
+  =/  clear-cache-cards
+    ^-  (list card)
+    =/  old-cache  .^((map url=@t [aeon=@ud val=(unit cache-entry:eyre)]) %e /(scot %p our.bowl)/cache/(scot %da now.bowl))
+    %+  murn
+      ~(tap by old-cache)
+    |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
+    ?~  val
+      ~
+    ?.  %+  lien
+          headers.response-header.simple-payload.body.u.val
+        |=  [key=@t value=@t]
+        =([key value] ['X-Urbit-Desk' 'Sky'])
+      ~&  >  "Not a Sky URL"
+      ~
+    ~&  >  "Clearing Sky's cached URL {<url>}"
+    %-  some
+    [%pass /eyre/cache %arvo %e %set-response url ~]
   :_  this
-  ::  ~&  >>  eyre-cards
-  :_  eyre-cards
-  [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]
+  ;:  weld
+      eyre-cards
+      clear-cache-cards
+      ^-  (list card)
+      [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
+  ==
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
