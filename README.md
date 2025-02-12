@@ -4,7 +4,7 @@ Urbit namespace browser, spiritual successor to the [urbit/shrub](https://github
 
 ## Developer Environment Setup
 
-Use Vite to preview frontend changes.
+Use Vite to run the frontend.
 
 ```
 $ cd piraeus/ui
