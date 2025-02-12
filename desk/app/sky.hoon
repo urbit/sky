@@ -113,15 +113,21 @@
         :_  state
         =/  dst  url.request.inbound-request
         =/  pax  (tail (cut-path dst '/'))
-        ::  XX check if path is a directory
-        ::  XX handle directory case (stub for now)
-        ::  XX check if no files /foo/txt and /foo/jpg
-        ::     at dst /foo; serve directory if so
         ::  XX should handle GET requests for e.g. /sys/css/spine.css
         =/  res  .^((list path) %ct (weld /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil pax))
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
+        ?:  (gth (lent res) 1)
+          ::  XX serve directory with both files if
+          ::     the client has permission to read
+          ::     this node and the files beneath
+          (send [501 ~ [%plain "501 - Not Implemented"]])
         =/  fil  (head res)
+        ?:  =(fil (weld /fil pax))
+          ::  XX handle directory with no "children";
+          ::     this directory should be removed the
+          ::     next time this desk is committed
+          (send [501 ~ [%plain "501 - Not Implemented"]])
         =/  typ  (rear fil)
         =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))
         =/  mim
