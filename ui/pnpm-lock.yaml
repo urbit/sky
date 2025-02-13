@@ -17,9 +17,6 @@ importers:
       '@urbit/sigil-js':
         specifier: ^2.2.0
         version: 2.2.0
-      '@urbit/vite-plugin-urbit':
-        specifier: github:urbit/vite-plugin-urbit
-        version: https://codeload.github.com/urbit/vite-plugin-urbit/tar.gz/e2e841912f00924fe0ebfd8499d96af01fea2381
       allotment:
         specifier: ^1.20.2
         version: 1.20.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -75,8 +72,11 @@ importers:
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.5(@types/react@18.3.18)
+      '@urbit/vite-plugin-urbit':
+        specifier: github:urbit/vite-plugin-urbit
+        version: https://codeload.github.com/urbit/vite-plugin-urbit/tar.gz/e2e841912f00924fe0ebfd8499d96af01fea2381
       '@vitejs/plugin-react':
-        specifier: ^4.3.2
+        specifier: ^4.0.0
         version: 4.3.4(vite@5.4.12)
       eslint:
         specifier: ^9.11.1
