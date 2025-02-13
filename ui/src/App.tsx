@@ -4,8 +4,6 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { get, put, del } from './api/sky'
-import Urbit from '@urbit/http-api'
 
 function App() {
   const {
@@ -23,55 +21,6 @@ function App() {
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
-
-  // on mount, authenticate and send test requests to fakeship
-  useEffect(() => {
-    async function init() {
-      const newUrbit = new Urbit('', '')
-      newUrbit.ship = window.ship
-
-      try {
-        const file = new File([`${Date.now()}`], 'date.txt', { type: 'text/plain' })
-
-        const putRes = await put('~zod/text', file)
-
-        if (putRes && !putRes.ok) {
-          throw new Error(`PUT failed with status: ${putRes.status}`)
-        }
-
-        if (putRes && putRes.ok) {
-          const getRes = await get('~zod/text')
-
-          if (getRes && !getRes.ok) {
-            throw new Error(`GET failed with status: ${getRes.status}`)
-          }
-
-          if (getRes && getRes.ok) {
-            const data = await getRes.text()
-            console.log('GET successful!')
-            console.log(data)
-
-            try {
-              const delRes = await del('~zod/text')
-
-              if (delRes && !delRes.ok) {
-                throw new Error(`DELETE failed with status: ${delRes.status}`)
-              }
-
-              if (delRes && delRes.ok) {
-                console.log('DELETE successful!')
-              }
-            } catch (err) {
-              console.error('DELETE failed:', err)
-            }
-          }
-        }
-      } catch (error) {
-        console.error('GET failed:', error)
-      }
-    }
-    init()
-  }, [])
 
   function enableWindows() {
     setDragWindow(0)
