@@ -8,7 +8,6 @@ export default defineConfig({
     urbitPlugin({
       base: 'sky',
       target: 'http://localhost:8080',
-      secure: false,
     }),
   ],
 })
