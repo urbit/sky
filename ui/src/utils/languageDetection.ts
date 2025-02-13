@@ -1,7 +1,17 @@
 export const detectLanguage = (content: string): string => {
   const trimmedContent = content.trim()
 
-  // First check for Markdown since we want it to have highest precedence
+  // Check CSS first with very specific patterns
+  const hasCssAtRule = /^[\s]*@(font-face|media|keyframes|import|charset)\b/.test(trimmedContent)
+  const hasCssSelector = /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) || /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
+  const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
+  const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
+  
+  if (hasCssAtRule || (hasCssSelector && hasCssProperty) || (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))) {
+    return 'css'
+  }
+
+  // Then check for Markdown since we want it to have high precedence for other cases
   if (
     // Headers (at start of line or after newline)
     /^#+ /.test(trimmedContent) ||
@@ -30,13 +40,32 @@ export const detectLanguage = (content: string): string => {
     return 'markdown'
   }
 
-  // Then check for JavaScript keywords and patterns
+  // Check for HTML at the start since it's the most specific
   if (
-    /(^|\s)(const|let|var|function|class|import|export)\s/.test(
+    trimmedContent.startsWith('<!DOCTYPE html>') ||
+    trimmedContent.startsWith('<html') ||
+    /<(div|span|p|h[1-6]|body|head|link|meta|script|style)\b/.test(
       trimmedContent
-    ) ||
-    /`[^`]*\${[^}]*}`/.test(trimmedContent) || // Template literals with interpolation
-    /=>\s*{/.test(trimmedContent) // Arrow functions
+    )
+  ) {
+    return 'html'
+  }
+
+  // Check CSS first with very specific patterns
+  //const hasCssSelector = /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) || /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
+  //const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
+  //const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
+  
+  if ((hasCssSelector && hasCssProperty) || (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))) {
+    return 'css'
+  }
+
+  // Then check for JavaScript
+  if (
+    /(^|\s)(const|let|var|function|class|import|export)\s/.test(trimmedContent) ||
+    /`[^`]*\${[^}]*}`/.test(trimmedContent) || // Template literals
+    /=>\s*{/.test(trimmedContent) || // Arrow functions
+    /class\s+\w+(\s+extends\s+[\w.]+)?\s*{/.test(trimmedContent) // Class definitions
   ) {
     return 'javascript'
   }
@@ -82,6 +111,8 @@ export const detectLanguage = (content: string): string => {
 
   // CSS detection - look for typical CSS patterns
   if (
+    // CSS Comments
+    /\/\*[\s\S]*?\*\//.test(trimmedContent) ||
     (trimmedContent.includes('{') &&
       // Basic selectors
       (/[.#*][\w-]+\s*{/.test(trimmedContent) ||

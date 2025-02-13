@@ -1,8 +1,17 @@
-|_  txt=@t
+::
+::::  /hoon/html/mar
+  ::
+/?    310
+  ::
+::::  compute
+  ::
+=,  html
+|_  htm=@t
 ++  grow                                                ::  convert to
   ^?
   |%                                                    ::
-  ++  mime  [/text/plain (met 3 txt) txt]                ::  to %mime
+  ++  mime  [/text/html (met 3 htm) htm]                ::  to %mime
+  ++  hymn  (need (de-xml htm))                         ::  to %hymn
   --                                                    ::
 ++  grab  ^?
           |%                                            ::  convert from

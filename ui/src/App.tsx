@@ -4,7 +4,8 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { auth, get, put, post, del } from './api/sky'
+import { get, put, del } from './api/sky'
+//import Urbit from '@urbit/http-api'
 
 function App() {
   const {
@@ -17,54 +18,73 @@ function App() {
     togglePathBarView,
     updateWindowPath,
     setActiveWindowID,
-    setWindowState,
+    //setWindowState,
   } = useWindowStore()
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
 
+  // on mount, authenticate and send test requests to fakeship
   useEffect(() => {
-    async function fetchData() {
+    async function init() {
+      // TODO all of this causes the refresh bug
+      //      find out why we can't use regular method
+
+      // regular method
+      //const newUrbit = new Urbit('', '')
+      //newUrbit.ship = window.ship
+
+      // non-standard method
+      //// TODO getting session.js but not applied here?
+      window.ship = 'zod'
+      //// TODO non-standard, not sure why necessary
+      //Urbit.authenticate({
+      //  ship: 'zod',
+      //  url: 'http://localhost:8080',
+      //  code: 'lidlut-tabwed-pillex-ridrup'
+      //})
+
       try {
-        // TODO move this to .env
-        const resAuth = await auth('zod', 'lidlut-tabwed-pillex-ridrup')
+        const file = new File([`${Date.now()}`], 'date.txt', { type: 'text/plain' })
 
-        if (resAuth) {
-          // TODO remove window.urbitID entirely
-          //window.urbitID = window.ship
-          const resGet = await get('~zod/api')
+        const putRes = await put('~zod/text', file)
 
-          if (resGet) {
-            console.log('got response from GET request', resGet)
-          }
-          const formData = new FormData()
-          formData.append('name', 'John Doe')
-          const json = formData as unknown as JSON
-          const resPost = await post('~zod/api', json)
-
-          if (resPost) {
-            console.log('got response from POST request', resPost)
-          }
-          const resPut = await put('~zod/api', new FormData())
-
-          if (resPut) {
-            console.log('got response from PUT request', resPut)
-          }
-          const resDelete = await del('~zod/api/del')
-
-          if (resDelete) {
-            console.log('got response from DELETE request', resDelete)
-          }
+        if (putRes && !putRes.ok) {
+          throw new Error(`PUT failed with status: ${putRes.status}`)
         }
 
-        if (!resAuth) {
-          window.urbitID = '~sampel'
+        if (putRes && putRes.ok) {
+          const getRes = await get('~zod/text')
+
+          if (getRes && !getRes.ok) {
+            throw new Error(`GET failed with status: ${getRes.status}`)
+          }
+
+          if (getRes && getRes.ok) {
+            const data = await getRes.text()
+            console.log('GET successful!')
+            console.log(data)
+
+            try {
+              const delRes = await del('~zod/text')
+
+              if (delRes && !delRes.ok) {
+                throw new Error(`DELETE failed with status: ${delRes.status}`)
+              }
+
+              if (delRes && delRes.ok) {
+                console.log('DELETE successful!')
+              }
+            } catch (err) {
+              console.error('DELETE failed:', err)
+            }
+          }
         }
       } catch (error) {
-        console.error('Error:', error)
+        console.error('GET failed:', error)
       }
     }
-    fetchData()
+    init()
   }, [])
 
   function enableWindows() {
@@ -109,7 +129,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function () {
+        event.target.addEventListener('dragend', function() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -266,27 +286,20 @@ function App() {
     setActiveWindowID,
   ])
 
+  // TODO restore
   // on mount, init window state
-  useEffect(() => {
-    async function init() {
-      const res = await get('~sampel/sys/state/windows')
-
-      if (res && res.ok) {
-        const data = await res.json()
-        setWindowState(data)
-      }
-    }
-
-    init()
-  }, [])
-
-  // TODO handle real window.urbitID, not suitable for production
-  // on mount, set window.urbitID
-  useEffect(() => {
-    if (!window.urbitID) {
-      window.urbitID = '~sampel'
-    }
-  }, [])
+  //useEffect(() => {
+  //  async function init() {
+  //    const res = await get('~zod/sys/state/windows')
+  //
+  //    if (res && res.ok) {
+  //      const data = await res.json()
+  //      setWindowState(data)
+  //    }
+  //  }
+  //
+  //  init()
+  //}, [])
 
   return (
     <div

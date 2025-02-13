@@ -84,7 +84,7 @@ export default function WindowContainer({
         // return a window
         <Window
           id={id}
-          path={map.get(id) ?? `${window.ship || window.urbitID}/home`}
+          path={map.get(id) ?? `${window.ship}/home`}
           handleDrop={handleDrop}
           handleDragStart={handleDragStart}
           dragWindow={dragWindow}

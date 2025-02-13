@@ -1,13 +1,21 @@
-|_  txt=@t
+::
+::::  /hoon/xml/mar
+  ::
+/?    310
+  ::
+::::  compute
+  ::
+=,  mimes:html
+=,  html
+|_  xml=@t
+::
+++  grad  %mime
 ++  grow                                                ::  convert to
-  ^?
   |%                                                    ::
-  ++  mime  [/text/plain (met 3 txt) txt]                ::  to %mime
+  ++  mime  [/application/xml (as-octs xml)]            ::  to %mime
+  ++  hymn  (need (de-xml xml))                         ::  to %hymn
   --                                                    ::
-++  grab  ^?
-          |%                                            ::  convert from
+++  grab  |%                                            ::  convert from
           ++  noun  @t                                  ::  clam from %noun
           ++  mime  |=([p=mite q=octs] q.q)             ::  retrieve form %mime
-          --
-++  grad  %mime
---
+--        --

@@ -1,8 +1,8 @@
-|_  txt=@t
+|_  json=@t
 ++  grow                                                ::  convert to
   ^?
   |%                                                    ::
-  ++  mime  [/text/plain (met 3 txt) txt]                ::  to %mime
+  ++  mime  [/application/json (met 3 json) json]                ::  to %mime
   --                                                    ::
 ++  grab  ^?
           |%                                            ::  convert from

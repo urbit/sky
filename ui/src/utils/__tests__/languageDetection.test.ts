@@ -83,6 +83,27 @@ describe('detectLanguage', () => {
   })
 
   // Additional Edge Cases
+  describe('HTML with embedded JavaScript', () => {
+    it('should detect HTML when it contains embedded JavaScript', () => {
+      const content = `<!DOCTYPE html>
+<html>
+<body>
+  <h1>Test Page</h1>
+  <script>
+    document.querySelector("iframe").onload = function() {
+      const iframe = document.querySelector("iframe").contentWindow.document;
+      const stylesheet = document.createElement("link");
+      stylesheet.rel = "stylesheet";
+      stylesheet.href = "./style.css";
+      iframe.head.appendChild(stylesheet);
+    };
+  </script>
+</body>
+</html>`
+      expect(detectLanguage(content)).toBe('html')
+    })
+  })
+
   describe('HTML vs XML edge cases', () => {
     it('should detect HTML even with XML-like custom elements', () => {
       const content = '<custom-element><div>This is HTML</div></custom-element>'
@@ -139,6 +160,18 @@ describe('detectLanguage', () => {
     it('should detect CSS with vendor prefixes', () => {
       const content =
         '.box { -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); }'
+      expect(detectLanguage(content)).toBe('css')
+    })
+
+    it('should detect CSS with comments', () => {
+      const content = 
+        '/*TODO add fallback colors*/\n.b0 { background-color: var(--b0); }'
+      expect(detectLanguage(content)).toBe('css')
+    })
+
+    it('should detect CSS with @font-face rule', () => {
+      const content = 
+        '@font-face {\n  font-family: "Example";\n  src: url("example.woff2");\n}'
       expect(detectLanguage(content)).toBe('css')
     })
   })

@@ -1,8 +1,8 @@
-|_  txt=@t
+|_  md=@t
 ++  grow                                                ::  convert to
   ^?
   |%                                                    ::
-  ++  mime  [/text/plain (met 3 txt) txt]                ::  to %mime
+  ++  mime  [/text/markdown (met 3 md) md]                ::  to %mime
   --                                                    ::
 ++  grab  ^?
           |%                                            ::  convert from

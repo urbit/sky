@@ -1,29 +1,24 @@
 /* Import default fonts */
 @font-face {
   font-family: 'Urbit Sans';
-  src: url('../assets/fonts/UrbitSansVFWeb-Regular.woff2');
+  src: url('https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2')
+       format('woff2');
   font-weight: 100 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Inter';
-  src: url('../assets/fonts/Inter-VariableFont_opsz,wght.ttf');
+  font-style: normal;
   font-weight: 100 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Geist Mono';
-  src: url('../assets/fonts/GeistMono-VariableFont_wght.ttf');
-  font-weight: 300 700;
-  font-style: normal;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2') format('woff2');
 }
 
 :root {
   --font-head: 'Urbit Sans', serif;
   --font-body: 'Inter', sans-serif;
-  --font-mono: 'Geist Mono', monospace;
+  --font-mono:  monospace;
   --font-size: 16px;
   --mono-scale: 0.9;
   --line-height: 1.4;
@@ -89,7 +84,6 @@
 html {
   height: 100%;
   font-size: var(--font-size);
-  font-family: var(--font-head);
 }
 
 body {
@@ -141,6 +135,10 @@ h6 {
   font-size: 1rem;
   font-weight: 500;
   margin: 1rem 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-head);
 }
 
 p {

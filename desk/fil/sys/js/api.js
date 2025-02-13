@@ -1,4 +1,4 @@
-async function findShipDomain(path: string) {
+async function findShipDomain(path) {
   const ship = path.split('/')[0]
   console.log(`Attempting to get domain for ${ship}`)
   console.log('window.ship', window.ship)
@@ -15,7 +15,7 @@ async function findShipDomain(path: string) {
   }
 }
 
-async function findPathUrl(path: string): Promise<string | void> {
+async function findPathUrl(path) {
   let shipLocation
   console.log('Attempting to find URLs for', path)
 
@@ -41,7 +41,7 @@ async function findPathUrl(path: string): Promise<string | void> {
 }
 
 // NOTE provisional; will change with remote scry support
-async function get(path: string): Promise<Response | void> {
+async function get(path) {
   const pathArray = path.split('/')
   const pathShip = pathArray[0].slice(1)
   const endpoint = pathArray.slice(1).join('/')
@@ -140,10 +140,10 @@ async function get(path: string): Promise<Response | void> {
   }
 }
 
-async function put(path: string, file: File): Promise<Response | void> {
+async function put(path, file) {
   const pathArray = path.split('/')
   const endpoint = pathArray.slice(1).join('/')
-  let url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
+  const url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
 
   if (!url) {
     console.error(`No URL found for ${path}`)
@@ -154,13 +154,15 @@ async function put(path: string, file: File): Promise<Response | void> {
     })
   }
 
-  url = `${url}?mime=${file.type}&name=${file.name}`
-
   try {
     console.log('PUTting to ', url)
     const res = await fetch(url, {
       method: 'PUT',
       credentials: 'include',
+      headers: {
+        'Content-Type': file.type,
+        'Content-Disposition': file.name
+      },
       body: file
     })
 
@@ -176,34 +178,6 @@ async function put(path: string, file: File): Promise<Response | void> {
 
 // TODO post()
 
-async function del(path: string): Promise<Response | void> {
-  const pathArray = path.split('/')
-  const endpoint = pathArray.slice(1).join('/')
-  const url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
+// TODO del()
 
-  if (!url) {
-    console.error(`No URL found for ${path}`)
-    return new Response(`No URL found for ${path}`, {
-      status: 404,
-      headers: { 'Content-Type': 'text/plain' },
-    })
-  }
-
-  try {
-    console.log('DELETE-ing ', url)
-    const res = await fetch(url, {
-      method: 'DELETE',
-      credentials: 'include'
-    })
-
-    if (!res.ok) {
-      throw new Error(`Response not ok for ${url}`)
-    }
-
-    return res
-  } catch (err) {
-    console.error(`DELETE request failed at ${url}`, err)
-  }
-}
-
-export { del, get, put, findPathUrl, findShipDomain }
+export { get, put, findPathUrl, findShipDomain }

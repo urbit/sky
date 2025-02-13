@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
-import { get, findShipDomain } from '../../api/sky'
+import { get, put } from '../../api/sky'
 import FilePNG from './FilePNG'
 import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
@@ -21,7 +21,7 @@ const composerContentTypes = new Set([
   'text/markdown',
 ])
 
-async function renderFile(res: Response): Promise<JSX.Element> {
+async function renderFile(path: string, res: Response): Promise<JSX.Element> {
   const contentType = res.headers.get('content-type')
 
   if (!contentType) {
@@ -33,7 +33,7 @@ async function renderFile(res: Response): Promise<JSX.Element> {
 
   if (composerContentTypes.has(baseContentType)) {
     console.log(`Rendering ${baseContentType} with FileComposer`)
-    return <FileComposer />
+    return <FileComposer path={path} />
   }
 
   switch (baseContentType) {
@@ -65,37 +65,26 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
   }
 
   function handleComposerClick() {
-    setFileViewerContent(<FileComposer />)
+    setFileViewerContent(<FileComposer path={path} />)
   }
 
   const uploadFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
     if (!fileList) return
 
-    const shipDomain = await findShipDomain(path)
-    const endpoint = path.split('/').slice(1).join('/')
-
     for (const file of Array.from(fileList)) {
-      const formData = new FormData()
-      formData.append('file', file)
-
       try {
-        // TODO should use put() from Sky API
-        console.log(`Attempting to PUT to ${shipDomain}/${endpoint}`)
-        const res = await fetch(`${shipDomain}/${endpoint}`, {
-          method: 'PUT',
-          body: formData,
-        })
+        const res = await put(path, file)
 
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`)
+        if (!res || !res.ok) {
+          throw new Error(`PUT failed with status: ${res?.status}`)
         }
 
         console.log('Upload successful:', res)
         const newResponse = await get(path)
 
         if (newResponse) {
-          const newEndpointContent = await renderFile(newResponse)
+          const newEndpointContent = await renderFile(path, newResponse)
           setFileViewerContent(newEndpointContent)
         }
       } catch (error) {
@@ -163,7 +152,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       const res = await get(path)
 
       if (res && res.status >= 200 && res.status <= 300) {
-        const content = await renderFile(res)
+        const content = await renderFile(path, res)
         setFileViewerContent(content)
       }
 

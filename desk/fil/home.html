@@ -13,7 +13,7 @@
         <div class="hf fc ac js">
             <!-- path bar -->
             <div class="wf fr ac jc">
-                <input type="text" placeholder="~sampel/home" />
+                <input type="text" placeholder="~zod/home" />
             </div>
             <!-- tiles -->
             <div id="app-container" class="wf fr as js frw" style="width: 500px; flex-wrap: wrap; margin-top: 8px;">
@@ -25,7 +25,7 @@
     import { get } from '/sys/js/api'
 
     async function makeTiles() {
-        const res = await get('~sampel/app-data')
+        const res = await get('~zod/app-data')
         const data = await res.json()
 
         const appContainer = document.getElementById('app-container')

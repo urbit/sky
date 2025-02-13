@@ -4,37 +4,35 @@ Urbit namespace browser, spiritual successor to the [urbit/shrub](https://github
 
 ## Developer Environment Setup
 
-Use Vite to preview frontend changes.
+Use Vite to run the frontend.
 
 ```
-cd piraeus/ui
-pnpm install
-pnpm dev
+$ cd piraeus/ui
+$ pnpm install
+$ pnpm dev
 ```
 
 Run [json-server](https://github.com/typicode/json-server) on `localhost:3000` to run a JSON API for resolving `@p`s to top-level domains.
 
 ```
-cd piraeus/athens
-npx json-server dns.json --port 3000
+$ cd piraeus
+$ npx json-server dns.json --port 3000
 ```
 
-Run `server.py` (which is hard-coded to run on `localhost:8000`) to run the mock fileserver, which enables reading and writing to your (`~sampel`'s) namespace. You'll need to install the `flask` and `flask_cors` modules if you don't have them.
+Boot up a fake ~zod on localhost:8080 and copy the contents of `/desk` to the ship.
 
 ```
-cd piraeus/athens
-python server.py
+$ ./urbit -F zod --http-port 8080
+> |new-desk %sky
+> |mount %sky
 ```
 
-Use `init.js` to PUT the contents of the `/namespace` folder into the namespace. This folder has the default content that will be pre-populated in a user's namespace when they open the app for the first time. Note that this uses the API in `/namespace/sys/js`; just copying the `/namespace` folder into `/athens` won't work.
-
 ```
-cd piraeus
-node init.js
+$ cd piraeus
+$ cp -r desk/* path/to/pier/sky
 ```
 
-To make HTTP requests to a fakeship, include the fakeship URL in an `.env` file in `/ui`.
-
 ```
-VITE_SHIP_URL=http://localhost:8080
+> |commit %sky
+> |install our %sky
 ```
