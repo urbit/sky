@@ -10,7 +10,9 @@ export default function PathBar({
   path: string | null
 }) {
   const [inputValue, setInputValue] = useState('')
-  const { pathBarView, updateWindowPath, togglePathBarView } = useWindowStore()
+  const { workspaces, activeWorkspaceID, updateWindowPath, togglePathBarView } =
+    useWindowStore()
+  const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
 
   useEffect(() => {
     setInputValue(path || '')
@@ -48,7 +50,7 @@ export default function PathBar({
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (isValidPath(inputValue)) {
-      if (pathBarView.includes(id)) {
+      if (pathBarView && pathBarView.includes(id)) {
         togglePathBarView(id)
       }
 
