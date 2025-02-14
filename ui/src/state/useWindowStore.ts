@@ -307,24 +307,36 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // toggle path bar view for a window
   togglePathBarView: (id: WindowID) => {
-    const pathBarView = get().pathBarView
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
 
-    if (!pathBarView.includes(id)) {
-      const newPathBarArray = [...pathBarView, id]
+    if (!activeWorkspace) {
+      console.error(`No workspace for ${get().activeWorkspaceID}`)
+      return;
+    }
 
-      sendWindowStateToNamespace(get(), {
-        key: 'pathBarView',
-        val: newPathBarArray,
-      })
-      set({ pathBarView: newPathBarArray })
+    const pathBarViewArray: Array<WindowID> = activeWorkspace.windowState.pathBarView
+
+    if (!pathBarViewArray.includes(id)) {
+      const newPathBarViewArray: Array<WindowID> = [...pathBarViewArray, id]
+
+      //sendWindowStateToNamespace(get(), {
+      //  key: 'pathBarViewArray',
+      //  val: newPathBarViewArray,
+      //})
+
+      activeWorkspace.windowState.pathBarView = newPathBarViewArray
+      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
     } else {
-      const newPathBarView = pathBarView.filter(item => item !== id)
+      const newPathBarViewArray: Array<WindowID> = pathBarViewArray.filter(item => item !== id)
 
-      sendWindowStateToNamespace(get(), {
-        key: 'pathBarView',
-        val: newPathBarView,
-      })
-      set({ pathBarView: newPathBarView })
+      //sendWindowStateToNamespace(get(), {
+      //  key: 'pathBarViewArray',
+      //  val: newPathBarView,
+      //})
+
+      activeWorkspace.windowState.pathBarView = newPathBarViewArray
+      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
     }
   },
 
