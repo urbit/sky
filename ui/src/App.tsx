@@ -233,10 +233,16 @@ function App() {
   // on mount, init frontend state
   useEffect(() => {
     async function init() {
-      const res = await get(`~${window.ship}/sys/state/windows`)
+      console.log('Running init()')
+      const res = await get(`~${window.ship}/sys/state/workspaces`)
+
+      if (res && !res.ok) {
+        console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
+      }
 
       if (res && res.ok) {
         const data = await res.json()
+        console.log(`init() received data: ${JSON.stringify(data)}`)
         setWorkspacesState(data)
       }
     }

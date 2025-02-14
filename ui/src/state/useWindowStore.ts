@@ -19,7 +19,7 @@ interface WindowStateObject {
 interface BackendWindowStateObject
   extends Omit<
     WindowStateObject,
-    'windowMap' | 'activeWindowID' | 'activeWindowPath'
+    'windowMap' | 'activeWindowID' | 'activeWindowPath' | 'pathBarView'
   > {
   windowMap: Array<[WindowID, Path]>
 }
@@ -34,7 +34,7 @@ interface BackendWorkspace {
   windowState: BackendWindowStateObject
 }
 
-interface WindowStore {
+interface WorkspaceStore {
   workspaces: WorkspaceMap
   activeWorkspaceID: WorkspaceID
 }
@@ -63,7 +63,8 @@ interface WindowStore {
 }
 
 // helper to serialize and send the entire workspaces state to the namespace
-function sendWorkspacesStateToNamespace(store: WindowStore): void {
+function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
+  console.log('Running sendWorkspacesStateToNamespace')
   // Convert each workspace's windowMap to array format for backend
   const workspacesArray: Array<[WorkspaceID, BackendWorkspace]> = Array.from(
     store.workspaces.entries()
@@ -72,7 +73,6 @@ function sendWorkspacesStateToNamespace(store: WindowStore): void {
       windowMap: Array.from(workspace.windowState.windowMap.entries()),
       maxWindow: workspace.windowState.maxWindow,
       fileView: workspace.windowState.fileView,
-      pathBarView: workspace.windowState.pathBarView,
     }
 
     const backendWorkspace: BackendWorkspace = {
@@ -162,6 +162,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         get().activeWorkspaceID,
         activeWorkspace
       ),
+    })
+    sendWorkspacesStateToNamespace({
+      workspaces: get().workspaces,
+      activeWorkspaceID: get().activeWorkspaceID
     })
   },
 
@@ -270,6 +274,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
           activeWorkspace
         ),
       })
+      sendWorkspacesStateToNamespace({
+        workspaces: get().workspaces,
+        activeWorkspaceID: get().activeWorkspaceID
+      })
     }
   },
 
@@ -295,6 +303,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         activeWorkspace
       ),
     })
+    sendWorkspacesStateToNamespace({
+      workspaces: get().workspaces,
+      activeWorkspaceID: get().activeWorkspaceID
+    })
   },
 
   // maximise a window
@@ -318,6 +330,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         activeWorkspace
       ),
     })
+    sendWorkspacesStateToNamespace({
+      workspaces: get().workspaces,
+      activeWorkspaceID: get().activeWorkspaceID
+    })
   },
 
   // toggle "normal" view and file view for a window
@@ -337,7 +353,6 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     if (!fileViewArray.includes(id)) {
       const newFileViewArray: Array<WindowID> = [...fileViewArray, id]
 
-      sendWorkspacesStateToNamespace(get())
       activeWorkspace.windowState.fileView = newFileViewArray
       set({
         workspaces: currentWorkspaces.set(
@@ -345,13 +360,12 @@ const useWindowStore = create<WindowStore>((set, get) => ({
           activeWorkspace
         ),
       })
+      sendWorkspacesStateToNamespace({
+        workspaces: get().workspaces,
+        activeWorkspaceID: get().activeWorkspaceID
+      })
     } else {
       const newFileViewArray = fileViewArray.filter(item => item !== id)
-
-      //sendWindowStateToNamespace(get(), {
-      //  key: 'fileView',
-      //  val: newFileViewArray,
-      //})
 
       activeWorkspace.windowState.fileView = newFileViewArray
       set({
@@ -359,6 +373,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
           get().activeWorkspaceID,
           activeWorkspace
         ),
+      })
+      sendWorkspacesStateToNamespace({
+        workspaces: get().workspaces,
+        activeWorkspaceID: get().activeWorkspaceID
       })
     }
   },
@@ -381,8 +399,6 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     if (!pathBarViewArray.includes(id)) {
       const newPathBarViewArray: Array<WindowID> = [...pathBarViewArray, id]
 
-      sendWorkspacesStateToNamespace(get())
-
       activeWorkspace.windowState.pathBarView = newPathBarViewArray
       set({
         workspaces: currentWorkspaces.set(
@@ -394,8 +410,6 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       const newPathBarViewArray: Array<WindowID> = pathBarViewArray.filter(
         item => item !== id
       )
-
-      sendWorkspacesStateToNamespace(get())
 
       activeWorkspace.windowState.pathBarView = newPathBarViewArray
       set({
@@ -455,6 +469,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // set init window state from namespace
   setWorkspacesState: (state: BackendWindowStore) => {
+    console.log('Running setWorkspacesState')
     if (!state) {
       set({ workspaces: defaultWorkspaceMap, activeWorkspaceID: 0 })
     }
@@ -472,6 +487,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
           windowMap,
           activeWindowID: 1, // Default since not stored in backend
           activeWindowPath: windowMap.get(1) || defaultPath, // Get path of first window or use default
+          pathBarView: []
         }
 
         // Create the full Workspace object
