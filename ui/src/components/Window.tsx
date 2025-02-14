@@ -424,7 +424,9 @@ export default function Window({
                       </button>
                     </div>
                   )}
-                  {!(path === '' || path?.split('/')[0].slice(1) !== window.ship) && (
+                  {!(
+                    path === '' || path?.split('/')[0].slice(1) !== window.ship
+                  ) && (
                     <button
                       className="fr ac jc"
                       style={{ pointerEvents: 'visible' }}

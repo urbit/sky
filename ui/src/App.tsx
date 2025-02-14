@@ -7,17 +7,23 @@ import { useEffect, useState, useRef } from 'react'
 
 function App() {
   const {
-    windowMap,
-    maxWindow,
-    activeWindowID,
+    workspaces,
+    activeWorkspaceID,
     addWindow,
     delWindow,
     setMaxWindow,
     togglePathBarView,
     updateWindowPath,
     setActiveWindowID,
-    //setWindowState,
   } = useWindowStore()
+
+  // Get active workspace and its window state
+  const activeWorkspace = workspaces.get(activeWorkspaceID)
+  const {
+    windowMap = new Map(),
+    maxWindow = 0,
+    activeWindowID = 1,
+  } = activeWorkspace?.windowState ?? {}
 
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
@@ -64,7 +70,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function() {
+        event.target.addEventListener('dragend', function () {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -124,7 +130,10 @@ function App() {
 
   // listen for keydown events
   useEffect(() => {
-    console.log(`path: ${windowMap.get(activeWindowID)}`)
+    console.log(`workspace: ${activeWorkspace?.name ?? 'none'}`)
+    console.log(
+      `path: ${activeWorkspace.windowState.windowMap.get(activeWindowID)}`
+    )
     console.log(`activeWindowID: ${activeWindowID}`)
     console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -219,6 +228,10 @@ function App() {
     addWindow,
     updateWindowPath,
     setActiveWindowID,
+    windowMap,
+    handleSwap,
+    setMaxWindow,
+    togglePathBarView,
   ])
 
   // TODO restore

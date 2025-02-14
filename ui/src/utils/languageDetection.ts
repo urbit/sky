@@ -2,12 +2,19 @@ export const detectLanguage = (content: string): string => {
   const trimmedContent = content.trim()
 
   // Check CSS first with very specific patterns
-  const hasCssAtRule = /^[\s]*@(font-face|media|keyframes|import|charset)\b/.test(trimmedContent)
-  const hasCssSelector = /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) || /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
+  const hasCssAtRule =
+    /^[\s]*@(font-face|media|keyframes|import|charset)\b/.test(trimmedContent)
+  const hasCssSelector =
+    /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) ||
+    /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
   const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
   const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
-  
-  if (hasCssAtRule || (hasCssSelector && hasCssProperty) || (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))) {
+
+  if (
+    hasCssAtRule ||
+    (hasCssSelector && hasCssProperty) ||
+    (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))
+  ) {
     return 'css'
   }
 
@@ -55,14 +62,19 @@ export const detectLanguage = (content: string): string => {
   //const hasCssSelector = /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) || /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
   //const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
   //const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
-  
-  if ((hasCssSelector && hasCssProperty) || (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))) {
+
+  if (
+    (hasCssSelector && hasCssProperty) ||
+    (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))
+  ) {
     return 'css'
   }
 
   // Then check for JavaScript
   if (
-    /(^|\s)(const|let|var|function|class|import|export)\s/.test(trimmedContent) ||
+    /(^|\s)(const|let|var|function|class|import|export)\s/.test(
+      trimmedContent
+    ) ||
     /`[^`]*\${[^}]*}`/.test(trimmedContent) || // Template literals
     /=>\s*{/.test(trimmedContent) || // Arrow functions
     /class\s+\w+(\s+extends\s+[\w.]+)?\s*{/.test(trimmedContent) // Class definitions

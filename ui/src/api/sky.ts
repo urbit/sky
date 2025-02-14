@@ -60,7 +60,7 @@ async function get(path: string): Promise<Response | void> {
     console.log('GETting ', url)
     const res = await fetch(url, {
       method: 'GET',
-      credentials: 'include'
+      credentials: 'include',
     })
 
     if (!res.ok) {
@@ -109,7 +109,7 @@ async function get(path: string): Promise<Response | void> {
         console.log('GETting ', apiUrl)
         const res = await fetch(apiUrl, {
           method: 'GET',
-          credentials: 'include'
+          credentials: 'include',
         })
 
         if (!res.ok) {
@@ -161,7 +161,7 @@ async function put(path: string, file: File): Promise<Response | void> {
     const res = await fetch(url, {
       method: 'PUT',
       credentials: 'include',
-      body: file
+      body: file,
     })
 
     if (!res.ok) {
@@ -193,7 +193,7 @@ async function del(path: string): Promise<Response | void> {
     console.log('DELETE-ing ', url)
     const res = await fetch(url, {
       method: 'DELETE',
-      credentials: 'include'
+      credentials: 'include',
     })
 
     if (!res.ok) {

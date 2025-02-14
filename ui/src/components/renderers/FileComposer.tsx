@@ -57,9 +57,7 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
   const [isEdited, setIsEdited] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
 
-  const pathArray = path
-    ? path.split('/')
-    : `${window.ship}/home`.split('/')
+  const pathArray = path ? path.split('/') : `${window.ship}/home`.split('/')
   const ship = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
   const tempPath = `${ship}/sys/tmp/${endpoint}`
@@ -143,7 +141,7 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
       const detectedLanguage = detectLanguage(content)
       const mimeType =
         languageToMimeType[
-        detectedLanguage as keyof typeof languageToMimeType
+          detectedLanguage as keyof typeof languageToMimeType
         ] || 'text/plain'
       const extension =
         detectedLanguage === 'plaintext'
@@ -189,7 +187,7 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
       const detectedLanguage = detectLanguage(editorContent)
       const mimeType =
         languageToMimeType[
-        detectedLanguage as keyof typeof languageToMimeType
+          detectedLanguage as keyof typeof languageToMimeType
         ] || 'text/plain'
       const extension =
         detectedLanguage === 'plaintext'

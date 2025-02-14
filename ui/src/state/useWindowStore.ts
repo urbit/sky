@@ -29,7 +29,7 @@ interface WindowStateObject {
 //}[keyof WindowStateObject]
 
 interface Workspace {
-  name: string,
+  name: string
   windowState: WindowStateObject
 }
 
@@ -38,7 +38,7 @@ type WorkspaceMap = Map<WorkspaceID, Workspace>
 
 interface WindowStore {
   workspaces: WorkspaceMap
-  activeWorkspaceID: WorkspaceID,
+  activeWorkspaceID: WorkspaceID
   addWindow: (parentID: WindowID, path: Path) => void
   delWindow: (id: WindowID) => void
   updateWindowPath: (id: WindowID, path: Path) => void
@@ -90,9 +90,7 @@ interface WindowStore {
 
 // default state values
 const defaultPath: Path = '~zod/home'
-const defaultMap: WindowMap = new Map<WindowID, Path>([
-  [1, defaultPath],
-])
+const defaultMap: WindowMap = new Map<WindowID, Path>([[1, defaultPath]])
 
 const defaultWindowStateObject: WindowStateObject = {
   windowMap: defaultMap,
@@ -105,7 +103,7 @@ const defaultWindowStateObject: WindowStateObject = {
 
 const defaultWorkspace: Workspace = {
   name: 'Home',
-  windowState: defaultWindowStateObject
+  windowState: defaultWindowStateObject,
 }
 
 const defaultWorkspaceMap: WorkspaceMap = new Map<WorkspaceID, Workspace>([
@@ -120,11 +118,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   // add a new window to the tree
   addWindow: (parentID: WindowID, path: Path) => {
     const currentWorkspaces: WorkspaceMap = get().workspaces
-    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
+      get().activeWorkspaceID
+    )
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
     const windowMap: WindowMap = activeWorkspace.windowState.windowMap
@@ -132,7 +132,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
     if (!parentPath) {
       console.error(`No parent at ${parentID}`)
-      return;
+      return
     }
 
     const newWindowMap: WindowMap = new Map(windowMap)
@@ -142,24 +142,31 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
     activeWorkspace.windowState.windowMap = newWindowMap
 
-    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+    set({
+      workspaces: currentWorkspaces.set(
+        get().activeWorkspaceID,
+        activeWorkspace
+      ),
+    })
   },
 
   // remove a node from the tree
   delWindow: (id: WindowID) => {
     const currentWorkspaces: WorkspaceMap = get().workspaces
-    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
+      get().activeWorkspaceID
+    )
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
     const windowMap: WindowMap = activeWorkspace.windowState.windowMap
 
     // if this is the only window, don't delete anything
     if (windowMap.size === 1 && windowMap.has(1)) {
-      return;
+      return
     }
 
     function isEven(num: WindowID): boolean {
@@ -184,8 +191,12 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       let currentID: WindowID = id
 
       while (currentID !== 1) {
-        const parentID: WindowID = isEven(currentID) ? currentID / 2 : (currentID - 1) / 2
-        const parentSiblingID: WindowID = isEven(parentID) ? parentID + 1 : parentID - 1
+        const parentID: WindowID = isEven(currentID)
+          ? currentID / 2
+          : (currentID - 1) / 2
+        const parentSiblingID: WindowID = isEven(parentID)
+          ? parentID + 1
+          : parentID - 1
         map.delete(currentID)
 
         if (map.has(parentSiblingID)) {
@@ -230,54 +241,80 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     // If no windows are left after deletion, reset to defaultMap
     if (newWindowMap.size === 0) {
       activeWorkspace.windowState.windowMap = defaultMap
-      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+      set({
+        workspaces: currentWorkspaces.set(
+          get().activeWorkspaceID,
+          activeWorkspace
+        ),
+      })
     } else {
       activeWorkspace.windowState.windowMap = newWindowMap
-      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+      set({
+        workspaces: currentWorkspaces.set(
+          get().activeWorkspaceID,
+          activeWorkspace
+        ),
+      })
     }
   },
 
   // update a window's path
   updateWindowPath: (id: WindowID, path: Path) => {
     const currentWorkspaces: WorkspaceMap = get().workspaces
-    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
+      get().activeWorkspaceID
+    )
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
     const windowMap: WindowMap = activeWorkspace.windowState.windowMap
     const newWindowMap: WindowMap = windowMap.set(id, path)
 
     activeWorkspace.windowState.windowMap = newWindowMap
-    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+    set({
+      workspaces: currentWorkspaces.set(
+        get().activeWorkspaceID,
+        activeWorkspace
+      ),
+    })
   },
 
   // maximise a window
   setMaxWindow: (id: WindowID) => {
     const currentWorkspaces: WorkspaceMap = get().workspaces
-    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
+      get().activeWorkspaceID
+    )
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
     activeWorkspace.windowState.maxWindow = id
 
     //sendWindowStateToNamespace(get(), { key: 'maxWindow', val: id })
-    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+    set({
+      workspaces: currentWorkspaces.set(
+        get().activeWorkspaceID,
+        activeWorkspace
+      ),
+    })
   },
 
   // toggle "normal" view and file view for a window
   toggleFileView: (id: WindowID) => {
     const currentWorkspaces: WorkspaceMap = get().workspaces
-    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
+      get().activeWorkspaceID
+    )
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
     const fileViewArray: Array<WindowID> = activeWorkspace.windowState.fileView
@@ -290,7 +327,12 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       //  val: newFileViewArray,
       //})
       activeWorkspace.windowState.fileView = newFileViewArray
-      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+      set({
+        workspaces: currentWorkspaces.set(
+          get().activeWorkspaceID,
+          activeWorkspace
+        ),
+      })
     } else {
       const newFileViewArray = fileViewArray.filter(item => item !== id)
 
@@ -300,22 +342,29 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       //})
 
       activeWorkspace.windowState.fileView = newFileViewArray
-      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
-
+      set({
+        workspaces: currentWorkspaces.set(
+          get().activeWorkspaceID,
+          activeWorkspace
+        ),
+      })
     }
   },
 
   // toggle path bar view for a window
   togglePathBarView: (id: WindowID) => {
     const currentWorkspaces: WorkspaceMap = get().workspaces
-    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
+      get().activeWorkspaceID
+    )
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
-    const pathBarViewArray: Array<WindowID> = activeWorkspace.windowState.pathBarView
+    const pathBarViewArray: Array<WindowID> =
+      activeWorkspace.windowState.pathBarView
 
     if (!pathBarViewArray.includes(id)) {
       const newPathBarViewArray: Array<WindowID> = [...pathBarViewArray, id]
@@ -326,9 +375,16 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       //})
 
       activeWorkspace.windowState.pathBarView = newPathBarViewArray
-      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+      set({
+        workspaces: currentWorkspaces.set(
+          get().activeWorkspaceID,
+          activeWorkspace
+        ),
+      })
     } else {
-      const newPathBarViewArray: Array<WindowID> = pathBarViewArray.filter(item => item !== id)
+      const newPathBarViewArray: Array<WindowID> = pathBarViewArray.filter(
+        item => item !== id
+      )
 
       //sendWindowStateToNamespace(get(), {
       //  key: 'pathBarViewArray',
@@ -336,36 +392,55 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       //})
 
       activeWorkspace.windowState.pathBarView = newPathBarViewArray
-      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+      set({
+        workspaces: currentWorkspaces.set(
+          get().activeWorkspaceID,
+          activeWorkspace
+        ),
+      })
     }
   },
 
   // track active window
   setActiveWindowID: (id: WindowID) => {
     const currentWorkspaces: WorkspaceMap = get().workspaces
-    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
+      get().activeWorkspaceID
+    )
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
     activeWorkspace.windowState.activeWindowID = id
-    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+    set({
+      workspaces: currentWorkspaces.set(
+        get().activeWorkspaceID,
+        activeWorkspace
+      ),
+    })
   },
 
   // track active window's path
   setActiveWindowPath: (path: Path) => {
     const currentWorkspaces: WorkspaceMap = get().workspaces
-    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
+      get().activeWorkspaceID
+    )
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
     activeWorkspace.windowState.activeWindowPath = path
-    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+    set({
+      workspaces: currentWorkspaces.set(
+        get().activeWorkspaceID,
+        activeWorkspace
+      ),
+    })
   },
 
   // set init window state from namespace
