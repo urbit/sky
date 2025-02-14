@@ -239,11 +239,19 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // update a window's path
   updateWindowPath: (id: WindowID, path: Path) => {
-    const windowMap = get().windowMap
-    const newWindowMap = windowMap.set(id, path)
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
 
-    sendWindowStateToNamespace(get(), { key: 'windowMap', val: newWindowMap })
-    set({ windowMap: newWindowMap })
+    if (!activeWorkspace) {
+      console.error(`No workspace for ${get().activeWorkspaceID}`)
+      return;
+    }
+
+    const windowMap: WindowMap = activeWorkspace.windowState.windowMap
+    const newWindowMap: WindowMap = windowMap.set(id, path)
+
+    activeWorkspace.windowState.windowMap = newWindowMap
+    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
   },
 
   // maximise a window
