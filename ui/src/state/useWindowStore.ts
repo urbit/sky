@@ -342,8 +342,16 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // track active window
   setActiveWindowID: (id: WindowID) => {
-    sendWindowStateToNamespace(get(), { key: 'activeWindowID', val: id })
-    set({ activeWindowID: id })
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+
+    if (!activeWorkspace) {
+      console.error(`No workspace for ${get().activeWorkspaceID}`)
+      return;
+    }
+
+    activeWorkspace.windowState.activeWindowID = id
+    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
   },
 
   // track active window's path
