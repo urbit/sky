@@ -47,6 +47,7 @@ interface WindowStore {
   togglePathBarView: (id: WindowID) => void
   setActiveWindowID: (id: WindowID) => void
   setActiveWindowPath: (path: Path) => void
+  setActiveWorkspaceID: (id: WorkspaceID) => void
   //setWindowState: (state: BackendWindowStateObject) => void
 }
 
@@ -107,7 +108,7 @@ const defaultWorkspace: Workspace = {
 }
 
 const defaultWorkspaceMap: WorkspaceMap = new Map<WorkspaceID, Workspace>([
-  [1, defaultWorkspace],
+  [0, defaultWorkspace],
 ])
 
 const useWindowStore = create<WindowStore>((set, get) => ({
@@ -441,6 +442,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         activeWorkspace
       ),
     })
+  },
+
+  setActiveWorkspaceID: (id: WorkspaceID) => {
+    set({ activeWorkspaceID: id })
   },
 
   // set init window state from namespace

@@ -6,11 +6,7 @@ import closeIcon from '../assets/images/close.png'
 import useWindowStore from '../state/useWindowStore'
 
 export default function StatusBar() {
-  const { setActiveWindowID } = useWindowStore()
-  // TODO don't redeclare defaultPath and defaultMap,
-  // should only be set in useWindowStore
-  const defaultPath = `~${window.ship}/home`
-  const defaultMap = new Map<number, string>([[1, defaultPath]])
+  const { setActiveWorkspaceID } = useWindowStore()
 
   const sigilConfig = {
     // TODO don't hard-code height all over this component
@@ -25,8 +21,7 @@ export default function StatusBar() {
   }
 
   const handleHomeClick = () => {
-    useWindowStore.setState({ windowMap: defaultMap })
-    setActiveWindowID(1)
+    setActiveWorkspaceID(0)
   }
 
   return (
