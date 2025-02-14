@@ -356,8 +356,16 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // track active window's path
   setActiveWindowPath: (path: Path) => {
-    sendWindowStateToNamespace(get(), { key: 'activeWindowPath', val: path })
-    set({ activeWindowPath: path })
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+
+    if (!activeWorkspace) {
+      console.error(`No workspace for ${get().activeWorkspaceID}`)
+      return;
+    }
+
+    activeWorkspace.windowState.activeWindowPath = path
+    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
   },
 
   // set init window state from namespace
