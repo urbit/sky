@@ -48,9 +48,8 @@ export default function Window({
   ])
 
   const {
-    maxWindow,
-    fileView,
-    pathBarView,
+    workspaces,
+    activeWorkspaceID,
     setMaxWindow,
     toggleFileView,
     setActiveWindowID,
@@ -284,10 +283,14 @@ export default function Window({
   }
 
   function handleXButtonClick(id: number) {
-    if (id === maxWindow) {
-      setMaxWindow(0)
-    } else {
-      delWindow(id)
+    const activeWorkspace = workspaces.get(activeWorkspaceID)
+
+    if (activeWorkspace) {
+      if (id === activeWorkspace.windowState.maxWindow) {
+        setMaxWindow(0)
+      } else {
+        delWindow(id)
+      }
     }
   }
 
@@ -322,6 +325,9 @@ export default function Window({
     setVisibilityOptions(filteredOptions)
   }, [published])
 
+  const fileView = workspaces.get(activeWorkspaceID)?.windowState.fileView
+  const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
+
   return (
     <Allotment>
       <Allotment.Pane visible key={id} className="wf hf fr">
@@ -333,7 +339,7 @@ export default function Window({
           }}
           onMouseEnter={handleWindowMouseEnter}
         >
-          {pathBarView.includes(id) && (
+          {pathBarView && pathBarView.includes(id) && (
             <div
               className="absolute b1 br1 bd1"
               style={{
@@ -420,7 +426,7 @@ export default function Window({
                           handleFileView()
                         }}
                       >
-                        {fileView.includes(id) ? 'View' : 'Edit'}
+                        {fileView && fileView.includes(id) ? 'View' : 'Edit'}
                       </button>
                     </div>
                   )}
@@ -452,7 +458,9 @@ export default function Window({
                 </div>
               )}
             </div>
-            {!fileView.includes(id) ? windowContent : fileSystemContent}
+            {fileView && !fileView.includes(id)
+              ? windowContent
+              : fileSystemContent}
           </div>
         </div>
       </Allotment.Pane>
