@@ -118,30 +118,29 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // add a new window to the tree
   addWindow: (parentID: WindowID, path: Path) => {
-    const currentWorkspaces = get().workspaces
-    const activeWorkspace = currentWorkspaces.get(get().activeWorkspaceID)
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
       return;
     }
 
-    const windowMap = activeWorkspace.windowState.windowMap
-    const parentPath = windowMap.get(parentID)
+    const windowMap: Map<WindowID, Path>  = activeWorkspace.windowState.windowMap
+    const parentPath: Path | undefined = windowMap.get(parentID)
 
     if (!parentPath) {
       console.error(`No parent at ${parentID}`)
       return;
     }
 
-    const newWindowMap = new Map(windowMap)
+    const newWindowMap: Map<WindowID, Path> = new Map(windowMap)
     newWindowMap.set(parentID * 2, parentPath)
     newWindowMap.set(parentID * 2 + 1, path)
     newWindowMap.set(parentID, '')
 
     activeWorkspace.windowState.windowMap = newWindowMap
 
-    //sendWindowStateToNamespace(activeWorkspace.windowState, { key: 'windowMap', val: newWindowMap })
     set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
   },
 
