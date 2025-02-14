@@ -88,7 +88,7 @@ function sendWindowStateToNamespace(
 }
 
 // default state values
-const defaultPath: string = '~zod/home'
+const defaultPath: Path = '~zod/home'
 const defaultMap: Map<WindowID, Path> = new Map<WindowID, Path>([
   [1, defaultPath],
 ])
