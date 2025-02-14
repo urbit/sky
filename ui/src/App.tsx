@@ -4,6 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
+import { get } from './api/sky.ts'
 
 function App() {
   const {
@@ -14,6 +15,7 @@ function App() {
     setMaxWindow,
     togglePathBarView,
     updateWindowPath,
+    setWorkspacesState,
     setActiveWindowID,
   } = useWindowStore()
 
@@ -228,20 +230,19 @@ function App() {
     togglePathBarView,
   ])
 
-  // TODO restore
-  // on mount, init window state
-  //useEffect(() => {
-  //  async function init() {
-  //    const res = await get('~zod/sys/state/windows')
-  //
-  //    if (res && res.ok) {
-  //      const data = await res.json()
-  //      setWindowState(data)
-  //    }
-  //  }
-  //
-  //  init()
-  //}, [])
+  // on mount, init frontend state
+  useEffect(() => {
+    async function init() {
+      const res = await get(`~${window.ship}/sys/state/windows`)
+
+      if (res && res.ok) {
+        const data = await res.json()
+        setWorkspacesState(data)
+      }
+    }
+
+    init()
+  }, [])
 
   return (
     <div

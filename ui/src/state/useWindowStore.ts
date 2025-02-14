@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-//import { put } from '../api/sky'
+import { put } from '../api/sky'
 
 type Path = string
 type WindowID = number
@@ -16,21 +16,32 @@ interface WindowStateObject {
 
 // window map must be serialized to an array in JSON
 // we don't store the active window ID or path on the backend
-//interface BackendWindowStateObject
-//  extends Omit<WindowStateObject, 'windowMap' | 'activeWindowID' | 'activeWindowPath'> {
-//  windowMap: Array<[WindowID, Path]>
-//}
-//
-//type WindowStateObjectAttribute = {
-//  [k in keyof WindowStateObject]: {
-//    key: k
-//    val: WindowStateObject[k]
-//  }
-//}[keyof WindowStateObject]
+interface BackendWindowStateObject
+  extends Omit<
+    WindowStateObject,
+    'windowMap' | 'activeWindowID' | 'activeWindowPath'
+  > {
+  windowMap: Array<[WindowID, Path]>
+}
 
 interface Workspace {
   name: string
   windowState: WindowStateObject
+}
+
+interface BackendWorkspace {
+  name: string
+  windowState: BackendWindowStateObject
+}
+
+interface WindowStore {
+  workspaces: WorkspaceMap
+  activeWorkspaceID: WorkspaceID
+}
+
+interface BackendWindowStore {
+  workspaces: Array<[WorkspaceID, BackendWorkspace]>
+  activeWorkspaceID: WorkspaceID
 }
 
 type WorkspaceID = number
@@ -48,46 +59,49 @@ interface WindowStore {
   setActiveWindowID: (id: WindowID) => void
   setActiveWindowPath: (path: Path) => void
   setActiveWorkspaceID: (id: WorkspaceID) => void
-  //setWindowState: (state: BackendWindowStateObject) => void
+  setWorkspacesState: (state: BackendWindowStore) => void
 }
 
-// helper to update window state in the namespace
-// TODO update for workspaces
-//function sendWindowStateToNamespace(
-//  state: WindowStateObject,
-//  update: WindowStateObjectAttribute
-//): void {
-//  interface IntermediateWindowStateObject
-//    extends Omit<WindowStateObject, 'windowMap' | 'activeWindowID' | 'activeWindowPath'> {
-//    windowMap: WindowMap | Array<[WindowID, Path]>
-//  }
-//
-//  const oldWindowMap = state.windowMap
-//
-//  const updatedState: IntermediateWindowStateObject = {
-//    ...state,
-//    [update.key]: update.val,
-//  }
-//
-//  if (update.key === 'windowMap') {
-//    updatedState.windowMap = Array.from(update.val.entries())
-//  } else {
-//    updatedState.windowMap = Array.from(oldWindowMap.entries())
-//  }
-//
-//  try {
-//    const stateFile = new File(
-//      [JSON.stringify(updatedState, null, 2)],
-//      'windows.json',
-//      { type: 'application/json' }
-//    )
-//
-//    // TODO remove @p; API should accept relative paths
-//    //put(`${window.ship}/sys/state`, stateFile)
-//  } catch (err) {
-//    console.log('Failed to save window state to namespace: ', err)
-//  }
-//}
+// helper to serialize and send the entire workspaces state to the namespace
+function sendWorkspacesStateToNamespace(store: WindowStore): void {
+  // Convert each workspace's windowMap to array format for backend
+  const workspacesArray: Array<[WorkspaceID, BackendWorkspace]> = Array.from(
+    store.workspaces.entries()
+  ).map(([id, workspace]) => {
+    const backendWindowState: BackendWindowStateObject = {
+      windowMap: Array.from(workspace.windowState.windowMap.entries()),
+      maxWindow: workspace.windowState.maxWindow,
+      fileView: workspace.windowState.fileView,
+      pathBarView: workspace.windowState.pathBarView,
+    }
+
+    const backendWorkspace: BackendWorkspace = {
+      name: workspace.name,
+      windowState: backendWindowState,
+    }
+
+    return [id, backendWorkspace]
+  })
+
+  const backendState: BackendWindowStore = {
+    workspaces: workspacesArray,
+    activeWorkspaceID: store.activeWorkspaceID,
+  }
+
+  try {
+    const stateFile = new File(
+      [JSON.stringify(backendState, null, 2)],
+      'workspaces.json',
+      { type: 'application/json' }
+    )
+
+    // TODO remove hard-coded @p; API should accept relative paths
+    // can't use window.ship in this file
+    put('~zod/sys/state', stateFile)
+  } catch (err) {
+    console.log('Failed to save workspaces state to namespace: ', err)
+  }
+}
 
 // default state values
 const defaultPath: Path = '~zod/home'
@@ -297,7 +311,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
     activeWorkspace.windowState.maxWindow = id
 
-    //sendWindowStateToNamespace(get(), { key: 'maxWindow', val: id })
+    sendWorkspacesStateToNamespace(get())
     set({
       workspaces: currentWorkspaces.set(
         get().activeWorkspaceID,
@@ -323,10 +337,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     if (!fileViewArray.includes(id)) {
       const newFileViewArray: Array<WindowID> = [...fileViewArray, id]
 
-      //sendWindowStateToNamespace(get(), {
-      //  key: 'fileView',
-      //  val: newFileViewArray,
-      //})
+      sendWorkspacesStateToNamespace(get())
       activeWorkspace.windowState.fileView = newFileViewArray
       set({
         workspaces: currentWorkspaces.set(
@@ -370,10 +381,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     if (!pathBarViewArray.includes(id)) {
       const newPathBarViewArray: Array<WindowID> = [...pathBarViewArray, id]
 
-      //sendWindowStateToNamespace(get(), {
-      //  key: 'pathBarViewArray',
-      //  val: newPathBarViewArray,
-      //})
+      sendWorkspacesStateToNamespace(get())
 
       activeWorkspace.windowState.pathBarView = newPathBarViewArray
       set({
@@ -387,10 +395,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         item => item !== id
       )
 
-      //sendWindowStateToNamespace(get(), {
-      //  key: 'pathBarViewArray',
-      //  val: newPathBarView,
-      //})
+      sendWorkspacesStateToNamespace(get())
 
       activeWorkspace.windowState.pathBarView = newPathBarViewArray
       set({
@@ -449,14 +454,41 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   // set init window state from namespace
-  //setWindowState: (state: BackendWindowStateObject) => {
-  //  set({
-  //    windowMap: new Map(state.windowMap),
-  //    maxWindow: state.maxWindow,
-  //    fileView: state.fileView,
-  //    pathBarView: state.pathBarView,
-  //  })
-  //},
+  setWorkspacesState: (state: BackendWindowStore) => {
+    if (!state) {
+      set({ workspaces: defaultWorkspaceMap, activeWorkspaceID: 0 })
+    }
+
+    const deserializedWorkspaces = new Map<WorkspaceID, Workspace>(
+      state.workspaces.map(([id, workspace]) => {
+        // Convert the windowMap array to a Map
+        const windowMap = new Map<WindowID, Path>(
+          workspace.windowState.windowMap
+        )
+
+        // Create a proper WindowStateObject
+        const windowState: WindowStateObject = {
+          ...workspace.windowState,
+          windowMap,
+          activeWindowID: 1, // Default since not stored in backend
+          activeWindowPath: windowMap.get(1) || defaultPath, // Get path of first window or use default
+        }
+
+        // Create the full Workspace object
+        const fullWorkspace: Workspace = {
+          name: workspace.name,
+          windowState,
+        }
+
+        return [id, fullWorkspace]
+      })
+    )
+
+    set({
+      workspaces: deserializedWorkspaces,
+      activeWorkspaceID: state.activeWorkspaceID,
+    })
+  },
 }))
 
 export default useWindowStore
