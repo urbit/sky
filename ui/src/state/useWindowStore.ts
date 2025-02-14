@@ -272,24 +272,36 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // toggle "normal" view and file view for a window
   toggleFileView: (id: WindowID) => {
-    const fileViewArray = get().fileView
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+
+    if (!activeWorkspace) {
+      console.error(`No workspace for ${get().activeWorkspaceID}`)
+      return;
+    }
+
+    const fileViewArray: Array<WindowID> = activeWorkspace.windowState.fileView
 
     if (!fileViewArray.includes(id)) {
-      const newFileViewArray = [...fileViewArray, id]
+      const newFileViewArray: Array<WindowID> = [...fileViewArray, id]
 
-      sendWindowStateToNamespace(get(), {
-        key: 'fileView',
-        val: newFileViewArray,
-      })
-      set({ fileView: newFileViewArray })
+      //sendWindowStateToNamespace(get(), {
+      //  key: 'fileView',
+      //  val: newFileViewArray,
+      //})
+      activeWorkspace.windowState.fileView = newFileViewArray
+      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
     } else {
       const newFileViewArray = fileViewArray.filter(item => item !== id)
 
-      sendWindowStateToNamespace(get(), {
-        key: 'fileView',
-        val: newFileViewArray,
-      })
-      set({ fileView: newFileViewArray })
+      //sendWindowStateToNamespace(get(), {
+      //  key: 'fileView',
+      //  val: newFileViewArray,
+      //})
+
+      activeWorkspace.windowState.fileView = newFileViewArray
+      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
+
     }
   },
 
