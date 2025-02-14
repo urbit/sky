@@ -37,7 +37,7 @@ type WorkspaceMap = Map<WorkspaceID, Workspace>
 interface WindowStore {
   workspaces: WorkspaceMap
   activeWorkspaceID: WorkspaceID,
-  addWindow: (parentId: WindowID, path: Path) => void
+  addWindow: (parentID: WindowID, path: Path) => void
   delWindow: (id: WindowID) => void
   updateWindowPath: (id: WindowID, path: Path) => void
   setMaxWindow: (id: WindowID) => void
@@ -117,7 +117,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   activeWorkspaceID: 0,
 
   // add a new window to the tree
-  addWindow: (parentId: WindowID, path: Path) => {
+  addWindow: (parentID: WindowID, path: Path) => {
     const currentWorkspaces = get().workspaces
     const activeWorkspace = currentWorkspaces.get(get().activeWorkspaceID)
 
@@ -127,17 +127,17 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     }
 
     const windowMap = activeWorkspace.windowState.windowMap
-    const parentPath = windowMap.get(parentId)
+    const parentPath = windowMap.get(parentID)
 
     if (!parentPath) {
-      console.error(`No parent at ${parentId}`)
+      console.error(`No parent at ${parentID}`)
       return;
     }
 
     const newWindowMap = new Map(windowMap)
-    newWindowMap.set(parentId * 2, parentPath)
-    newWindowMap.set(parentId * 2 + 1, path)
-    newWindowMap.set(parentId, '')
+    newWindowMap.set(parentID * 2, parentPath)
+    newWindowMap.set(parentID * 2 + 1, path)
+    newWindowMap.set(parentID, '')
 
     activeWorkspace.windowState.windowMap = newWindowMap
 
@@ -191,38 +191,38 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     }
 
     function findValidParent(map: Map<WindowID, Path | null>, id: WindowID) {
-      let currentId = id
+      let currentID = id
 
-      while (currentId !== 1) {
-        const parentId = isEven(currentId) ? currentId / 2 : (currentId - 1) / 2
-        const parentSiblingId = isEven(parentId) ? parentId + 1 : parentId - 1
-        map.delete(currentId)
+      while (currentID !== 1) {
+        const parentID = isEven(currentID) ? currentID / 2 : (currentID - 1) / 2
+        const parentSiblingID = isEven(parentID) ? parentID + 1 : parentID - 1
+        map.delete(currentID)
 
         //  if parent has sibling set parent to original path and return parent
-        if (map.has(parentSiblingId)) {
-          return parentId
+        if (map.has(parentSiblingID)) {
+          return parentID
         }
         //  delete parent window form map and move to grandparent
-        currentId = parentId
+        currentID = parentID
       }
       return 1
     }
 
     function handleDelete(map: Map<WindowID, Path | null>, id: WindowID) {
-      const siblingId = isEven(id) ? id + 1 : id - 1
-      const siblingPath = map.get(siblingId) ?? null
+      const siblingID = isEven(id) ? id + 1 : id - 1
+      const siblingPath = map.get(siblingID) ?? null
       const kids = new Set<WindowID>()
       findKids(map, id, kids)
       const idHasKids = hasKids(kids)
       const siblingKids = new Set<WindowID>()
-      findKids(map, siblingId, siblingKids)
+      findKids(map, siblingID, siblingKids)
       const siblingHasKids = hasKids(siblingKids)
 
       if (!idHasKids && !siblingHasKids && siblingPath === null) {
         //  handles single window delete case (when meta+w being used)
         //  if window doesn't have kids, sibling doesn't have kids and null(doesn't have sibling)
         //  delete nested parent windows till first window that has sibling
-        const validParent = findValidParent(map, siblingId)
+        const validParent = findValidParent(map, siblingID)
         const parentKids = new Set<WindowID>()
         findKids(map, validParent, parentKids)
         delKids(windowMap, parentKids)
@@ -237,7 +237,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         //  if window has kids and sibling doesn't
         //  setting valid parent(top tree node that has sibling) to sibling window path and deleteing all winodws below it
         //  deleteing window kids
-        //validParent(map, siblingId)
+        //validParent(map, siblingID)
         delKids(windowMap, kids)
       }
       //  otherwise keep sibling window state
