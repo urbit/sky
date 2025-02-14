@@ -130,12 +130,6 @@ function App() {
 
   // listen for keydown events
   useEffect(() => {
-    console.log(`workspace: ${activeWorkspace?.name ?? 'none'}`)
-    console.log(
-      `path: ${activeWorkspace.windowState.windowMap.get(activeWindowID)}`
-    )
-    console.log(`activeWindowID: ${activeWindowID}`)
-    console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey) {
         holdingKey.current = true
