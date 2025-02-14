@@ -15,17 +15,18 @@ interface WindowStateObject {
 }
 
 // window map must be serialized to an array in JSON
-interface SerializedWindowStateObject
-  extends Omit<WindowStateObject, 'windowMap'> {
-  windowMap: Array<[WindowID, Path]>
-}
-
-type WindowStateObjectAttribute = {
-  [k in keyof WindowStateObject]: {
-    key: k
-    val: WindowStateObject[k]
-  }
-}[keyof WindowStateObject]
+// we don't store the active window ID or path on the backend
+//interface BackendWindowStateObject
+//  extends Omit<WindowStateObject, 'windowMap' | 'activeWindowID' | 'activeWindowPath'> {
+//  windowMap: Array<[WindowID, Path]>
+//}
+//
+//type WindowStateObjectAttribute = {
+//  [k in keyof WindowStateObject]: {
+//    key: k
+//    val: WindowStateObject[k]
+//  }
+//}[keyof WindowStateObject]
 
 interface Workspace {
   name: string,
@@ -46,47 +47,46 @@ interface WindowStore {
   togglePathBarView: (id: WindowID) => void
   setActiveWindowID: (id: WindowID) => void
   setActiveWindowPath: (path: Path) => void
-  setWindowState: (state: SerializedWindowStateObject) => void
+  //setWindowState: (state: BackendWindowStateObject) => void
 }
 
 // helper to update window state in the namespace
 // TODO update for workspaces
-function sendWindowStateToNamespace(
-  state: WindowStateObject,
-  update: WindowStateObjectAttribute
-): void {
-  interface IntermediateWindowStateObject
-    extends Omit<WindowStateObject, 'windowMap'> {
-    windowMap: WindowMap | Array<[WindowID, Path]>
-  }
-
-  const oldWindowMap = state.windowMap
-
-  const updatedState: IntermediateWindowStateObject = {
-    ...state,
-    [update.key]: update.val,
-  }
-
-  if (update.key === 'windowMap') {
-    updatedState.windowMap = Array.from(update.val.entries())
-  } else {
-    updatedState.windowMap = Array.from(oldWindowMap.entries())
-  }
-
-  // TODO restore
-  //try {
-  //  const stateFile = new File(
-  //    [JSON.stringify(updatedState, null, 2)],
-  //    'windows.json',
-  //    { type: 'application/json' }
-  //  )
-  //
-  //  // TODO remove @p; API should accept relative paths
-  //  //put(`${window.ship}/sys/state`, stateFile)
-  //} catch (err) {
-  //  console.log('Failed to save window state to namespace: ', err)
-  //}
-}
+//function sendWindowStateToNamespace(
+//  state: WindowStateObject,
+//  update: WindowStateObjectAttribute
+//): void {
+//  interface IntermediateWindowStateObject
+//    extends Omit<WindowStateObject, 'windowMap' | 'activeWindowID' | 'activeWindowPath'> {
+//    windowMap: WindowMap | Array<[WindowID, Path]>
+//  }
+//
+//  const oldWindowMap = state.windowMap
+//
+//  const updatedState: IntermediateWindowStateObject = {
+//    ...state,
+//    [update.key]: update.val,
+//  }
+//
+//  if (update.key === 'windowMap') {
+//    updatedState.windowMap = Array.from(update.val.entries())
+//  } else {
+//    updatedState.windowMap = Array.from(oldWindowMap.entries())
+//  }
+//
+//  try {
+//    const stateFile = new File(
+//      [JSON.stringify(updatedState, null, 2)],
+//      'windows.json',
+//      { type: 'application/json' }
+//    )
+//
+//    // TODO remove @p; API should accept relative paths
+//    //put(`${window.ship}/sys/state`, stateFile)
+//  } catch (err) {
+//    console.log('Failed to save window state to namespace: ', err)
+//  }
+//}
 
 // default state values
 const defaultPath: Path = '~zod/home'
@@ -369,16 +369,14 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   // set init window state from namespace
-  setWindowState: (state: SerializedWindowStateObject) => {
-    set({
-      windowMap: new Map(state.windowMap),
-      maxWindow: state.maxWindow,
-      fileView: state.fileView,
-      pathBarView: state.pathBarView,
-      activeWindowID: state.activeWindowID,
-      activeWindowPath: state.activeWindowPath,
-    })
-  },
+  //setWindowState: (state: BackendWindowStateObject) => {
+  //  set({
+  //    windowMap: new Map(state.windowMap),
+  //    maxWindow: state.maxWindow,
+  //    fileView: state.fileView,
+  //    pathBarView: state.pathBarView,
+  //  })
+  //},
 }))
 
 export default useWindowStore
