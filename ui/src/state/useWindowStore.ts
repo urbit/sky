@@ -256,8 +256,18 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // maximise a window
   setMaxWindow: (id: WindowID) => {
-    sendWindowStateToNamespace(get(), { key: 'maxWindow', val: id })
-    set({ maxWindow: id })
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
+
+    if (!activeWorkspace) {
+      console.error(`No workspace for ${get().activeWorkspaceID}`)
+      return;
+    }
+
+    activeWorkspace.windowState.maxWindow = id
+
+    //sendWindowStateToNamespace(get(), { key: 'maxWindow', val: id })
+    set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
   },
 
   // toggle "normal" view and file view for a window
