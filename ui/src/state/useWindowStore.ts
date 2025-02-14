@@ -3,9 +3,10 @@ import { create } from 'zustand'
 
 type Path = string
 type WindowID = number
+type WindowMap = Map<WindowID, Path>
 
 interface WindowStateObject {
-  windowMap: Map<WindowID, Path>
+  windowMap: WindowMap
   maxWindow: WindowID
   fileView: Array<WindowID>
   pathBarView: Array<WindowID>
@@ -56,7 +57,7 @@ function sendWindowStateToNamespace(
 ): void {
   interface IntermediateWindowStateObject
     extends Omit<WindowStateObject, 'windowMap'> {
-    windowMap: Map<WindowID, Path> | Array<[WindowID, Path]>
+    windowMap: WindowMap | Array<[WindowID, Path]>
   }
 
   const oldWindowMap = state.windowMap
@@ -89,7 +90,7 @@ function sendWindowStateToNamespace(
 
 // default state values
 const defaultPath: Path = '~zod/home'
-const defaultMap: Map<WindowID, Path> = new Map<WindowID, Path>([
+const defaultMap: WindowMap = new Map<WindowID, Path>([
   [1, defaultPath],
 ])
 
@@ -126,7 +127,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return;
     }
 
-    const windowMap: Map<WindowID, Path>  = activeWorkspace.windowState.windowMap
+    const windowMap: WindowMap = activeWorkspace.windowState.windowMap
     const parentPath: Path | undefined = windowMap.get(parentID)
 
     if (!parentPath) {
@@ -134,7 +135,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return;
     }
 
-    const newWindowMap: Map<WindowID, Path> = new Map(windowMap)
+    const newWindowMap: WindowMap = new Map(windowMap)
     newWindowMap.set(parentID * 2, parentPath)
     newWindowMap.set(parentID * 2 + 1, path)
     newWindowMap.set(parentID, '')
@@ -146,126 +147,93 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // remove a node from the tree
   delWindow: (id: WindowID) => {
-    const windowMap = get().windowMap
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const activeWorkspace: Workspace | undefined = currentWorkspaces.get(get().activeWorkspaceID)
 
-    // If this is the last window (defaultMap), don't allow deletion
+    if (!activeWorkspace) {
+      console.error(`No workspace for ${get().activeWorkspaceID}`)
+      return;
+    }
+
+    const windowMap: WindowMap = activeWorkspace.windowState.windowMap
+
+    // if this is the only window, don't delete anything
     if (windowMap.size === 1 && windowMap.has(1)) {
-      return
+      return;
     }
 
     function isEven(num: WindowID): boolean {
       return num % 2 === 0
     }
 
-    function findKids(
-      map: Map<WindowID, Path | null>,
-      id: WindowID,
-      sequence: Set<WindowID>
-    ) {
-      const leftChild = id * 2
-      const rightChild = id * 2 + 1
-      //console.log('looking for kids in this map', new Map(map))
-
-      // If left child exists in the map, add it to the sequence and recurse
-      if (map.has(leftChild)) {
-        sequence.add(leftChild)
-        findKids(map, leftChild, sequence)
-      }
-
-      // If right child exists in the map, add it to the sequence and recurse
-      if (map.has(rightChild)) {
-        sequence.add(rightChild)
-        findKids(map, rightChild, sequence)
-      }
-    }
-
     function hasKids(kids: Set<WindowID>): boolean {
       return kids.size !== 0 ? true : false
     }
 
-    function delKids(map: Map<WindowID, Path | null>, kids: Set<WindowID>) {
+    function delWindows(map: WindowMap, kids: Set<WindowID>): WindowMap {
+      const newMap = new Map(map)
+
       kids.forEach(key => {
-        map.delete(key)
+        newMap.delete(key)
       })
+
+      return newMap
     }
 
-    function findValidParent(map: Map<WindowID, Path | null>, id: WindowID) {
-      let currentID = id
+    function findValidParent(map: WindowMap, id: WindowID): WindowID {
+      let currentID: WindowID = id
 
       while (currentID !== 1) {
-        const parentID = isEven(currentID) ? currentID / 2 : (currentID - 1) / 2
-        const parentSiblingID = isEven(parentID) ? parentID + 1 : parentID - 1
+        const parentID: WindowID = isEven(currentID) ? currentID / 2 : (currentID - 1) / 2
+        const parentSiblingID: WindowID = isEven(parentID) ? parentID + 1 : parentID - 1
         map.delete(currentID)
 
-        //  if parent has sibling set parent to original path and return parent
         if (map.has(parentSiblingID)) {
           return parentID
         }
-        //  delete parent window form map and move to grandparent
+
         currentID = parentID
       }
+
       return 1
     }
 
-    function handleDelete(map: Map<WindowID, Path | null>, id: WindowID) {
-      const siblingID = isEven(id) ? id + 1 : id - 1
-      const siblingPath = map.get(siblingID) ?? null
-      const kids = new Set<WindowID>()
-      findKids(map, id, kids)
-      const idHasKids = hasKids(kids)
-      const siblingKids = new Set<WindowID>()
-      findKids(map, siblingID, siblingKids)
-      const siblingHasKids = hasKids(siblingKids)
+    function handleDelete(map: WindowMap, id: WindowID): WindowMap {
+      const siblingID: WindowID = isEven(id) ? id + 1 : id - 1
+      const siblingPath: Path | undefined = map.get(siblingID)
+      const kids: Set<WindowID> = new Set<WindowID>()
 
-      if (!idHasKids && !siblingHasKids && siblingPath === null) {
-        //  handles single window delete case (when meta+w being used)
-        //  if window doesn't have kids, sibling doesn't have kids and null(doesn't have sibling)
-        //  delete nested parent windows till first window that has sibling
-        const validParent = findValidParent(map, siblingID)
-        const parentKids = new Set<WindowID>()
-        findKids(map, validParent, parentKids)
-        delKids(windowMap, parentKids)
-        windowMap.delete(validParent)
+      const idHasKids: boolean = hasKids(kids)
+      const siblingKids: Set<WindowID> = new Set<WindowID>()
+
+      const siblingHasKids: boolean = hasKids(siblingKids)
+
+      let newMap = new Map(map)
+
+      if (!idHasKids && !siblingHasKids && siblingPath === undefined) {
+        const validParent = findValidParent(newMap, siblingID)
+
+        newMap = delWindows(newMap, new Set([validParent]))
       } else if (idHasKids && siblingHasKids) {
-        //  handles nested window delete case (when multiple window shrinked to 0)
-        //  if window has kids and sibling has kids
-        //  delete window kids
-        delKids(windowMap, kids)
+        newMap = delWindows(newMap, kids)
       } else if (idHasKids && !siblingHasKids) {
-        //  handles nested window delete case (when multiple window shrinked to 0)
-        //  if window has kids and sibling doesn't
-        //  setting valid parent(top tree node that has sibling) to sibling window path and deleteing all winodws below it
-        //  deleteing window kids
-        //validParent(map, siblingID)
-        delKids(windowMap, kids)
+        newMap = delWindows(newMap, kids)
       }
-      //  otherwise keep sibling window state
-      //console.log('map', new Map(map))
-      const newMap = new Map<WindowID, Path>()
-      map.forEach((value, key) => {
-        newMap.set(key, value ?? defaultPath)
-      })
-      set({ windowMap: newMap })
+
+      newMap.delete(id)
+
+      return newMap
     }
 
-    windowMap.delete(id)
+    const newWindowMap = handleDelete(windowMap, id)
 
-    if (id === 1) {
-      sendWindowStateToNamespace(get(), { key: 'windowMap', val: defaultMap })
-      set({ windowMap: defaultMap })
+    // If no windows are left after deletion, reset to defaultMap
+    if (newWindowMap.size === 0) {
+      activeWorkspace.windowState.windowMap = defaultMap
+      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
     } else {
-      handleDelete(windowMap, id)
-
-      // If no windows are left after deletion, reset to defaultMap
-      if (windowMap.size === 0) {
-        sendWindowStateToNamespace(get(), { key: 'windowMap', val: defaultMap })
-        set({ windowMap: defaultMap })
-      } else {
-        // TODO this relies on handleDelete mutating the
-        // windowMap directly, mutation isn't ideal imo
-        sendWindowStateToNamespace(get(), { key: 'windowMap', val: windowMap })
-        set({ windowMap: windowMap })
-      }
+      activeWorkspace.windowState.windowMap = newWindowMap
+      set({ workspaces: currentWorkspaces.set(get().activeWorkspaceID, activeWorkspace) })
     }
   },
 
