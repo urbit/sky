@@ -8,6 +8,7 @@ type WindowMap = Map<WindowID, Path>
 interface WindowStateObject {
   windowMap: WindowMap
   maxWindow: WindowID
+  // TODO move fileView and pathBarView into Window object
   fileView: Array<WindowID>
   pathBarView: Array<WindowID>
   activeWindowID: WindowID
@@ -26,11 +27,13 @@ interface BackendWindowStateObject
 
 interface Workspace {
   name: string
+  mounted: boolean
   windowState: WindowStateObject
 }
 
 interface BackendWorkspace {
   name: string
+  mounted: boolean
   windowState: BackendWindowStateObject
 }
 
@@ -58,7 +61,12 @@ interface WindowStore {
   togglePathBarView: (id: WindowID) => void
   setActiveWindowID: (id: WindowID) => void
   setActiveWindowPath: (path: Path) => void
+  addWorkspace: () => void
+  delWorkspace: (id: WorkspaceID) => void
+  mountWorkspace: (id: WorkspaceID) => void
+  unmountWorkspace: (id: WorkspaceID) => void
   setActiveWorkspaceID: (id: WorkspaceID) => void
+  updateWorkspaceName: (id: WorkspaceID, name: string) => void
   setWorkspacesState: (state: BackendWindowStore) => void
 }
 
@@ -77,6 +85,7 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
 
     const backendWorkspace: BackendWorkspace = {
       name: workspace.name,
+      mounted: workspace.mounted,
       windowState: backendWindowState,
     }
 
@@ -118,6 +127,7 @@ const defaultWindowStateObject: WindowStateObject = {
 
 const defaultWorkspace: Workspace = {
   name: 'Home',
+  mounted: true,
   windowState: defaultWindowStateObject,
 }
 
@@ -166,7 +176,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
-      activeWorkspaceID: get().activeWorkspaceID
+      activeWorkspaceID: get().activeWorkspaceID,
     })
   },
 
@@ -288,7 +298,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       })
       sendWorkspacesStateToNamespace({
         workspaces: get().workspaces,
-        activeWorkspaceID: get().activeWorkspaceID
+        activeWorkspaceID: get().activeWorkspaceID,
       })
     }
   },
@@ -317,7 +327,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
-      activeWorkspaceID: get().activeWorkspaceID
+      activeWorkspaceID: get().activeWorkspaceID,
     })
   },
 
@@ -344,7 +354,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
-      activeWorkspaceID: get().activeWorkspaceID
+      activeWorkspaceID: get().activeWorkspaceID,
     })
   },
 
@@ -374,7 +384,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       })
       sendWorkspacesStateToNamespace({
         workspaces: get().workspaces,
-        activeWorkspaceID: get().activeWorkspaceID
+        activeWorkspaceID: get().activeWorkspaceID,
       })
     } else {
       const newFileViewArray = fileViewArray.filter(item => item !== id)
@@ -388,7 +398,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       })
       sendWorkspacesStateToNamespace({
         workspaces: get().workspaces,
-        activeWorkspaceID: get().activeWorkspaceID
+        activeWorkspaceID: get().activeWorkspaceID,
       })
     }
   },
@@ -475,8 +485,72 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     })
   },
 
+  // create a new workspace
+  addWorkspace: () => {
+    const currentWorkspaces: WorkspaceMap = get().workspaces
+    const newWorkspaceID: WorkspaceID =
+      Math.max(...currentWorkspaces.keys()) + 1
+
+    set({
+      workspaces: currentWorkspaces.set(newWorkspaceID, {
+        name: '',
+        mounted: true,
+        windowState: defaultWindowStateObject,
+      }),
+    })
+  },
+
+  // delete a workspace
+  delWorkspace: (id: WorkspaceID) => {
+    const workspaces: WorkspaceMap = get().workspaces
+    workspaces.delete(id)
+
+    set({ workspaces: workspaces })
+  },
+
+  // add a workspace to the tab bar
+  mountWorkspace: (id: WorkspaceID) => {
+    const currentWorkspaces = get().workspaces
+    const workspace = currentWorkspaces.get(id)
+
+    if (!workspace) {
+      console.error(`No workspace ${id}`)
+      return
+    }
+
+    workspace.mounted = true
+    set({ workspaces: currentWorkspaces.set(id, workspace) })
+  },
+
+  // remove a workspace from the tab bar
+  unmountWorkspace: (id: WorkspaceID) => {
+    const currentWorkspaces = get().workspaces
+    const workspace = currentWorkspaces.get(id)
+
+    if (!workspace) {
+      console.error(`No workspace ${id}`)
+      return
+    }
+
+    workspace.mounted = false
+    set({ workspaces: currentWorkspaces.set(id, workspace) })
+  },
+
   setActiveWorkspaceID: (id: WorkspaceID) => {
     set({ activeWorkspaceID: id })
+  },
+
+  updateWorkspaceName: (id: WorkspaceID, name: string) => {
+    const currentWorkspaces = get().workspaces
+    const workspace = currentWorkspaces.get(id)
+
+    if (!workspace) {
+      console.error(`No workspace ${id}`)
+      return
+    }
+
+    workspace.name = name
+    set({ workspaces: currentWorkspaces.set(id, workspace) })
   },
 
   // set init window state from namespace
@@ -499,12 +573,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
           windowMap,
           activeWindowID: 1, // Default since not stored in backend
           activeWindowPath: windowMap.get(1) || defaultPath, // Get path of first window or use default
-          pathBarView: []
+          pathBarView: [],
         }
 
         // Create the full Workspace object
         const fullWorkspace: Workspace = {
           name: workspace.name,
+          mounted: workspace.mounted,
           windowState,
         }
 
