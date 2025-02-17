@@ -125,6 +125,7 @@ const defaultWorkspaceMap: WorkspaceMap = new Map<WorkspaceID, Workspace>([
   [0, defaultWorkspace],
 ])
 
+// main
 const useWindowStore = create<WindowStore>((set, get) => ({
   // init state values
   workspaces: defaultWorkspaceMap,
@@ -188,14 +189,17 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return
     }
 
+    // helper
     function isEven(num: WindowID): boolean {
       return num % 2 === 0
     }
 
+    // helper
     function hasKids(kids: Set<WindowID>): boolean {
       return kids.size !== 0 ? true : false
     }
 
+    // helper
     function delWindows(map: WindowMap, kids: Set<WindowID>): WindowMap {
       const newMap = new Map(map)
 
@@ -206,9 +210,12 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return newMap
     }
 
+    // helper
     function findValidParent(map: WindowMap, id: WindowID): WindowID {
       let currentID: WindowID = id
 
+      // try to find a valid parent
+      // by iterating up the tree
       while (currentID !== 1) {
         const parentID: WindowID = isEven(currentID)
           ? currentID / 2
@@ -225,9 +232,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         currentID = parentID
       }
 
+      // if the loop completes without
+      // finding a valid parent, return 1
       return 1
     }
 
+    // helper: remove a window from the
+    // map, clean up, return new map
     function handleDelete(map: WindowMap, id: WindowID): WindowMap {
       const siblingID: WindowID = isEven(id) ? id + 1 : id - 1
       const siblingPath: Path | undefined = map.get(siblingID)
@@ -255,9 +266,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return newMap
     }
 
+    // actually run the function
     const newWindowMap = handleDelete(windowMap, id)
 
-    // If no windows are left after deletion, reset to defaultMap
+    // if no windows are left after deletion, reset to defaultMap
     if (newWindowMap.size === 0) {
       activeWorkspace.windowState.windowMap = defaultMap
       set({
