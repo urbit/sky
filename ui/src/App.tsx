@@ -4,7 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { get } from './api/sky.ts'
+//import { get } from './api/sky.ts'
 
 function App() {
   const {
@@ -15,18 +15,17 @@ function App() {
     setMaxWindow,
     togglePathBarView,
     updateWindowPath,
-    setWorkspacesState,
+    //setWorkspacesState,
     setActiveWindowID,
   } = useWindowStore()
 
-  // Get active workspace and its window state
   const activeWorkspace = workspaces.get(activeWorkspaceID)
-  const {
-    windowMap = new Map(),
-    maxWindow = 0,
-    activeWindowID = 1,
-  } = activeWorkspace?.windowState ?? {}
+  // TODO handle undefined cases better
+  const windowMap = activeWorkspace?.windowState.windowMap || new Map()
+  const maxWindow = activeWorkspace?.windowState.maxWindow || 0
+  const activeWindowID = activeWorkspace?.windowState.activeWindowID || 1
 
+  const [windowContainer, setWindowContainer] = useState(<></>)
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
 
@@ -72,7 +71,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function () {
+        event.target.addEventListener('dragend', function() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -138,12 +137,7 @@ function App() {
         handleSwap()
       }
 
-      if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
-        if (event.metaKey) {
-          console.log('Pressed CMD+n')
-        } else {
-          console.log('Pressed CTRL+n')
-        }
+      if (event.ctrlKey && event.key === 'n') {
         event.preventDefault()
 
         if (maxWindow === 0) {
@@ -220,35 +214,55 @@ function App() {
   }, [
     maxWindow,
     activeWindowID,
+    windowMap,
     delWindow,
     addWindow,
     updateWindowPath,
     setActiveWindowID,
-    windowMap,
     handleSwap,
     setMaxWindow,
     togglePathBarView,
   ])
 
   // on mount, init frontend state
+  //useEffect(() => {
+  //  async function init() {
+  //    console.log('Running init()')
+  //    const res = await get(`~${window.ship}/sys/state/workspaces`)
+  //
+  //    if (res && !res.ok) {
+  //      console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
+  //    }
+  //
+  //    if (res && res.ok) {
+  //      const data = await res.json()
+  //      console.log(`init() received data: ${JSON.stringify(data)}`)
+  //      setWorkspacesState(data)
+  //    }
+  //  }
+  //
+  //  init()
+  //}, [])
+
   useEffect(() => {
-    async function init() {
-      console.log('Running init()')
-      const res = await get(`~${window.ship}/sys/state/workspaces`)
+    console.log('workspaces:', workspaces)
+    console.log('New activeWorkspaceID:', activeWorkspaceID)
+    const activeWorkspace = workspaces.get(activeWorkspaceID)
+    console.log('activeWorkspace:', activeWorkspace)
+    const windowMap = activeWorkspace?.windowState.windowMap || new Map()
+    console.log('windowMap:', windowMap)
 
-      if (res && !res.ok) {
-        console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
-      }
-
-      if (res && res.ok) {
-        const data = await res.json()
-        console.log(`init() received data: ${JSON.stringify(data)}`)
-        setWorkspacesState(data)
-      }
-    }
-
-    init()
-  }, [])
+    setWindowContainer(
+      <WindowContainer
+        map={windowMap}
+        id={1}
+        isVertical={window.innerWidth > window.innerHeight}
+        handleDrop={handleDrop}
+        handleDragStart={handleDragStart}
+        dragWindow={dragWindow}
+      />
+    )
+  }, [workspaces, activeWorkspaceID])
 
   return (
     <div
@@ -280,14 +294,7 @@ function App() {
             />
           </div>
         )}
-        <WindowContainer
-          map={windowMap}
-          id={1}
-          isVertical={window.innerWidth > window.innerHeight}
-          handleDrop={handleDrop}
-          handleDragStart={handleDragStart}
-          dragWindow={dragWindow}
-        />
+        {windowContainer}
       </div>
     </div>
   )

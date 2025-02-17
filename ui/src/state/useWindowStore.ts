@@ -114,25 +114,30 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
 
 // default state values
 const defaultPath: Path = '~zod/home'
-const defaultMap: WindowMap = new Map<WindowID, Path>([[1, defaultPath]])
 
-const defaultWindowStateObject: WindowStateObject = {
-  windowMap: defaultMap,
-  maxWindow: 0,
-  fileView: [],
-  pathBarView: [],
-  activeWindowID: 1,
-  activeWindowPath: defaultPath,
+// Function to create new default window state to avoid shared references
+function createDefaultWindowState(): WindowStateObject {
+  return {
+    windowMap: new Map<WindowID, Path>([[1, defaultPath]]),
+    maxWindow: 0,
+    fileView: [],
+    pathBarView: [],
+    activeWindowID: 1,
+    activeWindowPath: defaultPath,
+  }
 }
 
-const defaultWorkspace: Workspace = {
-  name: 'Home',
-  mounted: true,
-  windowState: defaultWindowStateObject,
+// Function to create new default workspace to avoid shared references
+function createDefaultWorkspace(name: string = 'Home'): Workspace {
+  return {
+    name,
+    mounted: true,
+    windowState: createDefaultWindowState(),
+  }
 }
 
 const defaultWorkspaceMap: WorkspaceMap = new Map<WorkspaceID, Workspace>([
-  [0, defaultWorkspace],
+  [0, createDefaultWorkspace('Home')],
 ])
 
 // main
@@ -147,18 +152,20 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
       get().activeWorkspaceID
     )
+    console.log(`activeWorkspaceID: ${get().activeWorkspaceID}`)
+    console.log(`activeWorkspace:`, activeWorkspace)
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return
+      return;
     }
 
     const windowMap: WindowMap = activeWorkspace.windowState.windowMap
     const parentPath: Path | undefined = windowMap.get(parentID)
 
-    if (!parentPath) {
+    if (parentPath === undefined) {
       console.error(`No parent at ${parentID}`)
-      return
+      return;
     }
 
     const newWindowMap: WindowMap = new Map(windowMap)
@@ -492,11 +499,8 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       Math.max(...currentWorkspaces.keys()) + 1
 
     set({
-      workspaces: currentWorkspaces.set(newWorkspaceID, {
-        name: '',
-        mounted: true,
-        windowState: defaultWindowStateObject,
-      }),
+      activeWorkspaceID: newWorkspaceID,
+      workspaces: currentWorkspaces.set(newWorkspaceID, createDefaultWorkspace('')),
     })
   },
 

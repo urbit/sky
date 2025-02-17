@@ -6,7 +6,19 @@ import closeIcon from '../assets/images/close.png'
 import useWindowStore from '../state/useWindowStore'
 
 export default function StatusBar() {
-  const { setActiveWorkspaceID } = useWindowStore()
+  const {
+    workspaces,
+    activeWorkspaceID,
+    setActiveWorkspaceID,
+    unmountWorkspace,
+    addWorkspace,
+  } = useWindowStore()
+
+  // TODO fix
+  // Get all mounted workspaces sorted by ID
+  const mountedWorkspaces = Array.from(workspaces.entries())
+    .filter(([key, workspace]) => key !== 0 && workspace.mounted)
+    .sort(([a], [b]) => a - b)
 
   const sigilConfig = {
     // TODO don't hard-code height all over this component
@@ -41,23 +53,50 @@ export default function StatusBar() {
         >
           <span>~</span>
         </div>
+        {mountedWorkspaces.map(([id, workspace]) => (
+          <div
+            key={id}
+            className={`br1 fr ac jb b1 pointer ${
+              id === activeWorkspaceID ? 'active' : ''
+            }`}
+            style={{
+              height: '30px',
+              paddingLeft: '10px',
+              paddingRight: '10px',
+              width: '200px',
+              marginRight: '10px',
+              // TODO use feather class instead of this
+              backgroundColor: id === activeWorkspaceID ? '#f0f0f0' : 'transparent',
+            }}
+            onClick={() => setActiveWorkspaceID(id)}
+          >
+            <span>{workspace.name || `Workspace ${id}`}</span>
+            {id !== 0 && (
+              <div
+                onClick={(e) => {
+                  e.stopPropagation()
+                  unmountWorkspace(id)
+                }}
+              >
+                <img
+                  style={{ height: '10px', width: '10px' }}
+                  src={closeIcon}
+                  alt="Close workspace"
+                />
+              </div>
+            )}
+          </div>
+        ))}
         <div
-          className="br1 fr ac jb b1"
+          className="br1 fr ac jc b1 pointer"
           style={{
             height: '30px',
-            paddingLeft: '10px',
-            paddingRight: '10px',
-            width: '200px',
+            width: '35px',
+            marginRight: '10px',
           }}
+          onClick={addWorkspace}
         >
-          <span>Workspace 1</span>
-          <div>
-            <img
-              style={{ height: '10px', width: '10px' }}
-              src={closeIcon}
-              alt="Close space"
-            />
-          </div>
+          <span>+</span>
         </div>
       </div>
       <div className="fr ac jb" style={{ height: '30px' }}>
