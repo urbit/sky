@@ -122,7 +122,6 @@ export default function Window({
           return <TextPlain text={txt} />
         }
         case 'text/html': {
-
           if (res.url) {
             return <TextHTML url={res.url} />
           }
@@ -401,17 +400,17 @@ export default function Window({
                   {!(
                     path === '' || path?.split('/')[0].slice(1) !== window.ship
                   ) && (
-                      <button
-                        className="fr ac jc"
-                        style={{ pointerEvents: 'visible' }}
-                        onMouseEnter={() => {
-                          setOpenOptionsMenu(true)
-                          setOpenVisibilityMenu(false)
-                        }}
-                      >
-                        ...
-                      </button>
-                    )}
+                    <button
+                      className="fr ac jc"
+                      style={{ pointerEvents: 'visible' }}
+                      onMouseEnter={() => {
+                        setOpenOptionsMenu(true)
+                        setOpenVisibilityMenu(false)
+                      }}
+                    >
+                      ...
+                    </button>
+                  )}
                   <button
                     className="fr ac jc"
                     style={{ pointerEvents: 'visible' }}

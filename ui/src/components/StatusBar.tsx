@@ -5,7 +5,7 @@ import bellIcon from '../assets/images/bell.png'
 import closeIcon from '../assets/images/close.png'
 // @ts-expect-error Type definitions for PNG imports are missing
 import downArrowIcon from '../assets/images/down-arrow.png'
-import useWindowStore from '../state/useWindowStore'
+import useWindowStore, { Workspace } from '../state/useWindowStore'
 import { useState, useEffect } from 'react'
 
 export default function StatusBar() {
@@ -18,12 +18,12 @@ export default function StatusBar() {
     addWorkspace,
     updateWorkspaceName,
     delWorkspace,
-    resetHomeWorkspace
+    resetHomeWorkspace,
   } = useWindowStore()
 
   // Get unmounted workspaces sorted with titled first (alphabetically), then untitled
   const unmountedWorkspaces = Array.from(workspaces.entries())
-    .filter(([_, workspace]) => !workspace.mounted)
+    .filter(([, workspace]) => !workspace.mounted)
     .sort(([, a], [, b]) => {
       // If both have names or both are untitled, sort alphabetically
       if ((!a.name && !b.name) || (a.name && b.name)) {
@@ -33,7 +33,9 @@ export default function StatusBar() {
       return a.name ? -1 : 1
     })
 
-  const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(null)
+  const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(
+    null
+  )
   const [editingName, setEditingName] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState<number | null>(null)
   const [isHovered, setIsHovered] = useState(false)
@@ -42,7 +44,10 @@ export default function StatusBar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       // If we have a dropdown open and the click wasn't inside a dropdown menu
-      if (dropdownOpen !== null && !(event.target as Element).closest('.workspace-dropdown')) {
+      if (
+        dropdownOpen !== null &&
+        !(event.target as Element).closest('.workspace-dropdown')
+      ) {
         setDropdownOpen(null)
       }
     }
@@ -52,9 +57,11 @@ export default function StatusBar() {
   }, [dropdownOpen])
 
   // Helper to check if a workspace is empty (only has ~zod/home path)
-  const isEmptyWorkspace = (workspace: any) => {
+  const isEmptyWorkspace = (workspace: Workspace) => {
     const paths = Array.from(workspace.windowState.windowMap.values())
-    return workspace.name === '' && paths.length === 1 && paths[0] === '~zod/home'
+    return (
+      workspace.name === '' && paths.length === 1 && paths[0] === '~zod/home'
+    )
   }
 
   // Get all mounted workspaces sorted by lastMounted
@@ -106,8 +113,9 @@ export default function StatusBar() {
         {mountedWorkspaces.map(([id, workspace]) => (
           <div
             key={id}
-            className={`br1 fr ac jb pointer ${id === activeWorkspaceID ? 'b2' : 'b1'
-              }`}
+            className={`br1 fr ac jb pointer ${
+              id === activeWorkspaceID ? 'b2' : 'b1'
+            }`}
             style={{
               height: '30px',
               paddingLeft: '10px',
@@ -125,11 +133,11 @@ export default function StatusBar() {
                   minWidth: 0,
                   border: 'none',
                   padding: '0 5px',
-                  background: 'transparent'
+                  background: 'transparent',
                 }}
                 value={editingName}
-                onChange={(e) => setEditingName(e.target.value)}
-                onKeyDown={(e) => {
+                onChange={e => setEditingName(e.target.value)}
+                onKeyDown={e => {
                   if (e.key === 'Enter') {
                     updateWorkspaceName(id, editingName)
                     setEditingWorkspaceId(null)
@@ -154,11 +162,11 @@ export default function StatusBar() {
                 {workspace.name || `Untitled`}
               </span>
             )}
-            {id !== 0 && (
-              isEmptyWorkspace(workspace) ? (
+            {id !== 0 &&
+              (isEmptyWorkspace(workspace) ? (
                 <div className="fr ac" style={{ gap: '10px' }}>
                   <div
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation()
                       setDropdownOpen(dropdownOpen === id ? null : id)
                     }}
@@ -179,7 +187,7 @@ export default function StatusBar() {
                           width: '150px',
                           background: 'white',
                           zIndex: 1000,
-                          padding: '5px'
+                          padding: '5px',
                         }}
                       >
                         {unmountedWorkspaces.map(([wsId, ws]) => (
@@ -187,7 +195,7 @@ export default function StatusBar() {
                             key={wsId}
                             className="fr ac jb pointer"
                             style={{ padding: '5px' }}
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation()
                               // First mount the selected workspace
                               mountWorkspace(wsId)
@@ -203,7 +211,7 @@ export default function StatusBar() {
                               style={{ height: '8px', width: '8px' }}
                               src={closeIcon}
                               alt="Delete workspace"
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation()
                                 delWorkspace(wsId)
                               }}
@@ -214,7 +222,7 @@ export default function StatusBar() {
                     )}
                   </div>
                   <div
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation()
                       delWorkspace(id)
                     }}
@@ -228,7 +236,7 @@ export default function StatusBar() {
                 </div>
               ) : (
                 <div
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation()
                     unmountWorkspace(id)
                   }}
@@ -239,21 +247,22 @@ export default function StatusBar() {
                     alt="Close workspace"
                   />
                 </div>
-              )
-            )}
+              ))}
           </div>
         ))}
-        {isHovered && <div
-          className="br1 fr ac jc b1 pointer"
-          style={{
-            height: '30px',
-            width: '35px',
-            marginRight: '10px',
-          }}
-          onClick={addWorkspace}
-        >
-          <span>+</span>
-        </div>}
+        {isHovered && (
+          <div
+            className="br1 fr ac jc b1 pointer"
+            style={{
+              height: '30px',
+              width: '35px',
+              marginRight: '10px',
+            }}
+            onClick={addWorkspace}
+          >
+            <span>+</span>
+          </div>
+        )}
       </div>
       <div className="fr ac jb" style={{ height: '30px' }}>
         <div

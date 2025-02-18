@@ -25,7 +25,7 @@ interface BackendWindowStateObject
   windowMap: Array<[WindowID, Path]>
 }
 
-interface Workspace {
+export interface Workspace {
   name: string
   mounted: boolean
   lastMounted: number
@@ -132,7 +132,7 @@ const defaultWorkspace: Workspace = {
   name: 'Home',
   mounted: true,
   lastMounted: Date.now(),
-  windowState: defaultWindowState
+  windowState: defaultWindowState,
 }
 
 const defaultWorkspaceMap: WorkspaceMap = new Map([[0, defaultWorkspace]])
@@ -173,8 +173,8 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       ...activeWorkspace,
       windowState: {
         ...activeWorkspace.windowState,
-        windowMap: newWindowMap
-      }
+        windowMap: newWindowMap,
+      },
     }
 
     // create a new Map to ensure React sees the change
@@ -182,7 +182,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     newWorkspaces.set(get().activeWorkspaceID, updatedWorkspace)
 
     set({
-      workspaces: newWorkspaces
+      workspaces: newWorkspaces,
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
@@ -294,8 +294,8 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       ...activeWorkspace,
       windowState: {
         ...activeWorkspace.windowState,
-        windowMap: newWindowMap.size === 0 ? defaultMap : newWindowMap
-      }
+        windowMap: newWindowMap.size === 0 ? defaultMap : newWindowMap,
+      },
     }
 
     // create a new Map to ensure React sees the change
@@ -303,7 +303,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     newWorkspaces.set(get().activeWorkspaceID, updatedWorkspace)
 
     set({
-      workspaces: newWorkspaces
+      workspaces: newWorkspaces,
     })
 
     if (newWindowMap.size > 0) {
@@ -334,8 +334,8 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       ...activeWorkspace,
       windowState: {
         ...activeWorkspace.windowState,
-        windowMap: newWindowMap
-      }
+        windowMap: newWindowMap,
+      },
     }
 
     // create a new Map to ensure React sees the change
@@ -343,7 +343,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     newWorkspaces.set(get().activeWorkspaceID, updatedWorkspace)
 
     set({
-      workspaces: newWorkspaces
+      workspaces: newWorkspaces,
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
@@ -368,8 +368,8 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       ...activeWorkspace,
       windowState: {
         ...activeWorkspace.windowState,
-        maxWindow: id
-      }
+        maxWindow: id,
+      },
     }
 
     // create a new Map to ensure React sees the change
@@ -377,7 +377,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     newWorkspaces.set(get().activeWorkspaceID, updatedWorkspace)
 
     set({
-      workspaces: newWorkspaces
+      workspaces: newWorkspaces,
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
@@ -567,12 +567,12 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const updatedWorkspace = {
       ...workspace,
       mounted: true,
-      lastMounted: Date.now()
+      lastMounted: Date.now(),
     }
 
     set({
       workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace),
-      activeWorkspaceID: id
+      activeWorkspaceID: id,
     })
     sendWorkspacesStateToNamespace({
       workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace),
@@ -602,11 +602,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     set({
       workspaces: newWorkspaces,
       // If no other mounted workspaces exist, fall back to home workspace (0)
-      activeWorkspaceID: mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
+      activeWorkspaceID:
+        mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0,
     })
     sendWorkspacesStateToNamespace({
       workspaces: newWorkspaces,
-      activeWorkspaceID: mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
+      activeWorkspaceID:
+        mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0,
     })
   },
 
@@ -658,11 +660,14 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       },
     }
 
-    const newWorkspaces = new Map(currentWorkspaces).set(0, updatedHomeWorkspace)
+    const newWorkspaces = new Map(currentWorkspaces).set(
+      0,
+      updatedHomeWorkspace
+    )
 
     set({
       workspaces: newWorkspaces,
-      activeWorkspaceID: 0
+      activeWorkspaceID: 0,
     })
 
     sendWorkspacesStateToNamespace({

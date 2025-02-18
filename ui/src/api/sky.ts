@@ -65,7 +65,6 @@ async function get(path: string): Promise<Response | void> {
       endpoint !== '/apps/landscape' &&
       res.url === `http://localhost:8080/apps/landscape/`
 
-
     // NOTE handle Landscape redirect
     // TODO change this behaviour in Landscape
     if (redirectedToGrid) {
