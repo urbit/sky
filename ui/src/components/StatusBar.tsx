@@ -8,12 +8,6 @@ import downArrowIcon from '../assets/images/down-arrow.png'
 import useWindowStore from '../state/useWindowStore'
 import { useState, useEffect } from 'react'
 
-const DEMO_UNMOUNTED_WORKSPACES = [
-  { id: 100, name: 'foo' },
-  { id: 101, name: 'bar' },
-  { id: 102, name: 'baz' }
-]
-
 export default function StatusBar() {
   const {
     workspaces,
@@ -22,7 +16,20 @@ export default function StatusBar() {
     unmountWorkspace,
     addWorkspace,
     updateWorkspaceName,
+    delWorkspace,
   } = useWindowStore()
+
+  // Get unmounted workspaces sorted with titled first (alphabetically), then untitled
+  const unmountedWorkspaces = Array.from(workspaces.entries())
+    .filter(([_, workspace]) => !workspace.mounted)
+    .sort(([, a], [, b]) => {
+      // If both have names or both are untitled, sort alphabetically
+      if ((!a.name && !b.name) || (a.name && b.name)) {
+        return (a.name || 'Untitled').localeCompare(b.name || 'Untitled')
+      }
+      // If one has a name and the other doesn't, the named one comes first
+      return a.name ? -1 : 1
+    })
 
   const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(null)
   const [editingName, setEditingName] = useState('')
@@ -164,9 +171,9 @@ export default function StatusBar() {
                         padding: '5px'
                       }}
                     >
-                      {DEMO_UNMOUNTED_WORKSPACES.map(ws => (
+                      {unmountedWorkspaces.map(([wsId, ws]) => (
                         <div
-                          key={ws.id}
+                          key={wsId}
                           className="fr ac jb pointer"
                           style={{ padding: '5px' }}
                           onClick={(e) => {
@@ -175,14 +182,16 @@ export default function StatusBar() {
                             setDropdownOpen(null)
                           }}
                         >
-                          <span>{ws.name}</span>
+                          <span className={ws.name ? '' : 'italic'}>
+                            {ws.name || 'Untitled'}
+                          </span>
                           <img
                             style={{ height: '8px', width: '8px' }}
                             src={closeIcon}
                             alt="Delete workspace"
                             onClick={(e) => {
                               e.stopPropagation()
-                              // TODO: implement deletion
+                              delWorkspace(wsId)
                             }}
                           />
                         </div>
