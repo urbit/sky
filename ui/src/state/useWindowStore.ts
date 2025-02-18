@@ -28,12 +28,14 @@ interface BackendWindowStateObject
 interface Workspace {
   name: string
   mounted: boolean
+  lastMounted: number
   windowState: WindowStateObject
 }
 
 interface BackendWorkspace {
   name: string
   mounted: boolean
+  lastMounted: number
   windowState: BackendWindowStateObject
 }
 
@@ -85,6 +87,7 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
     const backendWorkspace: BackendWorkspace = {
       name: workspace.name,
       mounted: workspace.mounted,
+      lastMounted: workspace.lastMounted,
       windowState: backendWindowState,
     }
 
@@ -127,6 +130,7 @@ const defaultWindowState: WindowStateObject = {
 const defaultWorkspace: Workspace = {
   name: 'Home',
   mounted: true,
+  lastMounted: Date.now(),
   windowState: defaultWindowState
 }
 
@@ -515,6 +519,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const newWorkspace: Workspace = {
       name: '',
       mounted: true,
+      lastMounted: Date.now(),
       windowState: {
         windowMap: new Map<WindowID, Path>([[1, defaultPath]]),
         maxWindow: 0,
@@ -549,8 +554,12 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return
     }
 
-    workspace.mounted = true
-    set({ workspaces: currentWorkspaces.set(id, workspace) })
+    const updatedWorkspace = {
+      ...workspace,
+      mounted: true,
+      lastMounted: Date.now()
+    }
+    set({ workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace) })
   },
 
   // remove a workspace from the tab bar
@@ -563,17 +572,20 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return
     }
 
-    workspace.mounted = false
+    // Create new workspaces Map with the unmounted workspace
+    const newWorkspaces = new Map(currentWorkspaces)
+    newWorkspaces.set(id, { ...workspace, mounted: false })
 
-    // TODO use a lastMounted date rather than highest ID
-    // Find the mounted workspace with the highest ID number
-    const mountedWorkspaces = Array.from(currentWorkspaces.entries())
-      .filter(([_, workspace]) => workspace.mounted)
-      .sort(([idA], [idB]) => idB - idA)
+    // Find most recently mounted workspace, excluding the one being unmounted
+    const mountedWorkspaces = Array.from(newWorkspaces.entries())
+      .filter(([wid, ws]) => wid !== 0 && wid !== id && ws.mounted)
+      .sort(([, a], [, b]) => b.lastMounted - a.lastMounted)
 
-    const newActiveWorkspaceID = mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
-
-    set({ workspaces: currentWorkspaces.set(id, workspace), activeWorkspaceID: newActiveWorkspaceID })
+    set({ 
+      workspaces: newWorkspaces,
+      // If no other mounted workspaces exist, fall back to home workspace (0)
+      activeWorkspaceID: mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
+    })
   },
 
   setActiveWorkspaceID: (id: WorkspaceID) => {
@@ -619,6 +631,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         const fullWorkspace: Workspace = {
           name: workspace.name,
           mounted: workspace.mounted,
+          lastMounted: workspace.lastMounted,
           windowState,
         }
 

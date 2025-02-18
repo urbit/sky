@@ -14,11 +14,10 @@ export default function StatusBar() {
     addWorkspace,
   } = useWindowStore()
 
-  // TODO fix
-  // Get all mounted workspaces sorted by ID
+  // Get all mounted workspaces sorted by lastMounted
   const mountedWorkspaces = Array.from(workspaces.entries())
     .filter(([key, workspace]) => key !== 0 && workspace.mounted)
-    .sort(([a], [b]) => a - b)
+    .sort(([, a], [, b]) => a.lastMounted - b.lastMounted)
 
   const sigilConfig = {
     // TODO don't hard-code height all over this component
