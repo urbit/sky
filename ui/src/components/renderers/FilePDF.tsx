@@ -15,7 +15,6 @@ export default function FilePDF({ pdfData }: FilePDFProps): JSX.Element {
 
   // Convert the binary data to text
   const pdfText = new TextDecoder().decode(pdfData)
-  console.log('pdf text', pdfData)
 
   // Regular expressions to capture metadata fields in the PDF
   const titleMatch = /\/Title\s*\(([^)]+)\)/.exec(pdfText)

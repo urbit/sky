@@ -72,7 +72,6 @@ interface WindowStore {
 
 // helper to serialize and send the entire workspaces state to the namespace
 function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
-  console.log('Running sendWorkspacesStateToNamespace')
   // convert each workspace's windowMap to array format for backend
   const workspacesArray: Array<[WorkspaceID, BackendWorkspace]> = Array.from(
     store.workspaces.entries()
@@ -108,7 +107,7 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
     // can't use window.ship in this file
     put('~zod/sys/state', stateFile)
   } catch (err) {
-    console.log('Failed to save workspaces state to namespace: ', err)
+    console.error('Failed to save workspaces state to namespace: ', err)
   }
 }
 
@@ -145,8 +144,6 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const activeWorkspace: Workspace | undefined = currentWorkspaces.get(
       get().activeWorkspaceID
     )
-    console.log(`activeWorkspaceID: ${get().activeWorkspaceID}`)
-    console.log(`activeWorkspace:`, activeWorkspace)
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
@@ -575,7 +572,6 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       .sort(([idA], [idB]) => idB - idA)
 
     const newActiveWorkspaceID = mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
-    console.log('new active workspace:', newActiveWorkspaceID)
 
     set({ workspaces: currentWorkspaces.set(id, workspace), activeWorkspaceID: newActiveWorkspaceID })
   },
@@ -599,7 +595,6 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // set init window state from namespace
   setWorkspacesState: (state: BackendWindowStore) => {
-    console.log('Running setWorkspacesState')
     if (!state) {
       set({ workspaces: defaultWorkspaceMap, activeWorkspaceID: 0 })
     }

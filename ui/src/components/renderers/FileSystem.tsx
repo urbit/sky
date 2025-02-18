@@ -25,32 +25,29 @@ async function renderFile(path: string, res: Response): Promise<JSX.Element> {
   const contentType = res.headers.get('content-type')
 
   if (!contentType) {
-    console.log('No content type found')
+    console.error('No content type found')
     return <p>No content type found</p>
   }
 
   const baseContentType = contentType.split(';')[0]
 
   if (composerContentTypes.has(baseContentType)) {
-    console.log(`Rendering ${baseContentType} with FileComposer`)
     return <FileComposer path={path} />
   }
 
   switch (baseContentType) {
     case 'image/png': {
-      console.log('Rendering image/png')
       const blob = await res.blob()
       const objectURL = URL.createObjectURL(blob)
       return <FilePNG url={objectURL} />
     }
     case 'application/pdf': {
-      console.log('Rendering application/pdf')
       const arrayBuffer = await res.arrayBuffer()
       const pdfData = new Uint8Array(arrayBuffer)
       return <FilePDF pdfData={pdfData} />
     }
     default: {
-      console.log(
+      console.error(
         `Rendering ${contentType.split(';')[0]} not supported by filesystem`
       )
       return <p>{`${contentType.split(';')[0]} not supported by filesystem`}</p>
@@ -80,7 +77,6 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
           throw new Error(`PUT failed with status: ${res?.status}`)
         }
 
-        console.log('Upload successful:', res)
         const newResponse = await get(path)
 
         if (newResponse) {

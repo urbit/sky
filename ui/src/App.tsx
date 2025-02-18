@@ -146,11 +146,6 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
-        if (event.metaKey) {
-          console.log('Pressed CMD+w')
-        } else {
-          console.log('Pressed CTRL+w')
-        }
         event.preventDefault()
 
         if (maxWindow === 0) {
@@ -159,11 +154,6 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
-        if (event.metaKey) {
-          console.log('Pressed CMD+m')
-        } else {
-          console.log('Pressed CTRL+m')
-        }
         event.preventDefault()
 
         if (activeWindowID > 1 && maxWindow === 0) {
@@ -178,12 +168,6 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-        if (event.metaKey) {
-          console.log('Pressed CMD+k')
-        } else {
-          console.log('Pressed CTRL+k')
-        }
-
         event.preventDefault()
 
         if (activeWindowID !== null) {
@@ -227,7 +211,6 @@ function App() {
   // on mount, init frontend state
   useEffect(() => {
     async function init() {
-      console.log('Running init()')
       const res = await get(`~${window.ship}/sys/state/workspaces`)
 
       if (res && !res.ok) {
@@ -236,7 +219,6 @@ function App() {
 
       if (res && res.ok) {
         const data = await res.json()
-        console.log(`init() received data: ${JSON.stringify(data)}`)
         setWorkspacesState(data)
       }
     }
@@ -245,12 +227,8 @@ function App() {
   }, [])
 
   useEffect(() => {
-    console.log('workspaces:', workspaces)
-    console.log('New activeWorkspaceID:', activeWorkspaceID)
     const activeWorkspace = workspaces.get(activeWorkspaceID)
-    console.log('activeWorkspace:', activeWorkspace)
     const windowMap = activeWorkspace?.windowState.windowMap || new Map()
-    console.log('windowMap:', windowMap)
 
     setWindowContainer(
       <WindowContainer

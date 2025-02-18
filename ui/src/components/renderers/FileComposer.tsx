@@ -157,7 +157,6 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
 
       try {
         await put(tempPath, file)
-        console.log(`Uploaded to ${tempPath}`)
 
         if (showPreview && language === 'html') {
           // Force iframe reload
@@ -210,7 +209,6 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
 
         if (res && res.ok) {
           setIsEdited(false)
-          console.log(`Published to ${path}`)
         }
       } catch (err) {
         console.error(`Published failed to ${path}: `, err)
