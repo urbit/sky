@@ -567,7 +567,17 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     }
 
     workspace.mounted = false
-    set({ workspaces: currentWorkspaces.set(id, workspace) })
+
+    // TODO use a lastMounted date rather than highest ID
+    // Find the mounted workspace with the highest ID number
+    const mountedWorkspaces = Array.from(currentWorkspaces.entries())
+      .filter(([_, workspace]) => workspace.mounted)
+      .sort(([idA], [idB]) => idB - idA)
+
+    const newActiveWorkspaceID = mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
+    console.log('new active workspace:', newActiveWorkspaceID)
+
+    set({ workspaces: currentWorkspaces.set(id, workspace), activeWorkspaceID: newActiveWorkspaceID })
   },
 
   setActiveWorkspaceID: (id: WorkspaceID) => {
