@@ -6,7 +6,7 @@ import closeIcon from '../assets/images/close.png'
 // @ts-expect-error Type definitions for PNG imports are missing
 import downArrowIcon from '../assets/images/down-arrow.png'
 import useWindowStore from '../state/useWindowStore'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const DEMO_UNMOUNTED_WORKSPACES = [
   { id: 100, name: 'foo' },
@@ -27,6 +27,19 @@ export default function StatusBar() {
   const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(null)
   const [editingName, setEditingName] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState<number | null>(null)
+  
+  // Add click-outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // If we have a dropdown open and the click wasn't inside a dropdown menu
+      if (dropdownOpen !== null && !(event.target as Element).closest('.workspace-dropdown')) {
+        setDropdownOpen(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [dropdownOpen])
 
   // Helper to check if a workspace is empty (only has ~zod/home path)
   const isEmptyWorkspace = (workspace: any) => {
@@ -140,7 +153,7 @@ export default function StatusBar() {
                   />
                   {dropdownOpen === id && (
                     <div 
-                      className="b1 br1"
+                      className="b1 br1 workspace-dropdown"
                       style={{
                         position: 'absolute',
                         top: '20px',
