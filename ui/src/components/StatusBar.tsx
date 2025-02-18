@@ -68,7 +68,7 @@ export default function StatusBar() {
             }}
             onClick={() => setActiveWorkspaceID(id)}
           >
-            <span>{workspace.name || `Workspace ${id}`}</span>
+            <span className={workspace.name ? '' : 'italic'}>{workspace.name || `Untitled`}</span>
             {id !== 0 && (
               <div
                 onClick={(e) => {
