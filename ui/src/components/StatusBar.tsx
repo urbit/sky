@@ -180,7 +180,10 @@ export default function StatusBar() {
                           style={{ padding: '5px' }}
                           onClick={(e) => {
                             e.stopPropagation()
+                            // First mount the selected workspace
                             mountWorkspace(wsId)
+                            // Then delete the empty workspace we're replacing
+                            delWorkspace(dropdownOpen!)
                             setDropdownOpen(null)
                           }}
                         >
