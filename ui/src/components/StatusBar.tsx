@@ -36,6 +36,7 @@ export default function StatusBar() {
   const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(null)
   const [editingName, setEditingName] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState<number | null>(null)
+  const [isHovered, setIsHovered] = useState(false)
 
   // Add click-outside handler
   useEffect(() => {
@@ -86,7 +87,7 @@ export default function StatusBar() {
       className="fr ac jb"
       style={{ height: '40px', paddingLeft: '5px', paddingRight: '5px' }}
     >
-      <div className="fr ac">
+      <div className="fr ac wf" onMouseEnter={e => setIsHovered(true)} onMouseLeave={e => setIsHovered(false)}>
         <div
           className="br1 fr ac jc b1 pointer"
           style={{
@@ -238,7 +239,7 @@ export default function StatusBar() {
             )}
           </div>
         ))}
-        <div
+        {isHovered && <div
           className="br1 fr ac jc b1 pointer"
           style={{
             height: '30px',
@@ -248,7 +249,7 @@ export default function StatusBar() {
           onClick={addWorkspace}
         >
           <span>+</span>
-        </div>
+        </div>}
       </div>
       <div className="fr ac jb" style={{ height: '30px' }}>
         <div
