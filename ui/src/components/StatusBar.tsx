@@ -147,19 +147,20 @@ export default function StatusBar() {
             )}
             {id !== 0 && (
               isEmptyWorkspace(workspace) ? (
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setDropdownOpen(dropdownOpen === id ? null : id)
-                  }}
-                  style={{ position: 'relative' }}
-                >
-                  <img
-                    style={{ height: '10px', width: '10px', opacity: 0.75 }}
-                    src={downArrowIcon}
-                    alt="Show unmounted workspaces"
-                  />
-                  {dropdownOpen === id && (
+                <div className="fr ac" style={{ gap: '10px' }}>
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setDropdownOpen(dropdownOpen === id ? null : id)
+                    }}
+                    style={{ position: 'relative' }}
+                  >
+                    <img
+                      style={{ height: '10px', width: '10px', opacity: 0.75 }}
+                      src={downArrowIcon}
+                      alt="Show unmounted workspaces"
+                    />
+                    {dropdownOpen === id && (
                     <div 
                       className="b1 br1 workspace-dropdown"
                       style={{
@@ -198,7 +199,20 @@ export default function StatusBar() {
                         </div>
                       ))}
                     </div>
-                  )}
+                    )}
+                  </div>
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      delWorkspace(id)
+                    }}
+                  >
+                    <img
+                      style={{ height: '10px', width: '10px' }}
+                      src={closeIcon}
+                      alt="Delete workspace"
+                    />
+                  </div>
                 </div>
               ) : (
                 <div
