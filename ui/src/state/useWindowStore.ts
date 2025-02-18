@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { put } from '../api/sky'
-import { update } from 'lodash'
 
 type Path = string
 type WindowID = number

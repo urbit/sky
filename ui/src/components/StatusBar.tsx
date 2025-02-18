@@ -87,7 +87,11 @@ export default function StatusBar() {
       className="fr ac jb"
       style={{ height: '40px', paddingLeft: '5px', paddingRight: '5px' }}
     >
-      <div className="fr ac wf" onMouseEnter={e => setIsHovered(true)} onMouseLeave={e => setIsHovered(false)}>
+      <div
+        className="fr ac wf"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div
           className="br1 fr ac jc b1 pointer"
           style={{
