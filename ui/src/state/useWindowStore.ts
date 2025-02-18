@@ -70,6 +70,7 @@ interface WindowStore {
   unmountWorkspace: (id: WorkspaceID) => void
   setActiveWorkspaceID: (id: WorkspaceID) => void
   updateWorkspaceName: (id: WorkspaceID, name: string) => void
+  resetHomeWorkspace: () => void
   setWorkspacesState: (state: BackendWindowStore) => void
 }
 
@@ -152,7 +153,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
     if (!activeWorkspace) {
       console.error(`No workspace for ${get().activeWorkspaceID}`)
-      return;
+      return
     }
 
     const windowMap: WindowMap = activeWorkspace.windowState.windowMap
@@ -160,7 +161,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
     if (parentPath === undefined) {
       console.error(`No parent at ${parentID}`)
-      return;
+      return
     }
 
     const newWindowMap: WindowMap = new Map(windowMap)
@@ -636,6 +637,38 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     sendWorkspacesStateToNamespace({
       workspaces: currentWorkspaces.set(id, updatedWorkspace),
       activeWorkspaceID: id,
+    })
+  },
+
+  resetHomeWorkspace: () => {
+    const currentWorkspaces = get().workspaces
+    const homeWorkspace = currentWorkspaces.get(0)
+
+    if (!homeWorkspace) {
+      console.error('No home workspace')
+      return
+    }
+
+    const updatedHomeWorkspace = {
+      ...homeWorkspace,
+      windowState: {
+        ...homeWorkspace.windowState,
+        windowMap: new Map<WindowID, Path>([[1, defaultPath]]),
+        activeWindowID: 1,
+        activeWindowPath: defaultPath,
+      },
+    }
+
+    const newWorkspaces = new Map(currentWorkspaces).set(0, updatedHomeWorkspace)
+
+    set({
+      workspaces: newWorkspaces,
+      activeWorkspaceID: 0
+    })
+
+    sendWorkspacesStateToNamespace({
+      workspaces: newWorkspaces,
+      activeWorkspaceID: 0,
     })
   },
 

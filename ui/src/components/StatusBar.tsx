@@ -18,6 +18,7 @@ export default function StatusBar() {
     addWorkspace,
     updateWorkspaceName,
     delWorkspace,
+    resetHomeWorkspace
   } = useWindowStore()
 
   // Get unmounted workspaces sorted with titled first (alphabetically), then untitled
@@ -35,7 +36,7 @@ export default function StatusBar() {
   const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(null)
   const [editingName, setEditingName] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState<number | null>(null)
-  
+
   // Add click-outside handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,7 +74,11 @@ export default function StatusBar() {
   }
 
   const handleHomeClick = () => {
-    setActiveWorkspaceID(0)
+    if (activeWorkspaceID !== 0) {
+      setActiveWorkspaceID(0)
+    } else {
+      resetHomeWorkspace()
+    }
   }
 
   return (
@@ -96,9 +101,8 @@ export default function StatusBar() {
         {mountedWorkspaces.map(([id, workspace]) => (
           <div
             key={id}
-            className={`br1 fr ac jb pointer ${
-              id === activeWorkspaceID ? 'b2' : 'b1'
-            }`}
+            className={`br1 fr ac jb pointer ${id === activeWorkspaceID ? 'b2' : 'b1'
+              }`}
             style={{
               height: '30px',
               paddingLeft: '10px',
@@ -161,47 +165,47 @@ export default function StatusBar() {
                       alt="Show unmounted workspaces"
                     />
                     {dropdownOpen === id && (
-                    <div 
-                      className="b1 br1 workspace-dropdown"
-                      style={{
-                        position: 'absolute',
-                        top: '20px',
-                        right: '0',
-                        width: '150px',
-                        background: 'white',
-                        zIndex: 1000,
-                        padding: '5px'
-                      }}
-                    >
-                      {unmountedWorkspaces.map(([wsId, ws]) => (
-                        <div
-                          key={wsId}
-                          className="fr ac jb pointer"
-                          style={{ padding: '5px' }}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            // First mount the selected workspace
-                            mountWorkspace(wsId)
-                            // Then delete the empty workspace we're replacing
-                            delWorkspace(dropdownOpen!)
-                            setDropdownOpen(null)
-                          }}
-                        >
-                          <span className={ws.name ? '' : 'italic'}>
-                            {ws.name || 'Untitled'}
-                          </span>
-                          <img
-                            style={{ height: '8px', width: '8px' }}
-                            src={closeIcon}
-                            alt="Delete workspace"
+                      <div
+                        className="b1 br1 workspace-dropdown"
+                        style={{
+                          position: 'absolute',
+                          top: '20px',
+                          right: '0',
+                          width: '150px',
+                          background: 'white',
+                          zIndex: 1000,
+                          padding: '5px'
+                        }}
+                      >
+                        {unmountedWorkspaces.map(([wsId, ws]) => (
+                          <div
+                            key={wsId}
+                            className="fr ac jb pointer"
+                            style={{ padding: '5px' }}
                             onClick={(e) => {
                               e.stopPropagation()
-                              delWorkspace(wsId)
+                              // First mount the selected workspace
+                              mountWorkspace(wsId)
+                              // Then delete the empty workspace we're replacing
+                              delWorkspace(dropdownOpen!)
+                              setDropdownOpen(null)
                             }}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                          >
+                            <span className={ws.name ? '' : 'italic'}>
+                              {ws.name || 'Untitled'}
+                            </span>
+                            <img
+                              style={{ height: '8px', width: '8px' }}
+                              src={closeIcon}
+                              alt="Delete workspace"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                delWorkspace(wsId)
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                   <div
