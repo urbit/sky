@@ -570,7 +570,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       lastMounted: Date.now()
     }
 
-    set({ workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace) })
+    set({
+      workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace),
+      activeWorkspaceID: id
+    })
     sendWorkspacesStateToNamespace({
       workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace),
       activeWorkspaceID: get().activeWorkspaceID,

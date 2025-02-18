@@ -13,6 +13,7 @@ export default function StatusBar() {
     workspaces,
     activeWorkspaceID,
     setActiveWorkspaceID,
+    mountWorkspace,
     unmountWorkspace,
     addWorkspace,
     updateWorkspaceName,
@@ -178,7 +179,7 @@ export default function StatusBar() {
                           style={{ padding: '5px' }}
                           onClick={(e) => {
                             e.stopPropagation()
-                            // TODO: implement mounting
+                            mountWorkspace(wsId)
                             setDropdownOpen(null)
                           }}
                         >
