@@ -56,8 +56,8 @@ export default function StatusBar() {
         {mountedWorkspaces.map(([id, workspace]) => (
           <div
             key={id}
-            className={`br1 fr ac jb b1 pointer ${
-              id === activeWorkspaceID ? 'active' : ''
+            className={`br1 fr ac jb pointer ${
+              id === activeWorkspaceID ? 'b2' : 'b1'
             }`}
             style={{
               height: '30px',
@@ -65,8 +65,6 @@ export default function StatusBar() {
               paddingRight: '10px',
               width: '200px',
               marginRight: '10px',
-              // TODO use feather class instead of this
-              backgroundColor: id === activeWorkspaceID ? '#f0f0f0' : 'transparent',
             }}
             onClick={() => setActiveWorkspaceID(id)}
           >
