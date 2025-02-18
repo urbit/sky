@@ -3,8 +3,16 @@ import '@urbit/sigil-js'
 import bellIcon from '../assets/images/bell.png'
 // @ts-expect-error Type definitions for PNG imports are missing
 import closeIcon from '../assets/images/close.png'
+// @ts-expect-error Type definitions for PNG imports are missing
+import downArrowIcon from '../assets/images/down-arrow.png'
 import useWindowStore from '../state/useWindowStore'
 import { useState } from 'react'
+
+const DEMO_UNMOUNTED_WORKSPACES = [
+  { id: 100, name: 'foo' },
+  { id: 101, name: 'bar' },
+  { id: 102, name: 'baz' }
+]
 
 export default function StatusBar() {
   const {
@@ -18,6 +26,13 @@ export default function StatusBar() {
 
   const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(null)
   const [editingName, setEditingName] = useState('')
+  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null)
+
+  // Helper to check if a workspace is empty (only has ~zod/home path)
+  const isEmptyWorkspace = (workspace: any) => {
+    const paths = Array.from(workspace.windowState.windowMap.values())
+    return workspace.name === '' && paths.length === 1 && paths[0] === '~zod/home'
+  }
 
   // Get all mounted workspaces sorted by lastMounted
   const mountedWorkspaces = Array.from(workspaces.entries())
@@ -110,18 +125,72 @@ export default function StatusBar() {
               </span>
             )}
             {id !== 0 && (
-              <div
-                onClick={(e) => {
-                  e.stopPropagation()
-                  unmountWorkspace(id)
-                }}
-              >
-                <img
-                  style={{ height: '10px', width: '10px' }}
-                  src={closeIcon}
-                  alt="Close workspace"
-                />
-              </div>
+              isEmptyWorkspace(workspace) ? (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setDropdownOpen(dropdownOpen === id ? null : id)
+                  }}
+                  style={{ position: 'relative' }}
+                >
+                  <img
+                    style={{ height: '10px', width: '10px', opacity: 0.75 }}
+                    src={downArrowIcon}
+                    alt="Show unmounted workspaces"
+                  />
+                  {dropdownOpen === id && (
+                    <div 
+                      className="b1 br1"
+                      style={{
+                        position: 'absolute',
+                        top: '20px',
+                        right: '0',
+                        width: '150px',
+                        background: 'white',
+                        zIndex: 1000,
+                        padding: '5px'
+                      }}
+                    >
+                      {DEMO_UNMOUNTED_WORKSPACES.map(ws => (
+                        <div
+                          key={ws.id}
+                          className="fr ac jb pointer"
+                          style={{ padding: '5px' }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            // TODO: implement mounting
+                            setDropdownOpen(null)
+                          }}
+                        >
+                          <span>{ws.name}</span>
+                          <img
+                            style={{ height: '8px', width: '8px' }}
+                            src={closeIcon}
+                            alt="Delete workspace"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              // TODO: implement deletion
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    unmountWorkspace(id)
+                  }}
+                >
+                  <img
+                    style={{ height: '10px', width: '10px' }}
+                    src={closeIcon}
+                    alt="Close workspace"
+                  />
+                </div>
+              )
             )}
           </div>
         ))}
