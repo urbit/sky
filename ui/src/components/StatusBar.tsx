@@ -4,6 +4,7 @@ import bellIcon from '../assets/images/bell.png'
 // @ts-expect-error Type definitions for PNG imports are missing
 import closeIcon from '../assets/images/close.png'
 import useWindowStore from '../state/useWindowStore'
+import { useState } from 'react'
 
 export default function StatusBar() {
   const {
@@ -12,7 +13,11 @@ export default function StatusBar() {
     setActiveWorkspaceID,
     unmountWorkspace,
     addWorkspace,
+    updateWorkspaceName,
   } = useWindowStore()
+
+  const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(null)
+  const [editingName, setEditingName] = useState('')
 
   // Get all mounted workspaces sorted by lastMounted
   const mountedWorkspaces = Array.from(workspaces.entries())
@@ -67,7 +72,43 @@ export default function StatusBar() {
             }}
             onClick={() => setActiveWorkspaceID(id)}
           >
-            <span className={workspace.name ? '' : 'italic'}>{workspace.name || `Untitled`}</span>
+            {editingWorkspaceId === id ? (
+              <input
+                className="flex-1 br1 b1"
+                style={{
+                  height: '20px',
+                  minWidth: 0,
+                  border: 'none',
+                  padding: '0 5px',
+                  background: 'transparent'
+                }}
+                value={editingName}
+                onChange={(e) => setEditingName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    updateWorkspaceName(id, editingName)
+                    setEditingWorkspaceId(null)
+                  } else if (e.key === 'Escape') {
+                    setEditingWorkspaceId(null)
+                  }
+                }}
+                onBlur={() => {
+                  updateWorkspaceName(id, editingName)
+                  setEditingWorkspaceId(null)
+                }}
+                autoFocus
+              />
+            ) : (
+              <span
+                className={workspace.name ? '' : 'italic'}
+                onDoubleClick={() => {
+                  setEditingWorkspaceId(id)
+                  setEditingName(workspace.name || '')
+                }}
+              >
+                {workspace.name || `Untitled`}
+              </span>
+            )}
             {id !== 0 && (
               <div
                 onClick={(e) => {

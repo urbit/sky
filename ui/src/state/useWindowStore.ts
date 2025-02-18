@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { put } from '../api/sky'
+import { update } from 'lodash'
 
 type Path = string
 type WindowID = number
@@ -559,6 +560,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       mounted: true,
       lastMounted: Date.now()
     }
+
     set({ workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace) })
   },
 
@@ -601,8 +603,16 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return
     }
 
-    workspace.name = name
-    set({ workspaces: currentWorkspaces.set(id, workspace) })
+    const updatedWorkspace = {
+      ...workspace,
+      name: name,
+    }
+
+    set({ workspaces: currentWorkspaces.set(id, updatedWorkspace) })
+      sendWorkspacesStateToNamespace({
+        workspaces: currentWorkspaces.set(id, updatedWorkspace),
+        activeWorkspaceID: id,
+      })
   },
 
   // set init window state from namespace
