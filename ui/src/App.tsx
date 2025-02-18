@@ -4,7 +4,7 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-//import { get } from './api/sky.ts'
+import { get } from './api/sky.ts'
 
 function App() {
   const {
@@ -15,7 +15,7 @@ function App() {
     setMaxWindow,
     togglePathBarView,
     updateWindowPath,
-    //setWorkspacesState,
+    setWorkspacesState,
     setActiveWindowID,
   } = useWindowStore()
 
@@ -225,24 +225,24 @@ function App() {
   ])
 
   // on mount, init frontend state
-  //useEffect(() => {
-  //  async function init() {
-  //    console.log('Running init()')
-  //    const res = await get(`~${window.ship}/sys/state/workspaces`)
-  //
-  //    if (res && !res.ok) {
-  //      console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
-  //    }
-  //
-  //    if (res && res.ok) {
-  //      const data = await res.json()
-  //      console.log(`init() received data: ${JSON.stringify(data)}`)
-  //      setWorkspacesState(data)
-  //    }
-  //  }
-  //
-  //  init()
-  //}, [])
+  useEffect(() => {
+    async function init() {
+      console.log('Running init()')
+      const res = await get(`~${window.ship}/sys/state/workspaces`)
+
+      if (res && !res.ok) {
+        console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
+      }
+
+      if (res && res.ok) {
+        const data = await res.json()
+        console.log(`init() received data: ${JSON.stringify(data)}`)
+        setWorkspacesState(data)
+      }
+    }
+
+    init()
+  }, [])
 
   useEffect(() => {
     console.log('workspaces:', workspaces)
