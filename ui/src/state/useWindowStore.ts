@@ -73,7 +73,7 @@ interface WindowStore {
 // helper to serialize and send the entire workspaces state to the namespace
 function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
   console.log('Running sendWorkspacesStateToNamespace')
-  // Convert each workspace's windowMap to array format for backend
+  // convert each workspace's windowMap to array format for backend
   const workspacesArray: Array<[WorkspaceID, BackendWorkspace]> = Array.from(
     store.workspaces.entries()
   ).map(([id, workspace]) => {
@@ -166,13 +166,21 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     newWindowMap.set(parentID * 2 + 1, path)
     newWindowMap.set(parentID, '')
 
-    activeWorkspace.windowState.windowMap = newWindowMap
+    // create a new workspace object with the updated windowMap
+    const updatedWorkspace = {
+      ...activeWorkspace,
+      windowState: {
+        ...activeWorkspace.windowState,
+        windowMap: newWindowMap
+      }
+    }
+
+    // create a new Map to ensure React sees the change
+    const newWorkspaces = new Map(currentWorkspaces)
+    newWorkspaces.set(get().activeWorkspaceID, updatedWorkspace)
 
     set({
-      workspaces: currentWorkspaces.set(
-        get().activeWorkspaceID,
-        activeWorkspace
-      ),
+      workspaces: newWorkspaces
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
@@ -279,25 +287,26 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     // actually run the function
     const newWindowMap = handleDelete(windowMap, id)
 
-    // if no windows are left after deletion, reset to defaultMap
-    if (newWindowMap.size === 0) {
-      activeWorkspace.windowState.windowMap = defaultMap
-      set({
-        workspaces: currentWorkspaces.set(
-          get().activeWorkspaceID,
-          activeWorkspace
-        ),
-      })
-    } else {
-      activeWorkspace.windowState.windowMap = newWindowMap
-      set({
-        workspaces: currentWorkspaces.set(
-          get().activeWorkspaceID,
-          activeWorkspace
-        ),
-      })
+    // create a new workspace object with the updated windowMap
+    const updatedWorkspace = {
+      ...activeWorkspace,
+      windowState: {
+        ...activeWorkspace.windowState,
+        windowMap: newWindowMap.size === 0 ? defaultMap : newWindowMap
+      }
+    }
+
+    // create a new Map to ensure React sees the change
+    const newWorkspaces = new Map(currentWorkspaces)
+    newWorkspaces.set(get().activeWorkspaceID, updatedWorkspace)
+
+    set({
+      workspaces: newWorkspaces
+    })
+
+    if (newWindowMap.size > 0) {
       sendWorkspacesStateToNamespace({
-        workspaces: get().workspaces,
+        workspaces: newWorkspaces,
         activeWorkspaceID: get().activeWorkspaceID,
       })
     }
@@ -318,12 +327,21 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const windowMap: WindowMap = activeWorkspace.windowState.windowMap
     const newWindowMap: WindowMap = windowMap.set(id, path)
 
-    activeWorkspace.windowState.windowMap = newWindowMap
+    // create a new workspace object with the updated windowMap
+    const updatedWorkspace = {
+      ...activeWorkspace,
+      windowState: {
+        ...activeWorkspace.windowState,
+        windowMap: newWindowMap
+      }
+    }
+
+    // create a new Map to ensure React sees the change
+    const newWorkspaces = new Map(currentWorkspaces)
+    newWorkspaces.set(get().activeWorkspaceID, updatedWorkspace)
+
     set({
-      workspaces: currentWorkspaces.set(
-        get().activeWorkspaceID,
-        activeWorkspace
-      ),
+      workspaces: newWorkspaces
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
@@ -343,14 +361,21 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       return
     }
 
-    activeWorkspace.windowState.maxWindow = id
+    // create a new workspace object with the updated maxWindow
+    const updatedWorkspace = {
+      ...activeWorkspace,
+      windowState: {
+        ...activeWorkspace.windowState,
+        maxWindow: id
+      }
+    }
 
-    sendWorkspacesStateToNamespace(get())
+    // create a new Map to ensure React sees the change
+    const newWorkspaces = new Map(currentWorkspaces)
+    newWorkspaces.set(get().activeWorkspaceID, updatedWorkspace)
+
     set({
-      workspaces: currentWorkspaces.set(
-        get().activeWorkspaceID,
-        activeWorkspace
-      ),
+      workspaces: newWorkspaces
     })
     sendWorkspacesStateToNamespace({
       workspaces: get().workspaces,
@@ -571,12 +596,12 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
     const deserializedWorkspaces = new Map<WorkspaceID, Workspace>(
       state.workspaces.map(([id, workspace]) => {
-        // Convert the windowMap array to a Map
+        // convert the windowMap array to a Map
         const windowMap = new Map<WindowID, Path>(
           workspace.windowState.windowMap
         )
 
-        // Create a proper WindowStateObject
+        // create a proper WindowStateObject
         const windowState: WindowStateObject = {
           ...workspace.windowState,
           windowMap,
@@ -585,7 +610,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
           pathBarView: [],
         }
 
-        // Create the full Workspace object
+        // create the full Workspace object
         const fullWorkspace: Workspace = {
           name: workspace.name,
           mounted: workspace.mounted,
