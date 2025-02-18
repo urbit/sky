@@ -535,6 +535,11 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       activeWorkspaceID: newWorkspaceID,
       workspaces: currentWorkspaces.set(newWorkspaceID, newWorkspace),
     })
+
+    sendWorkspacesStateToNamespace({
+      workspaces: currentWorkspaces.set(newWorkspaceID, newWorkspace),
+      activeWorkspaceID: newWorkspaceID,
+    })
   },
 
   // delete a workspace
@@ -543,6 +548,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     workspaces.delete(id)
 
     set({ workspaces: workspaces })
+    sendWorkspacesStateToNamespace({
+      workspaces: workspaces,
+      activeWorkspaceID: get().activeWorkspaceID,
+    })
   },
 
   // add a workspace to the tab bar
@@ -562,6 +571,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     }
 
     set({ workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace) })
+    sendWorkspacesStateToNamespace({
+      workspaces: new Map(currentWorkspaces).set(id, updatedWorkspace),
+      activeWorkspaceID: get().activeWorkspaceID,
+    })
   },
 
   // remove a workspace from the tab bar
@@ -586,6 +599,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     set({
       workspaces: newWorkspaces,
       // If no other mounted workspaces exist, fall back to home workspace (0)
+      activeWorkspaceID: mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
+    })
+    sendWorkspacesStateToNamespace({
+      workspaces: newWorkspaces,
       activeWorkspaceID: mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
     })
   },
