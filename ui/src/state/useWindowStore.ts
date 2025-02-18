@@ -583,7 +583,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       .filter(([wid, ws]) => wid !== 0 && wid !== id && ws.mounted)
       .sort(([, a], [, b]) => b.lastMounted - a.lastMounted)
 
-    set({ 
+    set({
       workspaces: newWorkspaces,
       // If no other mounted workspaces exist, fall back to home workspace (0)
       activeWorkspaceID: mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
@@ -592,6 +592,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   setActiveWorkspaceID: (id: WorkspaceID) => {
     set({ activeWorkspaceID: id })
+    sendWorkspacesStateToNamespace({
+      workspaces: get().workspaces,
+      activeWorkspaceID: id,
+    })
   },
 
   updateWorkspaceName: (id: WorkspaceID, name: string) => {
@@ -609,10 +613,10 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     }
 
     set({ workspaces: currentWorkspaces.set(id, updatedWorkspace) })
-      sendWorkspacesStateToNamespace({
-        workspaces: currentWorkspaces.set(id, updatedWorkspace),
-        activeWorkspaceID: id,
-      })
+    sendWorkspacesStateToNamespace({
+      workspaces: currentWorkspaces.set(id, updatedWorkspace),
+      activeWorkspaceID: id,
+    })
   },
 
   // set init window state from namespace
