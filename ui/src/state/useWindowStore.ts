@@ -114,31 +114,24 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
 
 // default state values
 const defaultPath: Path = '~zod/home'
+const defaultMap: WindowMap = new Map<WindowID, Path>([[1, defaultPath]])
 
-// Function to create new default window state to avoid shared references
-function createDefaultWindowState(): WindowStateObject {
-  return {
-    windowMap: new Map<WindowID, Path>([[1, defaultPath]]),
-    maxWindow: 0,
-    fileView: [],
-    pathBarView: [],
-    activeWindowID: 1,
-    activeWindowPath: defaultPath,
-  }
+const defaultWindowState: WindowStateObject = {
+  windowMap: new Map<WindowID, Path>([[1, defaultPath]]),
+  maxWindow: 0,
+  fileView: [],
+  pathBarView: [],
+  activeWindowID: 1,
+  activeWindowPath: defaultPath,
 }
 
-// Function to create new default workspace to avoid shared references
-function createDefaultWorkspace(name: string = 'Home'): Workspace {
-  return {
-    name,
-    mounted: true,
-    windowState: createDefaultWindowState(),
-  }
+const defaultWorkspace: Workspace = {
+  name: 'Home',
+  mounted: true,
+  windowState: defaultWindowState
 }
 
-const defaultWorkspaceMap: WorkspaceMap = new Map<WorkspaceID, Workspace>([
-  [0, createDefaultWorkspace('Home')],
-])
+const defaultWorkspaceMap: WorkspaceMap = new Map([[0, defaultWorkspace]])
 
 // main
 const useWindowStore = create<WindowStore>((set, get) => ({
@@ -497,10 +490,22 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const currentWorkspaces: WorkspaceMap = get().workspaces
     const newWorkspaceID: WorkspaceID =
       Math.max(...currentWorkspaces.keys()) + 1
+    const newWorkspace: Workspace = {
+      name: '',
+      mounted: true,
+      windowState: {
+        windowMap: new Map<WindowID, Path>([[1, defaultPath]]),
+        maxWindow: 0,
+        fileView: [],
+        pathBarView: [],
+        activeWindowID: 1,
+        activeWindowPath: defaultPath,
+      },
+    }
 
     set({
       activeWorkspaceID: newWorkspaceID,
-      workspaces: currentWorkspaces.set(newWorkspaceID, createDefaultWorkspace('')),
+      workspaces: currentWorkspaces.set(newWorkspaceID, newWorkspace),
     })
   },
 
