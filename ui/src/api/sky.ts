@@ -73,7 +73,7 @@ async function scryGet(path: string): Promise<Response | void> {
   }
 
   try {
-    const fqsp = `${pathShip}/sky/${Date.now()}/cx/fil/${pathEnd}`
+    const fqsp = `${pathShip}/sky/${Date.now()}/cx/fil/${pathEnd}/mime`
     const res = await fetch(`${window.location.origin}/seer`, {
       method: 'GET',
       credentials: 'include',

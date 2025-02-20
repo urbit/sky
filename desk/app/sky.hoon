@@ -96,6 +96,7 @@
     ++  handle-http
       |=  [eyre-id=@ta =inbound-request:eyre]
       ^-  (quip card _state)
+      ::  XX unnecessary?
       =/  ,request-line:server
         (parse-request-line:server url.request.inbound-request)
       =+  send=(cury response:schooner eyre-id)
