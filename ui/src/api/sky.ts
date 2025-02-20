@@ -40,6 +40,62 @@ async function findPathUrl(path: string): Promise<string | void> {
   }
 }
 
+// TODO rename to just get()
+async function scryGet(path: string): Promise<Response | void> {
+  const pathArray = path.split('/')
+  // TODO assumes first path segment is a ship;
+  // should change this to support get('/foo') etc.
+  const pathShip = pathArray[0].slice(1)
+  const pathEnd = pathArray.slice(1).join('/')
+
+  if (pathShip === `~${window.ship}`) {
+    console.log('Scrying our ship')
+    const clayURL = `${window.location.origin}/_~_/~${window.ship}/sky/${Date.now()}/cx/fil/${pathEnd}/mime`
+
+    try {
+      const res = await fetch(clayURL, {
+        method: 'GET',
+        credentials: 'include',
+      })
+
+      if (!res.ok) {
+        throw new Error(`Response not ok for ${clayURL}`)
+      }
+
+      return res
+    } catch (err) {
+      console.error(`GET request failed at ${clayURL}`, err)
+
+      return new Response(`File not found for ${path}`, {
+        status: 404,
+      })
+    }
+  }
+
+  try {
+    const fqsp = `${pathShip}/sky/${Date.now()}/cx/fil/${pathEnd}`
+    const res = await fetch(`${window.location.origin}/seer`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'X-Path': fqsp,
+      }
+    })
+
+    if (!res.ok) {
+      throw new Error(`Response not ok for ${window.location.origin}/seer scrying path ${fqsp}`)
+    }
+
+    return res
+  } catch (err) {
+    console.error(`GET request failed at ${window.location.origin}/seer`, err)
+
+    return new Response(`File not found for ${path}`, {
+      status: 404,
+    })
+  }
+}
+
 // NOTE provisional; will change with remote scry support
 async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
