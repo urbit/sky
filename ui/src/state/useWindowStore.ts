@@ -544,13 +544,27 @@ const useWindowStore = create<WindowStore>((set, get) => ({
 
   // delete a workspace
   delWorkspace: (id: WorkspaceID) => {
-    const workspaces: WorkspaceMap = get().workspaces
-    workspaces.delete(id)
+    const currentWorkspaces = get().workspaces
+    
+    // Create new Map before deleting to maintain immutability
+    const newWorkspaces = new Map(currentWorkspaces)
+    newWorkspaces.delete(id)
 
-    set({ workspaces: workspaces })
+    // Find most recently mounted workspace to switch to
+    const mountedWorkspaces = Array.from(newWorkspaces.entries())
+      .filter(([wid, ws]) => wid !== 0 && ws.mounted)
+      .sort(([, a], [, b]) => b.lastMounted - a.lastMounted)
+
+    const newActiveId = mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
+
+    set({ 
+      workspaces: newWorkspaces,
+      activeWorkspaceID: newActiveId
+    })
+    
     sendWorkspacesStateToNamespace({
-      workspaces: workspaces,
-      activeWorkspaceID: get().activeWorkspaceID,
+      workspaces: newWorkspaces,
+      activeWorkspaceID: newActiveId
     })
   },
 
