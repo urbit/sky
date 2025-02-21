@@ -27,7 +27,7 @@ export default function StatusBar() {
     .sort(([, a], [, b]) => {
       // If both have names or both are untitled, sort alphabetically
       if ((!a.name && !b.name) || (a.name && b.name)) {
-        return (a.name || 'Untitled').localeCompare(b.name || 'Untitled')
+        return (a.name || 'Blank').localeCompare(b.name || 'Blank')
       }
       // If one has a name and the other doesn't, the named one comes first
       return a.name ? -1 : 1
@@ -159,7 +159,7 @@ export default function StatusBar() {
                   setEditingName(workspace.name || '')
                 }}
               >
-                {workspace.name || `Untitled`}
+                {workspace.name || `Blank`}
               </span>
             )}
             {id !== 0 &&
@@ -205,7 +205,7 @@ export default function StatusBar() {
                             }}
                           >
                             <span className={ws.name ? '' : 'italic'}>
-                              {ws.name || 'Untitled'}
+                              {ws.name || 'Blank'}
                             </span>
                             <img
                               style={{ height: '8px', width: '8px' }}
