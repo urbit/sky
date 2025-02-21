@@ -27,11 +27,8 @@
         window.addEventListener('load', () => {
           navigator.serviceWorker
             .register('./service-worker.js')
-            .then(registration =>
-              console.log('ServiceWorker registered:', registration)
-            )
             .catch(err =>
-              console.log('ServiceWorker registration failed:', err)
+              console.error('ServiceWorker registration failed:', err)
             )
         })
       }

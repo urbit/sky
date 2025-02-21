@@ -4,21 +4,28 @@ import useWindowStore from './state/useWindowStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
+import { get } from './api/sky.ts'
 
 function App() {
   const {
-    windowMap,
-    maxWindow,
-    activeWindowID,
+    workspaces,
+    activeWorkspaceID,
     addWindow,
     delWindow,
     setMaxWindow,
     togglePathBarView,
     updateWindowPath,
+    setWorkspacesState,
     setActiveWindowID,
-    //setWindowState,
   } = useWindowStore()
 
+  const activeWorkspace = workspaces.get(activeWorkspaceID)
+  // TODO handle undefined cases better
+  const windowMap = activeWorkspace?.windowState.windowMap || new Map()
+  const maxWindow = activeWorkspace?.windowState.maxWindow || 0
+  const activeWindowID = activeWorkspace?.windowState.activeWindowID || 1
+
+  const [windowContainer, setWindowContainer] = useState(<></>)
   const [dragWindow, setDragWindow] = useState(0)
   const holdingKey = useRef(false)
 
@@ -64,7 +71,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function() {
+        event.target.addEventListener('dragend', function () {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -124,21 +131,13 @@ function App() {
 
   // listen for keydown events
   useEffect(() => {
-    console.log(`path: ${windowMap.get(activeWindowID)}`)
-    console.log(`activeWindowID: ${activeWindowID}`)
-    console.log(`maxWindow: ${maxWindow}`)
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey) {
         holdingKey.current = true
         handleSwap()
       }
 
-      if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
-        if (event.metaKey) {
-          console.log('Pressed CMD+n')
-        } else {
-          console.log('Pressed CTRL+n')
-        }
+      if (event.ctrlKey && event.key === 'n') {
         event.preventDefault()
 
         if (maxWindow === 0) {
@@ -147,11 +146,6 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
-        if (event.metaKey) {
-          console.log('Pressed CMD+w')
-        } else {
-          console.log('Pressed CTRL+w')
-        }
         event.preventDefault()
 
         if (maxWindow === 0) {
@@ -160,11 +154,6 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
-        if (event.metaKey) {
-          console.log('Pressed CMD+m')
-        } else {
-          console.log('Pressed CTRL+m')
-        }
         event.preventDefault()
 
         if (activeWindowID > 1 && maxWindow === 0) {
@@ -179,12 +168,6 @@ function App() {
       }
 
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-        if (event.metaKey) {
-          console.log('Pressed CMD+k')
-        } else {
-          console.log('Pressed CTRL+k')
-        }
-
         event.preventDefault()
 
         if (activeWindowID !== null) {
@@ -215,26 +198,49 @@ function App() {
   }, [
     maxWindow,
     activeWindowID,
+    windowMap,
     delWindow,
     addWindow,
     updateWindowPath,
     setActiveWindowID,
+    handleSwap,
+    setMaxWindow,
+    togglePathBarView,
   ])
 
-  // TODO restore
-  // on mount, init window state
-  //useEffect(() => {
-  //  async function init() {
-  //    const res = await get('~zod/sys/state/windows')
-  //
-  //    if (res && res.ok) {
-  //      const data = await res.json()
-  //      setWindowState(data)
-  //    }
-  //  }
-  //
-  //  init()
-  //}, [])
+  // on mount, init frontend state
+  useEffect(() => {
+    async function init() {
+      const res = await get(`~${window.ship}/sys/state/workspaces`)
+
+      if (res && !res.ok) {
+        console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
+      }
+
+      if (res && res.ok) {
+        const data = await res.json()
+        setWorkspacesState(data)
+      }
+    }
+
+    init()
+  }, [])
+
+  useEffect(() => {
+    const activeWorkspace = workspaces.get(activeWorkspaceID)
+    const windowMap = activeWorkspace?.windowState.windowMap || new Map()
+
+    setWindowContainer(
+      <WindowContainer
+        map={windowMap}
+        id={1}
+        isVertical={window.innerWidth > window.innerHeight}
+        handleDrop={handleDrop}
+        handleDragStart={handleDragStart}
+        dragWindow={dragWindow}
+      />
+    )
+  }, [workspaces, activeWorkspaceID])
 
   return (
     <div
@@ -266,14 +272,7 @@ function App() {
             />
           </div>
         )}
-        <WindowContainer
-          map={windowMap}
-          id={1}
-          isVertical={window.innerWidth > window.innerHeight}
-          handleDrop={handleDrop}
-          handleDragStart={handleDragStart}
-          dragWindow={dragWindow}
-        />
+        {windowContainer}
       </div>
     </div>
   )

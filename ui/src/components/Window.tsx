@@ -48,9 +48,8 @@ export default function Window({
   ])
 
   const {
-    maxWindow,
-    fileView,
-    pathBarView,
+    workspaces,
+    activeWorkspaceID,
     setMaxWindow,
     toggleFileView,
     setActiveWindowID,
@@ -82,7 +81,7 @@ export default function Window({
   //);
 
   const noURLcontent = (path: string) => {
-    console.log('nourl content for ', id, path)
+    console.error('No URL content for ', id, path)
     return (
       <div className="hf wf p2 fc ac jc">
         <p>No URL found for {path}</p>
@@ -105,10 +104,6 @@ export default function Window({
   }
 
   async function renderResponse(res: Response): Promise<JSX.Element> {
-    console.log('Running renderResponse()')
-    console.log(res)
-    console.log(res.status)
-
     // TODO remove?
     //if (res.type === 'cors') {
     //  return corsErrorContent;
@@ -116,7 +111,6 @@ export default function Window({
 
     if (res.status >= 200 && res.status <= 300) {
       const contentType = res.headers.get('Content-Type')
-      console.log(`Content-Type: ${contentType && contentType.split(';')[0]}`)
 
       if (!contentType) {
         return notRecognizedContent
@@ -124,13 +118,10 @@ export default function Window({
 
       switch (contentType.split(';')[0]) {
         case 'text/plain': {
-          console.log('Processing plain text file...')
           const txt = await res.text()
           return <TextPlain text={txt} />
         }
         case 'text/html': {
-          console.log('Processing HTML document...')
-
           if (res.url) {
             return <TextHTML url={res.url} />
           }
@@ -138,38 +129,31 @@ export default function Window({
           return <div>{`No URLs found for ${path}`}</div>
         }
         case 'text/markdown': {
-          console.log('Processing markdown file...')
           const text = await res.text()
           return <TextMarkdown md={text} />
         }
         case 'text/css': {
-          console.log('Processing CSS document...')
           const txt = await res.text()
           return <TextPlain text={txt} />
         }
         case 'text/javascript': {
-          console.log('Processing JavaScript data...')
           const txt = await res.text()
           return <TextPlain text={txt} />
         }
         case 'application/json': {
-          console.log('Processing JSON data...')
           const txt = await res.text()
           return <TextPlain text={txt} />
         }
         case 'application/xml': {
-          console.log('Processing XML file...')
           const txt = await res.text()
           return <TextPlain text={txt} />
         }
         case 'application/pdf': {
-          console.log('Processing PDF document...')
           const blob = await res.blob()
           const pdfURL = URL.createObjectURL(blob)
           return <ApplicationPDF pdf={pdfURL} />
         }
         case 'image/jpeg': {
-          console.log('Processing JPEG image...')
           return (
             <>
               <p>JPEG image content is not currently displayed.</p>
@@ -177,13 +161,11 @@ export default function Window({
           )
         }
         case 'image/png': {
-          console.log('Processing PNG image...')
           const blob = await res.blob()
           const objectURL = URL.createObjectURL(blob)
           return <ImagePNG url={objectURL} />
         }
         case 'image/gif': {
-          console.log('Processing GIF image...')
           return (
             <>
               <p>GIF image content is not currently displayed.</p>
@@ -191,7 +173,6 @@ export default function Window({
           )
         }
         case 'video/mp4': {
-          console.log('Processing MP4 video file...')
           return (
             <>
               <p>MP4 video content is not currently displayed.</p>
@@ -199,7 +180,6 @@ export default function Window({
           )
         }
         case 'audio/mpeg': {
-          console.log('Processing MP3 audio file...')
           return (
             <>
               <p>MP3 audio content is not currently displayed.</p>
@@ -207,25 +187,15 @@ export default function Window({
           )
         }
         default: {
-          console.log(`Resource isn't recognized`)
           return notRecognizedContent
         }
       }
     }
 
     if (res.status === 404) {
-      console.log('Should render filesystem!')
-      console.log('path: ', path)
-      console.log('first segment: ', path.split('/')[0])
-
       if (path && path.split('/')[0].slice(1) === window.ship) {
-        console.log('Rendering filesystem')
         return <FileSystem id={id} path={path} />
       } else if (path && path.split('/')[0].slice(1) !== window.ship) {
-        // Last-ditch attempt to load something
-        console.log(
-          `Attempting to load a page from ${res.headers.get('X-Response-URL')}`
-        )
         return (
           <iframe
             className="hf wf"
@@ -240,10 +210,8 @@ export default function Window({
   }
 
   async function renderContent(path: string) {
-    console.log('render', path)
     try {
       const res = await get(path)
-      console.log('Data in renderContent is', res)
 
       if (res) {
         return await renderResponse(res)
@@ -261,8 +229,6 @@ export default function Window({
 
       if (url) {
         return <iframe src={url} className="hf wf" style={{ border: 'none' }} />
-      } else {
-        console.log(`No URLs detected for ${path.split('/').slice(0)}`)
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -284,10 +250,14 @@ export default function Window({
   }
 
   function handleXButtonClick(id: number) {
-    if (id === maxWindow) {
-      setMaxWindow(0)
-    } else {
-      delWindow(id)
+    const activeWorkspace = workspaces.get(activeWorkspaceID)
+
+    if (activeWorkspace) {
+      if (id === activeWorkspace.windowState.maxWindow) {
+        setMaxWindow(0)
+      } else {
+        delWindow(id)
+      }
     }
   }
 
@@ -322,6 +292,9 @@ export default function Window({
     setVisibilityOptions(filteredOptions)
   }, [published])
 
+  const fileView = workspaces.get(activeWorkspaceID)?.windowState.fileView
+  const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
+
   return (
     <Allotment>
       <Allotment.Pane visible key={id} className="wf hf fr">
@@ -333,7 +306,7 @@ export default function Window({
           }}
           onMouseEnter={handleWindowMouseEnter}
         >
-          {pathBarView.includes(id) && (
+          {pathBarView && pathBarView.includes(id) && (
             <div
               className="absolute b1 br1 bd1"
               style={{
@@ -420,11 +393,13 @@ export default function Window({
                           handleFileView()
                         }}
                       >
-                        {fileView.includes(id) ? 'View' : 'Edit'}
+                        {fileView && fileView.includes(id) ? 'View' : 'Edit'}
                       </button>
                     </div>
                   )}
-                  {!(path === '' || path?.split('/')[0].slice(1) !== window.ship) && (
+                  {!(
+                    path === '' || path?.split('/')[0].slice(1) !== window.ship
+                  ) && (
                     <button
                       className="fr ac jc"
                       style={{ pointerEvents: 'visible' }}
@@ -450,7 +425,9 @@ export default function Window({
                 </div>
               )}
             </div>
-            {!fileView.includes(id) ? windowContent : fileSystemContent}
+            {fileView && !fileView.includes(id)
+              ? windowContent
+              : fileSystemContent}
           </div>
         </div>
       </Allotment.Pane>

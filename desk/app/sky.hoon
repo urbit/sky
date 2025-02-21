@@ -142,6 +142,8 @@
         ?~  res
           (send [404 ~ [%plain "404 - Not Found"]])
         ?:  (gth (lent res) 1)
+          ~&  >>>  "Multiple files for this request"
+          ~&  >>>  res
           ::  XX serve directory with both files if
           ::     the client has permission to read
           ::     this node and the files beneath
@@ -151,6 +153,7 @@
           ::  XX handle directory with no "children";
           ::     this directory should be removed the
           ::     next time this desk is committed
+          ~&  >>>  "Empty directory"
           (send [501 ~ [%plain "501 - Not Implemented"]])
         =/  typ  (rear fil)
         =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) fil))

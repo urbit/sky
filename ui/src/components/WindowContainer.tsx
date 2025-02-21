@@ -59,7 +59,7 @@ export default function WindowContainer({
               delWindow(childId + 1)
             }, 1000)
           } else {
-            console.log('invalid index')
+            console.error('Invalid index')
           }
         }
         lastChange.current = sizes

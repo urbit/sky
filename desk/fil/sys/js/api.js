@@ -1,14 +1,11 @@
 async function findShipDomain(path) {
   const ship = path.split('/')[0]
-  console.log(`Attempting to get domain for ${ship}`)
-  console.log('window.ship', window.ship)
   // TODO replace with real server
   const res = await fetch(`http://localhost:3000/domains`)
   const data = await res.json()
 
   // TODO don't return all domains for all ships
   if (data[ship]) {
-    console.log('domain', data[ship])
     return data[ship]
   } else {
     console.error(`No domain found for ${ship}`)
@@ -17,17 +14,14 @@ async function findShipDomain(path) {
 
 async function findPathUrl(path) {
   let shipLocation
-  console.log('Attempting to find URLs for', path)
 
   if (path.startsWith('/')) {
-    console.log('Path starts with /')
     shipLocation = window.location.origin
   }
 
   // TODO support e.g. get('foo/bar') as well as get(/foo/bar)
 
   if (path.startsWith('~')) {
-    console.log('Path starts with ~')
     shipLocation = await findShipDomain(path)
   }
 
@@ -57,7 +51,6 @@ async function get(path) {
   }
 
   try {
-    console.log('GETting ', url)
     const res = await fetch(url, {
       method: 'GET',
       credentials: 'include'
@@ -72,8 +65,6 @@ async function get(path) {
       endpoint !== '/apps/landscape' &&
       res.url === `http://localhost:8080/apps/landscape/`
 
-    console.log(window.location.origin)
-    console.log('res.url', res.url)
 
     // NOTE handle Landscape redirect
     // TODO change this behaviour in Landscape
@@ -90,8 +81,6 @@ async function get(path) {
     return res
   } catch (err) {
     console.error(`GET request failed at ${url}`, err)
-    console.log(`pathShip is ${pathShip}`)
-    console.log(`API thinks window.ship is ${window.ship}`)
 
     if (pathShip === window.ship) {
       const apiUrl = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
@@ -106,7 +95,6 @@ async function get(path) {
       }
 
       try {
-        console.log('GETting ', apiUrl)
         const res = await fetch(apiUrl, {
           method: 'GET',
           credentials: 'include'
@@ -155,7 +143,6 @@ async function put(path, file) {
   }
 
   try {
-    console.log('PUTting to ', url)
     const res = await fetch(url, {
       method: 'PUT',
       credentials: 'include',

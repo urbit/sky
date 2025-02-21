@@ -4,8 +4,6 @@ interface TextHTMLProps {
 
 export default function TextHTML({ url }: TextHTMLProps) {
   if (url) {
-    console.log(`TextHTML rendering ${url}`)
-
     return (
       <div className="hf wf fr as jc">
         <iframe
