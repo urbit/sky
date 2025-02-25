@@ -34,6 +34,71 @@ async function findPathUrl(path: string): Promise<string | void> {
   }
 }
 
+// TODO rename to get() once finsihed
+async function newGet(path: string): Promise<Response | void> {
+  const pathArray = path.split('/')
+  const pathShip = pathArray[0].slice(1)
+  const endpoint = pathArray.slice(1).join('/')
+  const url = await findPathUrl(`${pathArray[0]}/${endpoint}`)
+
+  if (!url) {
+    console.error(`No URL found for ${path}`)
+    return
+  }
+
+  // TODO handle relative get('/foo')
+  // TODO handle relative get('foo') and get('~/foo')
+  if (pathShip === `~${window.ship}`) {
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+      })
+
+      if (!res.ok) {
+        throw new Error(`Response not ok for ${url}`)
+      }
+
+      // TODO remove hard-coded URL in prod.
+      const redirectedToGrid =
+        endpoint !== '/apps/landscape' &&
+        res.url === `http://localhost:8080/apps/landscape/`
+
+      // NOTE handle Landscape redirect
+      // TODO change this behaviour in Landscape?
+      if (redirectedToGrid) {
+        return new Response(`File not found for ${path}`, {
+          status: 404,
+          headers: {
+            'Content-Type': 'text/plain',
+            'X-Response-URL': url,
+          },
+        })
+      }
+
+      return res
+    } catch (err) {
+      console.error(`GET request failed at ${url}`, err)
+    }
+  }
+
+  // TODO remove hard-coded domain
+  try {
+    const res = await fetch(`http://localhost:8080/seer?path=${path}`, {
+      method: 'GET',
+      credentials: 'include',
+    })
+
+    if (!res.ok) {
+      throw new Error(`Response not ok for /seer`)
+    }
+
+    return res
+  } catch (err) {
+    console.error(`GET request failed at /seer`, err)
+  }
+}
+
 // NOTE provisional; will change with remote scry support
 async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
