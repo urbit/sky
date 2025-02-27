@@ -17,8 +17,18 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  "%seer initialized successfully."
+  =/  htm  '<!DOCTYPE html><html><head><title>200 Success</title></head><body><h1>200 Success</h1></body></html>'
   :_  this
-  [%pass /eyre/connect %arvo %e %connect `/seer dap.bowl]~
+  :~  :*  %pass  /eyre/connect
+          %arvo  %e  %connect
+          [`/seer dap.bowl]
+      ==
+      ::  XX handle gift at /call/back/path
+      :*  %pass  ~
+          %grow  /sys/http-test
+          [%html htm]
+      ==
+  ==
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
@@ -56,6 +66,7 @@
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  =path  (cut-path value.u.pax '/')
         ~&  >  path
+        ~&  >>  sky.bowl
         ?:  =(our.bowl `@p`(slav %p (head path)))
           ::
           ::  our path
