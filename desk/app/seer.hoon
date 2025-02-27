@@ -18,7 +18,7 @@
   ^-  (quip card _this)
   ~&  >  "%seer initialized successfully."
   :_  this
-  [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
+  [%pass /eyre/connect %arvo %e %connect `/seer dap.bowl]~
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
@@ -55,13 +55,14 @@
         ?~  pax
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  =path  (cut-path value.u.pax '/')
-        ?:  =(our.bowl (scot %p (head path)))
+        ~&  >  path
+        ?:  =(our.bowl `@p`(slav %p (head path)))
           ::
           ::  our path
           =/  ver  (~(get by sky.bowl) (tail path))
           ?~  ver
-            ::  XX error msg
-            !!
+            ::  XX i think 404 appropriate but not 100% sure
+            [(send [404 ~ [%plain "Not found"]]) state]
           =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
           ::  XX i think +ram is getting latest date
           ::     but check this works as expected
@@ -69,17 +70,30 @@
           ?~  neu
             ::  nothing here
             [(send [404 ~ [%plain "Not found"]]) state]
-          ?.  (head q.val.u.neu)
+          ?.  -.q.val.u.neu
             ::  tombstoned
             [(send [410 ~ [%plain "Gone"]]) state]
-          ::  XX return HTTP res and FQSP as a X-FQSP header
-          ::  XX take (pair mark noun) and return as mime
-          ::     so will need x-to-mime mark
-          `state
+          ?>  ?=(page p.q.val.u.neu)
+          =*  mar  p.p.q.val.u.neu
+          =/  mim
+            %-  (type-to-mime mar)
+            %-  (noun-to-type mar)
+            q.p.q.val.u.neu
+          :_  state
+          ^-  (list card)
+          %+  give-simple-payload:app:server
+            eyre-id
+          ^-  simple-payload:http
+          :-  :-  200
+              ::  XX form real FQSP
+              :~  ['Content-Type' (ext-to-mime mar)]
+                  ['X-FQSP' '~zod/foo']
+              ==
+          (some +.mim)
         ::
         ::  foreign path
         ::  XX find if this is their Eyre or Gall
-        `state
+        [(send [501 ~ [%plain "501 - Not Implemented"]]) state]
       ==
     --
 ::
