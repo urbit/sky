@@ -1,3 +1,4 @@
+/-  *seer
 /+  *sky, dbug, verb, server, schooner, default-agent
 |%
 +$  versioned-state
@@ -5,7 +6,6 @@
   ==
 +$  state-0  [%0 ~]
 +$  card  $+(card card:agent:gall)
-+$  bar-action  =path
 --
 ::
 %+  verb  &
@@ -20,7 +20,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  "%seer initialized successfully."
-  =/  htm  '<!DOCTYPE html><html><head><title>200 Success</title></head><body><h1>200 Success</h1></body></html>'
+  =/  htm  (crip "<!DOCTYPE html><html><head><title>200 Success</title></head><body><h1>200 Success</h1><p>Successful response from {<our.bowl>}</p></body></html>")
   :_  this
   :~  :*  %pass  /eyre/connect
           %arvo  %e  %connect
@@ -56,11 +56,10 @@
       [cards this]
     ::
         %foo-poke
-      =/  act  !<(bar-action vase)
-      =/  =path  path.act
-      =/  ver    (~(get by sky.bowl) (tail path))
+      =/  act  !<(foo-poke vase)
+      =/  ver  (~(get by sky.bowl) (tail path.act))
       ?~  ver
-        ~&  >>>  "No versions found"
+        ~&  >>>  "No versions found for {<(tail path.act)>}"
         !!
       =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
       ::  XX i think +ram is getting latest date
@@ -80,10 +79,34 @@
         %-  (type-to-mime mar)
         %-  (noun-to-type mar)
         q.p.q.val.u.neu
-      ~&  >  "Returning a response"
-      ::  XX return MIME response of file
+      ~&  >  "Returning a response for {<eyre-id.act>}"
       ::  XX return FQSP
-      `this
+      :_  this
+      :~  :*  %pass
+              ~
+              %agent
+              [src.bowl %seer]
+              %poke
+              %baz-response
+              !>([eyre-id.act /foo/bar mim])
+      ==  ==
+    ::
+        %baz-response
+      ~&  >  "Got %baz-response"
+      ~&  >>  vase
+      =/  act  !<(baz-response vase)
+      =/  mim-cord
+        (crip (tape (join '/' (turn (head mime.act) |=(=term (cord term))))))
+      :_  this
+      %+  give-simple-payload:app:server
+        eyre-id.act
+      ^-  simple-payload:http
+      :-  :-  200
+          ::  XX send FQSP in headers
+          :~  ['Content-Type' mim-cord]
+          ==
+      %-  some
+      +.mime.act
     ==
     ::
     ++  handle-http
@@ -140,15 +163,15 @@
         ::  foreign path
         ~&  >   "Sending request to {<ship>} for {<(tail path)>}"
         ~&  >>  eyre-id
-        ~&  >>  /keen/init/[eyre-id]
+        ~&  >>  /foo/poke/[eyre-id]
         :_  state
         :~  :*  %pass
-                /keen/init/[eyre-id]
+                /foo/poke/[eyre-id]
                 %agent
                 [ship %seer]
                 %poke
                 %foo-poke
-                !>(path)
+                !>([eyre-id path])
         ==  ==
       ==
     --
@@ -179,8 +202,7 @@
   ?+  wire
     (on-agent:def wire sign)
   ::
-      [%keen %init @ ~]
-    ~&  >  "Got response"
+      [%foo %poke @ ~]
     =/  eyre-id=@ta  i.t.t.wire
     ~&  >>  eyre-id
     ?+  -.sign
@@ -189,20 +211,7 @@
         %poke-ack
       ?~  p.sign
         ~&  >  "Got ack"
-        :_  this
-        %+  give-simple-payload:app:server
-          eyre-id
-        ^-  simple-payload:http
-        :-  :-  200
-            ::  XX send FQSP in headers
-            ::  XX get mime header from response
-            :~  ['Content-Type' 'text/html']
-            ==
-        =/  htm  '<!DOCTYPE html><html><head><title>200 Success</title></head><body><h1>200 Success</h1></body></html>'
-        %-  some
-        :-  (met 3 htm)
-        htm
-        ::  :-  /text/html
+        `this
       ~&  >>>  "Got nack"
       :_  this
       %+  give-simple-payload:app:server
@@ -213,11 +222,10 @@
           ::  XX get mime header from response
           :~  ['Content-Type' 'text/plain']
           ==
+      =/  htm  '<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1></body></html>'
       %-  some
-      %-  tail
-      *mime
-      ::  :-  /text/html
-      :: '<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1></body></html>'
+      :-  (met 3 htm)
+      htm
     ::
     ==
   ==

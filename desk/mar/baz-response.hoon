@@ -1,13 +1,13 @@
 /-  seer
-|_  =foo-poke:seer
-++  grow                                                ::  convert to
+|_  =baz-response:seer
+++  grow                                           ::  convert to
   |%                                                    ::
-  ++  noun  foo-poke
+  ++  noun  baz-response
   --                                                    ::
 ++  grab
   ^?
   |%
-  ++  noun  (pair @ta path)
+  ++  noun  ,[@ta path mime]
   --
 ++  grad  %noun
 --
