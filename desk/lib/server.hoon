@@ -64,6 +64,9 @@
   ++  give-simple-payload
     |=  [eyre-id=@ta =simple-payload:http]
     ^-  (list card:agent:gall)
+    ~&  >  "Running +give-simple-payload"
+    ~&  >>  "eyre-id {<eyre-id>}"
+    ~&  >>  "payload {<simple-payload>}"
     =/  header-cage
       [%http-response-header !>(response-header.simple-payload)]
     =/  data-cage
