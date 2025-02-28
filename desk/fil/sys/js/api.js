@@ -34,7 +34,6 @@ async function findPathUrl(path) {
   }
 }
 
-// TODO rename to get() once finsihed
 async function get(path) {
   const pathArray = path.split('/')
   const pathShip = pathArray[0].slice(1)

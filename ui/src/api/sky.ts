@@ -34,7 +34,6 @@ async function findPathUrl(path: string): Promise<string | void> {
   }
 }
 
-// TODO rename to get() once finsihed
 async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
   const pathShip = pathArray[0].slice(1)
