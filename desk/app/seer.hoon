@@ -88,11 +88,7 @@
         ~&  >>>  "Latest version is tombstoned"
         !!
       ?>  ?=(page p.q.val.u.neu)
-      =*  mar  p.p.q.val.u.neu
-      =/  mim
-        %-  (type-to-mime mar)
-        %-  (noun-to-type mar)
-        q.p.q.val.u.neu
+      =/  =mime  (mime q.p.q.val.u.neu)
       ~&  >  "Returning a response for {<eyre-id.act>}"
       ::  XX return FQSP
       :_  this
@@ -102,7 +98,7 @@
               [src.bowl %seer]
               %poke
               %baz-response
-              !>([eyre-id.act /foo/bar mim])
+              !>([eyre-id.act /foo/bar mime])
       ==  ==
     ::
         %baz-response
@@ -169,8 +165,8 @@
           ?>  ?=(page p.q.val.u.neu)
           ~&  >  "It's a page"
           =/  =mime  (mime q.p.q.val.u.neu)
-        =/  mim-cord
-          (crip (tape (join '/' (turn (head mime) |=(=term (cord term))))))
+          =/  mim-cord
+            (crip (tape (join '/' (turn (head mime) |=(=term (cord term))))))
           ~&  >  "Returning response"
           :_  state
           ^-  (list card)
