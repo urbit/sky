@@ -20,17 +20,31 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  "%seer initialized successfully."
-  =/  htm  (crip "<!DOCTYPE html><html><head><title>200 Success</title></head><body><h1>200 Success</h1><p>Successful response from {<our.bowl>}</p></body></html>")
+  =/  init-paths
+    %+  weld
+      ^-  (list path)
+      :~  /fil/home/html
+          /fil/sys/http-test/html
+          /fil/app-data/json
+      ==
+    .^((list path) %ct /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil/sys)
+  =/  grow-cards
+    %+  turn
+      init-paths
+    |=  =path
+    ^-  card
+    =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
+    =/  mim  ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
+    ::  XX is there a gift at /call/back/path?
+    :*  %pass  ~
+        %grow  (tail (snip path))
+        [%mime mim]
+    ==
   :_  this
-  :~  :*  %pass  /eyre/connect
-          %arvo  %e  %connect
-          [`/seer dap.bowl]
-      ==
-      ::  XX handle gift at /call/back/path
-      :*  %pass  ~
-          %grow  /sys/http-test
-          [%html htm]
-      ==
+  :_  grow-cards
+  :*  %pass  /eyre/connect
+      %arvo  %e  %connect
+      [`/seer dap.bowl]
   ==
 ++  on-save   !>(state)
 ++  on-load
@@ -118,13 +132,14 @@
           [(send [405 ~ [%stock ~]]) state]
       ::
           %'GET'
+        ~&  >  "Got GET"
         =/  line  (parse-request-line:server url.request.inbound-request)
         =/  pax   (~(get by (malt args.line)) 'path')
         ?~  pax
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  =path  (cut-path value.u.pax '/')
         ~&  >  path
-        ~&  >>  sky.bowl
+        ::  ~&  >>  sky.bowl
         =/  =ship  `@p`(slav %p (head path))
         ?:  =(ship our.bowl)
           ::
