@@ -133,9 +133,11 @@
       ::
           %'GET'
         ~&  >  "Got GET"
+        ~&  >  "eyre-id {<eyre-id>}"
         =/  line  (parse-request-line:server url.request.inbound-request)
         =/  pax   (~(get by (malt args.line)) 'path')
         ?~  pax
+          ~&  >>>  "No data received"
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  =path  (cut-path value.u.pax '/')
         ~&  >  path
@@ -144,25 +146,32 @@
         ?:  =(ship our.bowl)
           ::
           ::  our path
+          ~&  >  "Local request"
           =/  ver  (~(get by sky.bowl) (tail path))
           ?~  ver
+            ~&  >>>  "No versions of this file"
             [(send [404 ~ [%plain "Not found"]]) state]
+          ~&  >  "There is/was a version of this file"
           =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
           ::  XX i think +ram is getting latest date
           ::     but check this works as expected
           =/  neu  (ram:on-path (need ver))
           ?~  neu
+            ~&  >>>  "Not found"
             ::  nothing here
             [(send [404 ~ [%plain "Not found"]]) state]
+          ~&  >  "Found something"
           ?.  -.q.val.u.neu
             ::  tombstoned
+            ~&  >>>  "Tombstoned"
             [(send [410 ~ [%plain "Gone"]]) state]
+          ~&  >  "Not tombstoned"
           ?>  ?=(page p.q.val.u.neu)
-          =*  mar  p.p.q.val.u.neu
-          =/  mim
-            %-  (type-to-mime mar)
-            %-  (noun-to-type mar)
-            q.p.q.val.u.neu
+          ~&  >  "It's a page"
+          =/  =mime  (mime q.p.q.val.u.neu)
+        =/  mim-cord
+          (crip (tape (join '/' (turn (head mime) |=(=term (cord term))))))
+          ~&  >  "Returning response"
           :_  state
           ^-  (list card)
           %+  give-simple-payload:app:server
@@ -170,10 +179,10 @@
           ^-  simple-payload:http
           :-  :-  200
               ::  XX form real FQSP
-              :~  ['Content-Type' (ext-to-mime mar)]
+              :~  ['Content-Type' mim-cord]
                   ['X-FQSP' '~zod/foo']
               ==
-          (some +.mim)
+          (some +.mime)
         ::
         ::  foreign path
         ~&  >   "Sending request to {<ship>} for {<(tail path)>}"

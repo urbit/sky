@@ -1,5 +1,5 @@
 import { Allotment } from 'allotment'
-import { get, findPathUrl } from '../api/sky'
+import { get } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
@@ -217,19 +217,9 @@ export default function Window({
         return await renderResponse(res)
       }
 
-      // TODO nothing below this todo should be necessary;
-      // get() should account for all of this
-
-      const url = await findPathUrl(path)
-
-      if (!url) {
-        console.error(`No URLs found for ${path.split('/').slice(0)}`)
-        return noURLcontent(path)
-      }
-
-      if (url) {
-        return <iframe src={url} className="hf wf" style={{ border: 'none' }} />
-      }
+      return (
+        <p>{`No response for get(${path})`}</p>
+      )
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Error fetching content:', error)
@@ -400,17 +390,17 @@ export default function Window({
                   {!(
                     path === '' || path?.split('/')[0].slice(1) !== window.ship
                   ) && (
-                    <button
-                      className="fr ac jc"
-                      style={{ pointerEvents: 'visible' }}
-                      onMouseEnter={() => {
-                        setOpenOptionsMenu(true)
-                        setOpenVisibilityMenu(false)
-                      }}
-                    >
-                      ...
-                    </button>
-                  )}
+                      <button
+                        className="fr ac jc"
+                        style={{ pointerEvents: 'visible' }}
+                        onMouseEnter={() => {
+                          setOpenOptionsMenu(true)
+                          setOpenVisibilityMenu(false)
+                        }}
+                      >
+                        ...
+                      </button>
+                    )}
                   <button
                     className="fr ac jc"
                     style={{ pointerEvents: 'visible' }}
