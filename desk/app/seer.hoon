@@ -129,7 +129,27 @@
       ?+    method.request.inbound-request
           [(send [405 ~ [%stock ~]]) state]
           %'PUT'
-        [(send [405 ~ [%stock ~]]) state]
+        =/  line  (parse-request-line:server url.request.inbound-request)
+        =/  mime  (~(get by (malt args.line)) 'mime')
+        ?~  mime
+          [(send [400 ~ [%plain "No MIME type provided"]]) state]
+        =/  name  (~(get by (malt args.line)) 'name')
+        ?~  name
+          [(send [400 ~ [%plain "No filename provided"]]) state]
+        =/  body  body.request.inbound-request
+        ?~  body
+          [(send [400 ~ [%plain "No data received"]]) state]
+        ::  XX could use +stab if cord started with '/'
+        =/  nym  (cut-path value.u.name '.')
+        =/  ext  (rear nym)
+        =/  mim  ((type-to-mime ext) ((noun-to-type ext) q.u.body))
+        :_  state
+        ::  XX is there a gift at /call/back/path?
+        :~  :*  %pass  ~
+                %grow  (tail site.line)
+                [%mime mim]
+            ==
+        ==
       ::
           %'DELETE'
         [(send [405 ~ [%stock ~]]) state]
