@@ -1,22 +1,21 @@
+function getShipDomain() {
+  if (import.meta.env.NODE_ENV === 'development') {
+    return import.meta.env.VITE_SHIP_URL || 'http://localhost:8080'
+  }
+
+  return window.location.origin
+}
+
 async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
   const pathShip = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
-  let url = `${window.location.origin}/${endpoint}`
+  const url = `${getShipDomain()}/${endpoint}`
 
   // TODO handle relative get('foo')
   // TODO handle relative get('/foo')
   // TODO handle relative get('~/foo')
-  //console.log(url)
   if (pathShip === `~${window.ship}`) {
-    if (process.env.NODE_ENV === 'development') {
-      // TODO fix; should get url from .env.local
-      //url = `${process.env.VITE_SHIP_URL}/${endpoint}`
-      url = `http://localhost:8080/${endpoint}`
-    }
-
-    //console.log(url)
-    //console.log(`GET request at ${url}`)
     try {
       const res = await fetch(url, {
         method: 'GET',
@@ -27,10 +26,9 @@ async function get(path: string): Promise<Response | void> {
         throw new Error(`Response not ok from ${url}`)
       }
 
-      // TODO remove hard-coded URL in prod.
       const redirectedToGrid =
         endpoint !== '/apps/landscape' &&
-        res.url === `http://localhost:8080/apps/landscape/`
+        res.url === `${getShipDomain()}/apps/landscape/`
 
       // NOTE handle Landscape redirect
       // TODO change this behaviour in Landscape?
@@ -50,9 +48,8 @@ async function get(path: string): Promise<Response | void> {
     }
   }
 
-  // TODO remove hard-coded domain
   try {
-    const res = await fetch(`http://localhost:8080/seer?path=${path}`, {
+    const res = await fetch(`${getShipDomain()}/seer?path=${path}`, {
       method: 'GET',
       credentials: 'include',
     })
