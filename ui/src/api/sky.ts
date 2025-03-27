@@ -1,8 +1,7 @@
-function getShipDomain() {
+const shipDomain = () => {
   if (import.meta.env.NODE_ENV === 'development') {
     return import.meta.env.VITE_SHIP_URL || 'http://localhost:8080'
   }
-
   return window.location.origin
 }
 
@@ -10,7 +9,7 @@ async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
   const pathShip = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
-  const url = `${getShipDomain()}/${endpoint}`
+  const url = `${shipDomain}/${endpoint}`
 
   // TODO handle relative get('foo')
   // TODO handle relative get('/foo')
@@ -28,7 +27,7 @@ async function get(path: string): Promise<Response | void> {
 
       const redirectedToGrid =
         endpoint !== '/apps/landscape' &&
-        res.url === `${getShipDomain()}/apps/landscape/`
+        res.url === `${shipDomain}/apps/landscape/`
 
       // NOTE handle Landscape redirect
       // TODO change this behaviour in Landscape?
@@ -49,7 +48,7 @@ async function get(path: string): Promise<Response | void> {
   }
 
   try {
-    const res = await fetch(`${getShipDomain()}/seer?path=${path}`, {
+    const res = await fetch(`${shipDomain}/seer?path=${path}`, {
       method: 'GET',
       credentials: 'include',
     })
