@@ -1,12 +1,22 @@
 async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
-  const pathShip = pathArray[0].slice(1)
+  const pathShip = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
-  const url = `${window.location.origin}/${endpoint}`
+  let url = `${window.location.origin}/${endpoint}`
 
+  // TODO handle relative get('foo')
   // TODO handle relative get('/foo')
-  // TODO handle relative get('foo') and get('~/foo')
+  // TODO handle relative get('~/foo')
+  //console.log(url)
   if (pathShip === `~${window.ship}`) {
+    if (process.env.NODE_ENV === 'development') {
+      // TODO fix; should get url from .env.local
+      //url = `${process.env.VITE_SHIP_URL}/${endpoint}`
+      url = `http://localhost:8080/${endpoint}`
+    }
+
+    //console.log(url)
+    //console.log(`GET request at ${url}`)
     try {
       const res = await fetch(url, {
         method: 'GET',
@@ -14,7 +24,7 @@ async function get(path: string): Promise<Response | void> {
       })
 
       if (!res.ok) {
-        throw new Error(`Response not ok for ${url}`)
+        throw new Error(`Response not ok from ${url}`)
       }
 
       // TODO remove hard-coded URL in prod.
@@ -36,7 +46,7 @@ async function get(path: string): Promise<Response | void> {
 
       return res
     } catch (err) {
-      console.error(`GET request failed at ${url}`, err)
+      console.error(`GET request to ${pathShip} failed at ${url}`, err)
     }
   }
 
@@ -48,107 +58,14 @@ async function get(path: string): Promise<Response | void> {
     })
 
     if (!res.ok) {
-      throw new Error(`Response not ok for /seer`)
+      throw new Error(`Response not ok from %seer`)
     }
 
     return res
   } catch (err) {
-    console.error(`GET request failed at /seer`, err)
+    console.error(`GET request to ${pathShip} failed at /seer`, err)
   }
 }
-
-// NOTE provisional; will change with remote scry support
-//async function get(path: string): Promise<Response | void> {
-//  const pathArray = path.split('/')
-//  const pathShip = pathArray[0].slice(1)
-//  const endpoint = pathArray.slice(1).join('/')
-//  const url = await findPathUrl(`${pathArray[0]}/${endpoint}`)
-//
-//  if (!url) {
-//    console.error(`No URL found for ${path}`)
-//
-//    return new Response(`No URL found for ${path}`, {
-//      status: 404,
-//      headers: { 'Content-Type': 'text/plain' },
-//    })
-//  }
-//
-//  try {
-//    const res = await fetch(url, {
-//      method: 'GET',
-//      credentials: 'include',
-//    })
-//
-//    if (!res.ok) {
-//      throw new Error(`Response not ok for ${url}`)
-//    }
-//
-//    // TODO remove hard-coded URL
-//    const redirectedToGrid =
-//      endpoint !== '/apps/landscape' &&
-//      res.url === `http://localhost:8080/apps/landscape/`
-//
-//    // NOTE handle Landscape redirect
-//    // TODO change this behaviour in Landscape
-//    if (redirectedToGrid) {
-//      return new Response(`File not found for ${path}`, {
-//        status: 404,
-//        headers: {
-//          'Content-Type': 'text/plain',
-//          'X-Response-URL': url,
-//        },
-//      })
-//    }
-//
-//    return res
-//  } catch (err) {
-//    console.error(`GET request failed at ${url}`, err)
-//
-//    if (pathShip === window.ship) {
-//      const apiUrl = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
-//
-//      if (!apiUrl) {
-//        console.error(`No URL found for ${path}`)
-//
-//        return new Response(`No URL found for ${path}`, {
-//          status: 404,
-//          headers: { 'Content-Type': 'text/plain' },
-//        })
-//      }
-//
-//      try {
-//        const res = await fetch(apiUrl, {
-//          method: 'GET',
-//          credentials: 'include',
-//        })
-//
-//        if (!res.ok) {
-//          throw new Error(`Response not ok for ${apiUrl}`)
-//        }
-//
-//        return res
-//      } catch (err) {
-//        console.error(`GET request failed at ${apiUrl}`, err)
-//
-//        return new Response(`File not found for ${path}`, {
-//          status: 404,
-//          headers: {
-//            'Content-Type': 'text/plain',
-//            'X-Response-URL': apiUrl,
-//          },
-//        })
-//      }
-//    }
-//
-//    return new Response(`File not found for ${path}`, {
-//      status: 404,
-//      headers: {
-//        'Content-Type': 'text/plain',
-//        'X-Response-URL': url,
-//      },
-//    })
-//  }
-//}
 
 //async function put(path: string, file: File): Promise<Response | void> {
 //  const pathArray = path.split('/')

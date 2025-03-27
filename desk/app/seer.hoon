@@ -58,6 +58,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  ~&  >  "Got poke"
   |^
     ?+    mark
       (on-poke:def mark vase)
@@ -70,6 +71,7 @@
       [cards this]
     ::
         %foo-poke
+      ~&  >  "Got %foo-poke"
       =/  act  !<(foo-poke vase)
       =/  ver  (~(get by sky.bowl) (tail path.act))
       ?~  ver
@@ -130,6 +132,7 @@
           %'GET'
         ~&  >  "Got GET"
         ~&  >  "eyre-id {<eyre-id>}"
+        ::  ~&  >>  inbound-request
         =/  line  (parse-request-line:server url.request.inbound-request)
         =/  pax   (~(get by (malt args.line)) 'path')
         ?~  pax
@@ -188,7 +191,7 @@
         :~  :*  %pass
                 /foo/poke/[eyre-id]
                 %agent
-                [ship %seer]
+                [our.bowl %seer]
                 %poke
                 %foo-poke
                 !>([eyre-id path])
@@ -230,7 +233,7 @@
     ::
         %poke-ack
       ?~  p.sign
-        ~&  >  "Got ack"
+        ~&  >  "Got ack from {<src.bowl>}"
         `this
       ~&  >>>  "Got nack"
       :_  this

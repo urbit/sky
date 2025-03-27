@@ -211,14 +211,14 @@ export default function Window({
 
   async function renderContent(path: string) {
     try {
-      const res = await get(path)
+      const res: Response | void = await get(path)
 
       if (res) {
         return await renderResponse(res)
       }
 
       return (
-        <p>{`No response for get(${path})`}</p>
+        <p>{`No response from ${path}`}</p>
       )
     } catch (error: unknown) {
       if (error instanceof Error) {
