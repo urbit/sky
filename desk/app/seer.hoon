@@ -139,7 +139,6 @@
         =/  body  body.request.inbound-request
         ?~  body
           [(send [400 ~ [%plain "No data received"]]) state]
-        ::  XX could use +stab if cord started with '/'
         =/  nym  (cut-path value.u.name '.')
         =/  ext  (rear nym)
         =/  mim  ((type-to-mime ext) ((noun-to-type ext) q.u.body))
