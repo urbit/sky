@@ -5,15 +5,15 @@ const shipDomain = () => {
   return window.location.origin
 }
 
+// TODO handle relative get('foo')
+// TODO handle relative get('/foo')
+// TODO handle relative get('~/foo')
 async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
   const pathShip = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
   const url = `${shipDomain}/${endpoint}`
 
-  // TODO handle relative get('foo')
-  // TODO handle relative get('/foo')
-  // TODO handle relative get('~/foo')
   if (pathShip === `~${window.ship}`) {
     try {
       const res = await fetch(url, {
@@ -63,38 +63,28 @@ async function get(path: string): Promise<Response | void> {
   }
 }
 
-//async function put(path: string, file: File): Promise<Response | void> {
-//  const pathArray = path.split('/')
-//  const endpoint = pathArray.slice(1).join('/')
-//  let url = await findPathUrl(`${pathArray[0]}/api/${endpoint}`)
-//
-//  if (!url) {
-//    console.error(`No URL found for ${path}`)
-//
-//    return new Response(`No URL found for ${path}`, {
-//      status: 404,
-//      headers: { 'Content-Type': 'text/plain' },
-//    })
-//  }
-//
-//  url = `${url}?mime=${file.type}&name=${file.name}`
-//
-//  try {
-//    const res = await fetch(url, {
-//      method: 'PUT',
-//      credentials: 'include',
-//      body: file,
-//    })
-//
-//    if (!res.ok) {
-//      throw new Error(`Response not ok for ${url}`)
-//    }
-//
-//    return res
-//  } catch (err) {
-//    console.error(`PUT request failed at ${url}`, err)
-//  }
-//}
+// TODO handle relative put('foo', file)
+// TODO handle relative put('/foo', file)
+// TODO handle relative put('~/foo', file)
+async function put(path: string, file: File): Promise<Response | void> {
+  const url = `${shipDomain}/seer?path=${path}&mime=${file.type}&name=${file.name}`
+
+  try {
+    const res = await fetch(url, {
+      method: 'PUT',
+      credentials: 'include',
+      body: file,
+    })
+
+    if (!res.ok) {
+      throw new Error(`Response not ok from our %seer`)
+    }
+
+    return res
+  } catch (err) {
+    console.error(`PUT request failed at ${url}`, err)
+  }
+}
 
 // TODO post()
 

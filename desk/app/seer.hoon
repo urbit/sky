@@ -128,8 +128,12 @@
     ::
       ?+    method.request.inbound-request
           [(send [405 ~ [%stock ~]]) state]
+        ::
           %'PUT'
         =/  line  (parse-request-line:server url.request.inbound-request)
+        =/  pax   (~(get by (malt args.line)) 'path')
+        ?~  pax
+          [(send [400 ~ [%plain "No path provided"]]) state]
         =/  mime  (~(get by (malt args.line)) 'mime')
         ?~  mime
           [(send [400 ~ [%plain "No MIME type provided"]]) state]
@@ -145,7 +149,7 @@
         :_  state
         ::  XX is there a gift at /call/back/path?
         :~  :*  %pass  ~
-                %grow  (tail site.line)
+                %grow  (cut-path value.u.pax '/')
                 [%mime mim]
             ==
         ==
