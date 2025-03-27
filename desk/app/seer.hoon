@@ -128,6 +128,11 @@
     ::
       ?+    method.request.inbound-request
           [(send [405 ~ [%stock ~]]) state]
+          %'PUT'
+        [(send [405 ~ [%stock ~]]) state]
+      ::
+          %'DELETE'
+        [(send [405 ~ [%stock ~]]) state]
       ::
           %'GET'
         ~&  >  "Got GET"
