@@ -151,7 +151,16 @@
         ==
       ::
           %'DELETE'
-        [(send [405 ~ [%stock ~]]) state]
+        =/  line  (parse-request-line:server url.request.inbound-request)
+        ::  XX get actual latest revision number from
+        ::     sky.bowl, then %tomb it
+        =/  rev
+          0
+        :_  state
+        :~  :*  %pass  ~
+                %tomb  [%ud rev]  (tail site.line)
+            ==
+        ==
       ::
           %'GET'
         ~&  >  "Got GET"
