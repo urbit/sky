@@ -12,6 +12,7 @@ async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
   const pathShip = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
+  // TODO shipDomain breaks rendering
   const url = `${shipDomain}/${endpoint}`
 
   if (pathShip === `~${window.ship}`) {
