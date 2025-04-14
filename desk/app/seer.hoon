@@ -169,6 +169,7 @@
         =/  line  (parse-request-line:server url.request.inbound-request)
         ::  XX get actual latest revision number from
         ::     sky.bowl, then %tomb it
+        ::  XX add 200 success response card
         =/  rev
           0
         :_  state
