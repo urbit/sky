@@ -75,6 +75,7 @@ interface WindowStore {
 
 // helper to serialize and send the entire workspaces state to the namespace
 function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
+  //console.log('Sending workspaces state to namespace')
   // convert each workspace's windowMap to array format for backend
   const workspacesArray: Array<[WorkspaceID, BackendWorkspace]> = Array.from(
     store.workspaces.entries()
@@ -109,7 +110,7 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
 
     // TODO remove hard-coded @p; API should accept relative paths
     // can't use window.ship in this file
-    put('~zod/sys/state', stateFile)
+    put('~zod/sys/state/workspaces', stateFile)
   } catch (err) {
     console.error('Failed to save workspaces state to namespace: ', err)
   }
