@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-//import { put } from '../api/sky'
+import { put } from '../api/sky'
 
 type Path = string
 type WindowID = number
@@ -109,7 +109,7 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
 
     // TODO remove hard-coded @p; API should accept relative paths
     // can't use window.ship in this file
-    //put('~zod/sys/state', stateFile)
+    put('~zod/sys/state', stateFile)
   } catch (err) {
     console.error('Failed to save workspaces state to namespace: ', err)
   }
