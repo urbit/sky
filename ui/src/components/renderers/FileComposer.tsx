@@ -272,7 +272,7 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
               <iframe
                 className="hf wf"
                 // TODO remove hard-coded domain
-                src={`http://localhost:8080/sys/tmp/${endpoint}`}
+                src={`http://localhost:8080/seer?path=~zod/sys/tmp/${endpoint}`}
                 style={{ border: 'none', borderRadius: '2.5px' }}
                 sandbox="allow-scripts allow-same-origin"
               ></iframe>
