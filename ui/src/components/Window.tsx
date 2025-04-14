@@ -80,15 +80,6 @@ export default function Window({
   //  </div>
   //);
 
-  const noURLcontent = (path: string) => {
-    console.error('No URL content for ', id, path)
-    return (
-      <div className="hf wf p2 fc ac jc">
-        <p>No URL found for {path}</p>
-      </div>
-    )
-  }
-
   const errorFetchingContent = (err: string) => {
     return (
       <div className="hf wf p2">
