@@ -12,17 +12,16 @@ $ pnpm install
 $ pnpm dev
 ```
 
-Run [json-server](https://github.com/typicode/json-server) on `localhost:3000` to run a JSON API for resolving `@p`s to top-level domains.
+Vite expects a ~zod running on localhost:8080, but you can configure this in an .env.local file.
 
 ```
-$ cd piraeus
-$ npx json-server dns.json --port 3000
+VITE_SHIP_URL=http://localhost:80
 ```
 
-Boot up a fake ~zod on localhost:8080 and copy the contents of `/desk` to the ship.
+Boot up a fake ~zod and copy the contents of `/desk` to the ship.
 
 ```
-$ ./urbit -F zod --http-port 8080
+$ ./urbit -F zod
 > |new-desk %sky
 > |mount %sky
 ```

@@ -2,7 +2,7 @@ import Editor from '@monaco-editor/react'
 import type * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
 import { debounce } from 'lodash'
-import { get, put } from '../../api/sky'
+import { get, put, ourDomain } from '../../api/sky'
 import { emmetHTML, registerCustomSnippets } from 'emmet-monaco-es'
 import { detectLanguage } from '../../utils/languageDetection'
 
@@ -271,8 +271,7 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
             <div className="hf wf p2">
               <iframe
                 className="hf wf"
-                // TODO remove hard-coded domain
-                src={`http://localhost:8080/seer?path=~zod/sys/tmp/${endpoint}`}
+                src={`${ourDomain()}/seer?path=~zod/sys/tmp/${endpoint}`}
                 style={{ border: 'none', borderRadius: '2.5px' }}
                 sandbox="allow-scripts allow-same-origin"
               ></iframe>

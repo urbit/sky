@@ -114,4 +114,4 @@ async function put(path: string, file: File): Promise<Response | void> {
 //  }
 //}
 
-export { get, put }
+export { get, put, ourDomain }

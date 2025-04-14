@@ -14,5 +14,15 @@ export default ({ mode }) => {
       urbitPlugin({ base: 'sky', target: SHIP_URL, secure: false }),
       reactRefresh(),
     ],
+    build: {
+      rollupOptions: {
+        preserveEntrySignatures: 'strict',
+      },
+    },
+    template: {
+      transformIndexHtml(html) {
+        return html.replace(/%VITE_SHIP_URL%/g, SHIP_URL);
+      }
+    }
   })
 }
