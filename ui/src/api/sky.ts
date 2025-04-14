@@ -17,10 +17,6 @@ async function get(path: string): Promise<Response | void> {
         credentials: 'include',
       })
 
-      if (!res.ok) {
-        throw new Error(`Response not ok from ${url}`)
-      }
-
       const redirectedToGrid =
         endpoint !== '/apps/landscape' &&
         res.url === `http://localhost:8080/apps/landscape/`
