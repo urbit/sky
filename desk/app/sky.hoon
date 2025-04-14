@@ -6,72 +6,15 @@
 +$  state-0  [%0 ~]
 +$  card  $+(card card:agent:gall)
 --
-%+  verb  &
+%+  verb  %.y
 %-  agent:dbug
 =|  state-0
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
-    def   ~(. (default-agent this %|) bowl)
-++  on-init
-  ^-  (quip card _this)
-  ::  XX %connect to /sky, not /api
-  =/  init-paths
-    %+  weld
-      ~[/fil/home/html /fil/app-data/json]
-    .^((list path) %ct /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil/sys)
-  =/  eyre-cards
-    ^-  (list card)
-    %+  turn
-      init-paths
-    |=  =path
-    ^-  card
-    =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
-    =/  mim
-      ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
-    ::  ~&  >>  mim
-    =/  pax-cord
-      (crip (weld "/" (tape (join '/' (turn (snip (oust [0 1] path)) |=(=term (cord term)))))))
-    ~&  >>  pax-cord
-    :*  %pass  /eyre/cache
-        %arvo  %e
-        %set-response  pax-cord
-        ~  %.y  %payload
-        :-  200
-        :~  ['Content-Type' (ext-to-mime (rear path))]
-            ['Access-Control-Allow-Origin' '*']
-            ['X-Urbit-Desk' 'Sky']
-        ==
-        (some +.mim)
-    ==
-  ::
-  ::  in case we're |reviving sky, clear
-  ::  paths that sky cached in eyre
-  =/  clear-cache-cards
-    ^-  (list card)
-    =/  old-cache  .^((map url=@t [aeon=@ud val=(unit cache-entry:eyre)]) %e /(scot %p our.bowl)/cache/(scot %da now.bowl))
-    %+  murn
-      ~(tap by old-cache)
-    |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
-    ?~  val
-      ~
-    ?.  %+  lien
-          headers.response-header.simple-payload.body.u.val
-        |=  [key=@t value=@t]
-        =([key value] ['X-Urbit-Desk' 'Sky'])
-      ~&  >  "Not a Sky URL"
-      ~
-    ~&  >  "Clearing Sky's cached URL {<url>}"
-    %-  some
-    [%pass /eyre/cache %arvo %e %set-response url ~]
-  :_  this
-  ;:  weld
-      clear-cache-cards
-      eyre-cards
-      ^-  (list card)
-      [%pass /eyre/connect %arvo %e %connect `/api dap.bowl]~
-  ==
+    def   ~(. (default-agent this %.n) bowl)
+++  on-init   on-init:def
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase

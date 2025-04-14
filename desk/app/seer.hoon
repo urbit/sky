@@ -33,6 +33,7 @@
       init-paths
     |=  =path
     ^-  card
+    ~&  >  "Growing {<(tail (snip path))>}"
     =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
     =/  mim  ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
     ::  XX is there a gift at /call/back/path?

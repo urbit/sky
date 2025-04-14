@@ -1,23 +1,18 @@
-const shipDomain = () => {
-  if (import.meta.env.NODE_ENV === 'development') {
-    return import.meta.env.VITE_SHIP_URL || 'http://localhost:8080'
-  }
-  return window.location.origin
-}
-
 // TODO handle relative get('foo')
 // TODO handle relative get('/foo')
 // TODO handle relative get('~/foo')
+// TODO remove hard-coded URLs
 async function get(path: string): Promise<Response | void> {
   const pathArray = path.split('/')
   const pathShip = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
   // TODO shipDomain breaks rendering
-  const url = `${shipDomain}/${endpoint}`
+  //const url = `${shipDomain}/${endpoint}`
+  const url = `http://localhost:8080/${endpoint}`
 
   if (pathShip === `~${window.ship}`) {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`http://localhost:8080/seer?path=${path}`, {
         method: 'GET',
         credentials: 'include',
       })
@@ -28,7 +23,7 @@ async function get(path: string): Promise<Response | void> {
 
       const redirectedToGrid =
         endpoint !== '/apps/landscape' &&
-        res.url === `${shipDomain}/apps/landscape/`
+        res.url === `http://localhost:8080/apps/landscape/`
 
       // NOTE handle Landscape redirect
       // TODO change this behaviour in Landscape?
@@ -49,7 +44,7 @@ async function get(path: string): Promise<Response | void> {
   }
 
   try {
-    const res = await fetch(`${shipDomain}/seer?path=${path}`, {
+    const res = await fetch(`http://localhost:8080/seer?path=${path}`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -67,8 +62,9 @@ async function get(path: string): Promise<Response | void> {
 // TODO handle relative put('foo', file)
 // TODO handle relative put('/foo', file)
 // TODO handle relative put('~/foo', file)
+// TODO remove hard-coded URLs
 async function put(path: string, file: File): Promise<Response | void> {
-  const url = `${shipDomain}/seer?path=${path}&mime=${file.type}&name=${file.name}`
+  const url = `http://localhost:8080/seer?path=${path}&mime=${file.type}&name=${file.name}`
 
   try {
     const res = await fetch(url, {
