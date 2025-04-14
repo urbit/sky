@@ -93,6 +93,7 @@
       ?>  ?=(page p.q.val.u.neu)
       =/  =mime  (mime q.p.q.val.u.neu)
       ~&  >  "Returning a response for {<eyre-id.act>}"
+      ~&  >>  mime
       ::  XX return FQSP
       :_  this
       :~  :*  %pass
@@ -229,7 +230,7 @@
         :~  :*  %pass
                 /foo/poke/[eyre-id]
                 %agent
-                [our.bowl %seer]
+                [ship %seer]
                 %poke
                 %foo-poke
                 !>([eyre-id path])
