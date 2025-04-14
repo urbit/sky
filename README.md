@@ -18,7 +18,7 @@ Vite expects a ~zod running on localhost:8080, but you can configure this in an 
 VITE_SHIP_URL=http://localhost:80
 ```
 
-Boot up a fake ~zod and copy the contents of `/desk` to the ship.
+Boot up a fake ~zod (yes, the Vite setup only works with \~zod) and copy the contents of `/desk` to the ship.
 
 ```
 $ ./urbit -F zod
