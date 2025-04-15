@@ -1,4 +1,4 @@
-# Piraeus
+# Sky
 
 Urbit namespace browser, spiritual successor to the [urbit/shrub](https://github.com/urbit/shrub) prototype and the [Aegean](https://tiller-tolbus.redhorizon.com/blog/aegean) proposal.
 
@@ -19,7 +19,7 @@ $ ./urbit -F zod
 ```
 
 ```
-$ cd piraeus
+$ cd sky
 $ cp -r desk/* path/to/pier/sky
 ```
 
@@ -31,7 +31,7 @@ $ cp -r desk/* path/to/pier/sky
 Use Vite to run the frontend.
 
 ```
-$ cd piraeus/ui
+$ cd sky/ui
 $ pnpm install
 $ pnpm dev
 ```
