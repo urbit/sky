@@ -5,6 +5,9 @@
     </head>
     <body>
         <h1>200 Success</h1>
-        <p>Success</p>
+        <p>Successful response from <span id="domain"></span></p>
+        <script>
+            document.getElementById('domain').textContent = window.location.origin
+        </script>
     </body>
 </html>
