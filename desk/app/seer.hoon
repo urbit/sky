@@ -24,7 +24,6 @@
     %+  weld
       ^-  (list path)
       :~  /fil/home/html
-          /fil/sys/http-test/html
           /fil/app-data/json
       ==
     .^((list path) %ct /(scot %p our.bowl)/sky/(scot %da now.bowl)/fil/sys)
@@ -41,7 +40,16 @@
         %grow  (tail (snip path))
         [%mime mim]
     ==
+  =/  http-test-cards
+    ~&  >  "Growing /sys/http-test"
+    :~  :*  %pass  ~
+            %grow  /sys/http-test
+            [%mime ((type-to-mime %html) (crip "<!DOCTYPE html><html><head><title>200 Success</title></head><body><h1>200 Success</h1><p>Successful response from {<our.bowl>}</p></body></html>"))]
+        ==
+    ==
   :_  this
+  %+  welp
+    http-test-cards
   :_  grow-cards
   :*  %pass  /eyre/connect
       %arvo  %e  %connect
