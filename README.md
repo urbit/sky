@@ -4,21 +4,13 @@ Urbit namespace browser, spiritual successor to the [urbit/shrub](https://github
 
 ## Developer Environment Setup
 
-Use Vite to run the frontend.
-
-```
-$ cd piraeus/ui
-$ pnpm install
-$ pnpm dev
-```
-
-Vite expects a ~zod running on localhost:8080, but you can configure this in an .env.local file.
+The developer environment requires a fake \~zod (yes, it has to be \~zod) and expects that \~zod to be running on localhost:8080, but you can configure that URL in an .env.local file in the `/ui` folder.
 
 ```
 VITE_SHIP_URL=http://localhost:80
 ```
 
-Boot up a fake ~zod (yes, the Vite setup only works with \~zod) and copy the contents of `/desk` to the ship.
+Boot up your fake \~zod and copy the contents of `/desk` to its %sky desk.
 
 ```
 $ ./urbit -F zod
@@ -35,3 +27,15 @@ $ cp -r desk/* path/to/pier/sky
 > |commit %sky
 > |install our %sky
 ```
+
+Use Vite to run the frontend.
+
+```
+$ cd piraeus/ui
+$ pnpm install
+$ pnpm dev
+```
+
+Go to the Vite URL in the terminal ending `/apps/sky` to use Sky.
+
+Sky only works in an authenticated browser session, so you'll need to log into the ship with its `+code` for Sky to be able to communicate with it.
