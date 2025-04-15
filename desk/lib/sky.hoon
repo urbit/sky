@@ -75,6 +75,9 @@
 ::
 +|  %parsers
 ::
+::  XX arguably should use +stab but the client would
+::     have to do more work to format the input in the
+::     URL parameters
 ++  cut-path
   |=  [=cord sep=@t]
   ^-  path

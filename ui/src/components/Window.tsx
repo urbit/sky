@@ -1,5 +1,5 @@
 import { Allotment } from 'allotment'
-import { get, findPathUrl } from '../api/sky'
+import { get } from '../api/sky'
 import ImagePNG from './renderers/ImagePNG'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
@@ -79,15 +79,6 @@ export default function Window({
   //    <p>Blocked by CORS</p>
   //  </div>
   //);
-
-  const noURLcontent = (path: string) => {
-    console.error('No URL content for ', id, path)
-    return (
-      <div className="hf wf p2 fc ac jc">
-        <p>No URL found for {path}</p>
-      </div>
-    )
-  }
 
   const errorFetchingContent = (err: string) => {
     return (
@@ -211,25 +202,13 @@ export default function Window({
 
   async function renderContent(path: string) {
     try {
-      const res = await get(path)
+      const res: Response | void = await get(path)
 
       if (res) {
         return await renderResponse(res)
       }
 
-      // TODO nothing below this todo should be necessary;
-      // get() should account for all of this
-
-      const url = await findPathUrl(path)
-
-      if (!url) {
-        console.error(`No URLs found for ${path.split('/').slice(0)}`)
-        return noURLcontent(path)
-      }
-
-      if (url) {
-        return <iframe src={url} className="hf wf" style={{ border: 'none' }} />
-      }
+      return <p>{`No response from ${path}`}</p>
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Error fetching content:', error)

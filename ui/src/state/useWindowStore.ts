@@ -75,6 +75,7 @@ interface WindowStore {
 
 // helper to serialize and send the entire workspaces state to the namespace
 function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
+  //console.log('Sending workspaces state to namespace')
   // convert each workspace's windowMap to array format for backend
   const workspacesArray: Array<[WorkspaceID, BackendWorkspace]> = Array.from(
     store.workspaces.entries()
@@ -109,7 +110,7 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
 
     // TODO remove hard-coded @p; API should accept relative paths
     // can't use window.ship in this file
-    put('~zod/sys/state', stateFile)
+    put('~zod/sys/state/workspaces', stateFile)
   } catch (err) {
     console.error('Failed to save workspaces state to namespace: ', err)
   }
@@ -545,7 +546,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   // delete a workspace
   delWorkspace: (id: WorkspaceID) => {
     const currentWorkspaces = get().workspaces
-    
+
     // Create new Map before deleting to maintain immutability
     const newWorkspaces = new Map(currentWorkspaces)
     newWorkspaces.delete(id)
@@ -555,16 +556,17 @@ const useWindowStore = create<WindowStore>((set, get) => ({
       .filter(([wid, ws]) => wid !== 0 && ws.mounted)
       .sort(([, a], [, b]) => b.lastMounted - a.lastMounted)
 
-    const newActiveId = mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
+    const newActiveId =
+      mountedWorkspaces.length > 0 ? mountedWorkspaces[0][0] : 0
 
-    set({ 
+    set({
       workspaces: newWorkspaces,
-      activeWorkspaceID: newActiveId
+      activeWorkspaceID: newActiveId,
     })
-    
+
     sendWorkspacesStateToNamespace({
       workspaces: newWorkspaces,
-      activeWorkspaceID: newActiveId
+      activeWorkspaceID: newActiveId,
     })
   },
 
