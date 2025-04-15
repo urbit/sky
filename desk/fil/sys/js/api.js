@@ -1,9 +1,3 @@
-const ourDomain = () => {
-  return import.meta.env.MODE !== 'production'
-    ? import.meta.env.VITE_SHIP_URL || 'http://localhost:8080'
-    : window.location.origin
-}
-
 // TODO handle relative get('foo')
 // TODO handle relative get('/foo')
 // TODO handle relative get('~/foo')
@@ -12,39 +6,9 @@ async function get(path) {
   const pathArray = path.split('/')
   const pathShip = pathArray[0]
   const endpoint = pathArray.slice(1).join('/')
-  const url = `${ourDomain()}/${endpoint}`
-
-  if (pathShip === `~${window.ship}`) {
-    try {
-      const res = await fetch(`${ourDomain()}/seer?path=${path}`, {
-        method: 'GET',
-        credentials: 'include',
-      })
-
-      const redirectedToGrid =
-        endpoint !== '/apps/landscape' &&
-        res.url === `${ourDomain()}/apps/landscape/`
-
-      // NOTE handle Landscape redirect
-      // TODO change this behaviour in Landscape?
-      if (redirectedToGrid) {
-        return new Response(`File not found for ${path}`, {
-          status: 404,
-          headers: {
-            'Content-Type': 'text/plain',
-            'X-Response-URL': url,
-          },
-        })
-      }
-
-      return res
-    } catch (err) {
-      console.error(`GET request to ${pathShip} failed at ${url}`, err)
-    }
-  }
 
   try {
-    const res = await fetch(`${ourDomain()}/seer?path=${path}`, {
+    const res = await fetch(`${window.location.origin}/seer?path=${path}`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -64,7 +28,7 @@ async function get(path) {
 // TODO handle relative put('~/foo', file)
 // TODO remove hard-coded URLs
 async function put(path, file) {
-  const url = `${ourDomain()}/seer?path=${path}&mime=${file.type}&name=${file.name}`
+  const url = `${window.location.origin}/seer?path=${path}&mime=${file.type}&name=${file.name}`
 
   try {
     const res = await fetch(url, {
@@ -114,4 +78,4 @@ async function put(path, file) {
 //  }
 //}
 
-export { get, put, ourDomain }
+export { get, put }
