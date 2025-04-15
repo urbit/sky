@@ -39,3 +39,5 @@ $ pnpm dev
 Go to the Vite URL in the terminal ending `/apps/sky` to use Sky.
 
 Sky only works in an authenticated browser session, so you'll need to log into the ship with its `+code` for Sky to be able to communicate with it.
+
+For the Vite frontend to talk to the fakeship, you'll also need to run `|cors-approve 'http://localhost:5173'` in the dojo.
