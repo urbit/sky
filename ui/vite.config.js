@@ -21,8 +21,8 @@ export default ({ mode }) => {
     },
     template: {
       transformIndexHtml(html) {
-        return html.replace(/%VITE_SHIP_URL%/g, SHIP_URL);
-      }
-    }
+        return html.replace(/%VITE_SHIP_URL%/g, SHIP_URL)
+      },
+    },
   })
 }

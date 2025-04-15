@@ -1,9 +1,6 @@
 import '@urbit/sigil-js'
-// @ts-expect-error Type definitions for PNG imports are missing
 import bellIcon from '../assets/images/bell.png'
-// @ts-expect-error Type definitions for PNG imports are missing
 import closeIcon from '../assets/images/close.png'
-// @ts-expect-error Type definitions for PNG imports are missing
 import downArrowIcon from '../assets/images/down-arrow.png'
 import useWindowStore, { Workspace } from '../state/useWindowStore'
 import { useState, useEffect } from 'react'

@@ -208,9 +208,7 @@ export default function Window({
         return await renderResponse(res)
       }
 
-      return (
-        <p>{`No response from ${path}`}</p>
-      )
+      return <p>{`No response from ${path}`}</p>
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Error fetching content:', error)
@@ -381,17 +379,17 @@ export default function Window({
                   {!(
                     path === '' || path?.split('/')[0].slice(1) !== window.ship
                   ) && (
-                      <button
-                        className="fr ac jc"
-                        style={{ pointerEvents: 'visible' }}
-                        onMouseEnter={() => {
-                          setOpenOptionsMenu(true)
-                          setOpenVisibilityMenu(false)
-                        }}
-                      >
-                        ...
-                      </button>
-                    )}
+                    <button
+                      className="fr ac jc"
+                      style={{ pointerEvents: 'visible' }}
+                      onMouseEnter={() => {
+                        setOpenOptionsMenu(true)
+                        setOpenVisibilityMenu(false)
+                      }}
+                    >
+                      ...
+                    </button>
+                  )}
                   <button
                     className="fr ac jc"
                     style={{ pointerEvents: 'visible' }}
