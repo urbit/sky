@@ -108,7 +108,7 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
       { type: 'application/json' }
     )
 
-    put('~zod/sys/state/workspaces', stateFile)
+    put(`~${window.ship}/sys/state/workspaces`, stateFile)
   } catch (err) {
     console.error('Failed to save workspaces state to namespace: ', err)
   }
