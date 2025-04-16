@@ -57,7 +57,7 @@ export default function StatusBar() {
   const isEmptyWorkspace = (workspace: Workspace) => {
     const paths = Array.from(workspace.windowState.windowMap.values())
     return (
-      workspace.name === '' && paths.length === 1 && paths[0] === '~zod/home'
+      workspace.name === '' && paths.length === 1 && paths[0] === `~${window.ship}/home`
     )
   }
 
@@ -70,7 +70,7 @@ export default function StatusBar() {
     // TODO don't hard-code height all over this component
     // changing size in sigilConfig upsets layout
     size: '30px',
-    point: `~${window.ship || 'zod'}`,
+    point: `~${window.ship}`,
     // TODO get colors from tlon/landscape user preferences
     foreground: '#FFF',
     background: '#c10c31',
