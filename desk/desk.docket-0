@@ -5,5 +5,6 @@
     version+[0 0 1]
     website+'https://urbit.org/'
     license+'MIT'
-    site+/sky
+    glob-ames+~zod^0v0
+    base+'sky'
 ==

@@ -57,7 +57,9 @@ export default function StatusBar() {
   const isEmptyWorkspace = (workspace: Workspace) => {
     const paths = Array.from(workspace.windowState.windowMap.values())
     return (
-      workspace.name === '' && paths.length === 1 && paths[0] === `~${window.ship}/home`
+      workspace.name === '' &&
+      paths.length === 1 &&
+      paths[0] === `~${window.ship}/home`
     )
   }
 
