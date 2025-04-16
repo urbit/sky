@@ -1,6 +1,6 @@
 import { Allotment } from 'allotment'
 import { get } from '../api/sky'
-import ImagePNG from './renderers/ImagePNG'
+import Image from './renderers/Image'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
 import FileSystem from './renderers/FileSystem'
@@ -9,6 +9,8 @@ import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import TextPlain from './renderers/TextPlain'
+import Video from './renderers/Video'
+import Audio from './renderers/Audio'
 
 export interface WindowProps {
   id: number
@@ -62,9 +64,9 @@ export default function Window({
     setActiveWindowPath(path)
   }
 
-  const notRecognizedContent = (
+  const notRecognizedContent = (mimeType?: string) => (
     <div className="hf wf p2 fc ac jc">
-      <p>Unrecognized MIME type</p>
+      <p>Unrecognized MIME type{mimeType ? `: ${mimeType}` : ''}</p>
     </div>
   )
 
@@ -104,81 +106,78 @@ export default function Window({
       const contentType = res.headers.get('Content-Type')
 
       if (!contentType) {
-        return notRecognizedContent
+        return notRecognizedContent()
       }
 
-      switch (contentType.split(';')[0]) {
-        case 'text/plain': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'text/html': {
-          if (res.url) {
-            return <TextHTML url={res.url} />
-          }
+      const mimeType = contentType.split(';')[0]
+      const mainType = mimeType.split('/')[0]
+      const subType = mimeType.split('/')[1]
 
-          return <div>{`No URLs found for ${path}`}</div>
+      // Group by main MIME type
+      switch (mainType) {
+        case 'text': {
+          switch (subType) {
+            case 'html': {
+              if (res.url) {
+                return <TextHTML url={res.url} />
+              }
+              return <div>{`No URLs found for ${path}`}</div>
+            }
+            case 'markdown':
+            case 'x-markdown': {
+              const text = await res.text()
+              return <TextMarkdown md={text} />
+            }
+            // Default text handler for plain, css, javascript, etc.
+            default: {
+              const txt = await res.text()
+              return <TextPlain text={txt} />
+            }
+          }
         }
-        case 'text/markdown': {
-          const text = await res.text()
-          return <TextMarkdown md={text} />
+
+        case 'application': {
+          switch (subType) {
+            case 'pdf': {
+              const blob = await res.blob()
+              const pdfURL = URL.createObjectURL(blob)
+              return <ApplicationPDF pdf={pdfURL} />
+            }
+            // Handle json, xml and other application types as text
+            case 'json':
+            case 'xml': {
+              const txt = await res.text()
+              return <TextPlain text={txt} />
+            }
+            default: {
+              return notRecognizedContent(mimeType)
+            }
+          }
         }
-        case 'text/css': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'text/javascript': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'application/json': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'application/xml': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'application/pdf': {
-          const blob = await res.blob()
-          const pdfURL = URL.createObjectURL(blob)
-          return <ApplicationPDF pdf={pdfURL} />
-        }
-        case 'image/jpeg': {
-          return (
-            <>
-              <p>JPEG image content is not currently displayed.</p>
-            </>
-          )
-        }
-        case 'image/png': {
+
+        case 'image': {
+          // All image types can use the Image component
           const blob = await res.blob()
           const objectURL = URL.createObjectURL(blob)
-          return <ImagePNG url={objectURL} />
+          return <Image url={objectURL} />
         }
-        case 'image/gif': {
-          return (
-            <>
-              <p>GIF image content is not currently displayed.</p>
-            </>
-          )
+
+        case 'video': {
+          // All video types can use the Video component
+          const blob = await res.blob()
+          const objectURL = URL.createObjectURL(blob)
+          return <Video url={objectURL} />
         }
-        case 'video/mp4': {
-          return (
-            <>
-              <p>MP4 video content is not currently displayed.</p>
-            </>
-          )
+
+        case 'audio': {
+          // All audio types can use the Audio component
+          const blob = await res.blob()
+          const objectURL = URL.createObjectURL(blob)
+          return <Audio url={objectURL} />
         }
-        case 'audio/mpeg': {
-          return (
-            <>
-              <p>MP3 audio content is not currently displayed.</p>
-            </>
-          )
-        }
+
         default: {
-          return notRecognizedContent
+          return notRecognizedContent(mimeType)
         }
       }
     }
@@ -379,17 +378,17 @@ export default function Window({
                   {!(
                     path === '' || path?.split('/')[0].slice(1) !== window.ship
                   ) && (
-                    <button
-                      className="fr ac jc"
-                      style={{ pointerEvents: 'visible' }}
-                      onMouseEnter={() => {
-                        setOpenOptionsMenu(true)
-                        setOpenVisibilityMenu(false)
-                      }}
-                    >
-                      ...
-                    </button>
-                  )}
+                      <button
+                        className="fr ac jc"
+                        style={{ pointerEvents: 'visible' }}
+                        onMouseEnter={() => {
+                          setOpenOptionsMenu(true)
+                          setOpenVisibilityMenu(false)
+                        }}
+                      >
+                        ...
+                      </button>
+                    )}
                   <button
                     className="fr ac jc"
                     style={{ pointerEvents: 'visible' }}

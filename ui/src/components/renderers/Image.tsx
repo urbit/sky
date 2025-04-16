@@ -1,12 +1,12 @@
-interface ImagePNGProps {
+interface ImageProps {
   url: string
 }
 
-export default function ImagePNG({ url }: ImagePNGProps): JSX.Element {
+export default function Image({ url }: ImageProps): JSX.Element {
   return (
     <img
       src={url}
-      alt="PNG image"
+      alt="image"
       className="hf wf"
       style={{ objectFit: 'cover' }}
     />

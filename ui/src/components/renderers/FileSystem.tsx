@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, put } from '../../api/sky'
-import FilePNG from './FilePNG'
+import FileImage from './FileImage'
 import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
+import FileVideo from './FileVideo'
+import FileAudio from './FileAudio'
 
 interface FileSystemProps {
   id: number
@@ -19,6 +21,7 @@ const composerContentTypes = new Set([
   'application/json',
   'application/xml',
   'text/markdown',
+  'text/x-markdown',
 ])
 
 async function renderFile(path: string, res: Response): Promise<JSX.Element> {
@@ -29,30 +32,50 @@ async function renderFile(path: string, res: Response): Promise<JSX.Element> {
     return <p>No content type found</p>
   }
 
-  const baseContentType = contentType.split(';')[0]
+  const mimeType = contentType.split(';')[0]
 
-  if (composerContentTypes.has(baseContentType)) {
+  // Check if it's a text or other composer-friendly type
+  if (composerContentTypes.has(mimeType)) {
     return <FileComposer path={path} />
   }
 
-  switch (baseContentType) {
-    case 'image/png': {
+  // Extract main and sub types
+  const [mainType, subType] = mimeType.split('/')
+
+  // Group by main MIME type
+  switch (mainType) {
+    case 'image': {
+      // Handle all image types with FileImage renderer
       const blob = await res.blob()
       const objectURL = URL.createObjectURL(blob)
-      return <FilePNG url={objectURL} />
+      return <FileImage url={objectURL} />
     }
-    case 'application/pdf': {
-      const arrayBuffer = await res.arrayBuffer()
-      const pdfData = new Uint8Array(arrayBuffer)
-      return <FilePDF pdfData={pdfData} />
+    case 'video': {
+      // Handle all video types with FileVideo renderer
+      const blob = await res.blob()
+      const objectURL = URL.createObjectURL(blob)
+      return <FileVideo url={objectURL} />
     }
-    default: {
-      console.error(
-        `Rendering ${contentType.split(';')[0]} not supported by filesystem`
-      )
-      return <p>{`${contentType.split(';')[0]} not supported by filesystem`}</p>
+    case 'audio': {
+      // Handle all audio types with FileAudio renderer
+      const blob = await res.blob()
+      const objectURL = URL.createObjectURL(blob)
+      return <FileAudio url={objectURL} />
+    }
+    case 'application': {
+      if (subType === 'pdf') {
+        const arrayBuffer = await res.arrayBuffer()
+        const pdfData = new Uint8Array(arrayBuffer)
+        return <FilePDF pdfData={pdfData} />
+      }
+      // Fall through to default for unhandled application types
+      break
     }
   }
+
+  // Default case for unhandled types
+  console.error(`Rendering ${mimeType} not supported by filesystem`)
+  return <p>{`${mimeType} not supported by filesystem`}</p>
 }
 
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
@@ -127,7 +150,6 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
       <button onClick={handleUploadClick}>Upload a file</button>
       <input
         type="file"
-        accept=".css, .html, .js, .json, .md, .pdf, .png, .txt, .xml"
         style={{ display: 'none' }}
         onChange={uploadFiles}
       />
