@@ -9,6 +9,7 @@ import useWindowStore from '../state/useWindowStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import TextPlain from './renderers/TextPlain'
+import Video from './renderers/Video'
 
 export interface WindowProps {
   id: number
@@ -159,11 +160,14 @@ export default function Window({
           return <Image url={objectURL} />
         }
         case 'video/mp4': {
-          return (
-            <>
-              <p>MP4 video content is not currently displayed.</p>
-            </>
-          )
+          const blob = await res.blob()
+          const objectURL = URL.createObjectURL(blob)
+          return <Video url={objectURL} />
+        }
+        case 'video/quicktime': {
+          const blob = await res.blob()
+          const objectURL = URL.createObjectURL(blob)
+          return <Video url={objectURL} />
         }
         case 'audio/mpeg': {
           return (
