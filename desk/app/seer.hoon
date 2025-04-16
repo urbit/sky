@@ -8,7 +8,7 @@
 +$  card  $+(card card:agent:gall)
 --
 ::
-%+  verb  &
+%+  verb  %.n
 %-  agent:dbug
 =|  state-0
 =*  state  -
