@@ -1,6 +1,6 @@
 import { Allotment } from 'allotment'
 import { get } from '../api/sky'
-import ImagePNG from './renderers/ImagePNG'
+import Image from './renderers/Image'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'
 import FileSystem from './renderers/FileSystem'
@@ -149,16 +149,14 @@ export default function Window({
           return <ApplicationPDF pdf={pdfURL} />
         }
         case 'image/jpeg': {
-          return (
-            <>
-              <p>JPEG image content is not currently displayed.</p>
-            </>
-          )
+          const blob = await res.blob()
+          const objectURL = URL.createObjectURL(blob)
+          return <Image url={objectURL} />
         }
         case 'image/png': {
           const blob = await res.blob()
           const objectURL = URL.createObjectURL(blob)
-          return <ImagePNG url={objectURL} />
+          return <Image url={objectURL} />
         }
         case 'image/gif': {
           return (
@@ -383,17 +381,17 @@ export default function Window({
                   {!(
                     path === '' || path?.split('/')[0].slice(1) !== window.ship
                   ) && (
-                    <button
-                      className="fr ac jc"
-                      style={{ pointerEvents: 'visible' }}
-                      onMouseEnter={() => {
-                        setOpenOptionsMenu(true)
-                        setOpenVisibilityMenu(false)
-                      }}
-                    >
-                      ...
-                    </button>
-                  )}
+                      <button
+                        className="fr ac jc"
+                        style={{ pointerEvents: 'visible' }}
+                        onMouseEnter={() => {
+                          setOpenOptionsMenu(true)
+                          setOpenVisibilityMenu(false)
+                        }}
+                      >
+                        ...
+                      </button>
+                    )}
                   <button
                     className="fr ac jc"
                     style={{ pointerEvents: 'visible' }}
