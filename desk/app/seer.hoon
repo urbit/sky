@@ -150,18 +150,15 @@
         ?~  body
           [(send [400 ~ [%plain "No data received"]]) state]
         ::  ~&  >>  body
-        =/  nym  (cut-path value.u.name '.')
-        ::  ~&  >  nym
-        =/  ext  (rear nym)
-        ::  ~&  >  ext
-        =/  mim  ((type-to-mime ext) ((noun-to-type ext) q.u.body))
+        ::  ~&  >>  u.body
+        =/  mym  [(cut-path value.u.mime '/') u.body]
         :_  state
         ::  XX is there a gift at /call/back/path?
         %+  welp
           (send [200 ~ [%plain "Success"]])
         :~  :*  %pass  ~
                 %grow  (tail (cut-path value.u.pax '/'))
-                [%mime mim]
+                [%mime mym]
             ==
         ==
       ::

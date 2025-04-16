@@ -123,6 +123,10 @@ export default function Window({
           const text = await res.text()
           return <TextMarkdown md={text} />
         }
+        case 'text/x-markdown': {
+          const text = await res.text()
+          return <TextMarkdown md={text} />
+        }
         case 'text/css': {
           const txt = await res.text()
           return <TextPlain text={txt} />
