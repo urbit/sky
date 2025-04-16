@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
 import { get, put } from '../../api/sky'
-import FilePNG from './FilePNG'
+import FileImage from './FileImage'
 import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
 
@@ -30,30 +30,39 @@ async function renderFile(path: string, res: Response): Promise<JSX.Element> {
     return <p>No content type found</p>
   }
 
-  const baseContentType = contentType.split(';')[0]
+  const mimeType = contentType.split(';')[0]
 
-  if (composerContentTypes.has(baseContentType)) {
+  // Check if it's a text or other composer-friendly type
+  if (composerContentTypes.has(mimeType)) {
     return <FileComposer path={path} />
   }
 
-  switch (baseContentType) {
-    case 'image/png': {
+  // Extract main and sub types
+  const [mainType, subType] = mimeType.split('/')
+
+  // Group by main MIME type
+  switch (mainType) {
+    case 'image': {
+      // Handle all image types with FileImage renderer
       const blob = await res.blob()
       const objectURL = URL.createObjectURL(blob)
-      return <FilePNG url={objectURL} />
+      return <FileImage url={objectURL} />
     }
-    case 'application/pdf': {
-      const arrayBuffer = await res.arrayBuffer()
-      const pdfData = new Uint8Array(arrayBuffer)
-      return <FilePDF pdfData={pdfData} />
+    case 'application': {
+      if (subType === 'pdf') {
+        const arrayBuffer = await res.arrayBuffer()
+        const pdfData = new Uint8Array(arrayBuffer)
+        return <FilePDF pdfData={pdfData} />
+      }
+      // Fall through to default for unhandled application types
+      break
     }
-    default: {
-      console.error(
-        `Rendering ${contentType.split(';')[0]} not supported by filesystem`
-      )
-      return <p>{`${contentType.split(';')[0]} not supported by filesystem`}</p>
-    }
+    // Add cases for video and audio if needed in the future
   }
+
+  // Default case for unhandled types
+  console.error(`Rendering ${mimeType} not supported by filesystem`)
+  return <p>{`${mimeType} not supported by filesystem`}</p>
 }
 
 export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
