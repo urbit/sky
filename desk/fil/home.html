@@ -25,7 +25,7 @@
     import { get } from '/seer?path=/sys/js/api'
 
     async function makeTiles() {
-        const res = await get('~zod/app-data')
+        const res = await get('/app-data')
         const data = await res.json()
 
         const appContainer = document.getElementById('app-container')
