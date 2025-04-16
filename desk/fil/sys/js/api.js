@@ -1,11 +1,24 @@
 // TODO handle relative get('foo')
-// TODO handle relative get('/foo')
-// TODO handle relative get('~/foo')
-// TODO remove hard-coded URLs
 async function get(path) {
+  if (path.startsWith('/')) {
+    try {
+      const res = await fetch(`${window.location.origin}/seer?path=${path}`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+
+      if (!res.ok) {
+        throw new Error(`Response not ok from ${window.location.origin}/seer?path=${path}`)
+      }
+
+      return res
+    } catch(err) {
+      console.error(`GET request to ${path} failed at ${window.location.origin}/seer?path=${path}`, err)
+    }
+  }
+
   const pathArray = path.split('/')
   const pathShip = pathArray[0]
-  const endpoint = pathArray.slice(1).join('/')
 
   try {
     const res = await fetch(`${window.location.origin}/seer?path=${path}`, {
@@ -25,8 +38,6 @@ async function get(path) {
 
 // TODO handle relative put('foo', file)
 // TODO handle relative put('/foo', file)
-// TODO handle relative put('~/foo', file)
-// TODO remove hard-coded URLs
 async function put(path, file) {
   const url = `${window.location.origin}/seer?path=${path}&mime=${file.type}&name=${file.name}`
 

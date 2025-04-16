@@ -108,16 +108,14 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
       { type: 'application/json' }
     )
 
-    // TODO remove hard-coded @p; API should accept relative paths
-    // can't use window.ship in this file
-    put('~zod/sys/state/workspaces', stateFile)
+    put(`~${window.ship}/sys/state/workspaces`, stateFile)
   } catch (err) {
     console.error('Failed to save workspaces state to namespace: ', err)
   }
 }
 
 // default state values
-const defaultPath: Path = '~zod/home'
+const defaultPath: Path = `~${window.ship}/home`
 const defaultMap: WindowMap = new Map<WindowID, Path>([[1, defaultPath]])
 
 const defaultWindowState: WindowStateObject = {

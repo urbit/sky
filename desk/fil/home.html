@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Screen</title>
-    <link rel="stylesheet" href="/seer?path=~zod/sys/css/hollow">
-    <link rel="stylesheet" href="/seer?path=~zod/sys/css/spine">
-    <link rel="stylesheet" href="/seer?path=~zod/sys/css/feather">
+    <link rel="stylesheet" href="/seer?path=/sys/css/hollow">
+    <link rel="stylesheet" href="/seer?path=/sys/css/spine">
+    <link rel="stylesheet" href="/seer?path=/sys/css/feather">
 </head>
 <body class="p4 b1">
     <div class="hf wf fr ac jc b1">
         <div class="hf fc ac js">
             <!-- path bar -->
-            <div class="wf fr ac jc">
-                <input type="text" placeholder="~zod/home" />
-            </div>
+            <!--<div class="wf fr ac jc">-->
+            <!--    <input type="text" placeholder="~zod/home" />-->
+            <!--</div>-->
             <!-- tiles -->
             <div id="app-container" class="wf fr as js frw" style="width: 500px; flex-wrap: wrap; margin-top: 8px;">
                 <!-- App tiles will be generated here -->
@@ -22,10 +22,10 @@
         </div>
     </div>
     <script type="module">
-    import { get } from '/seer?path=~zod/sys/js/api'
+    import { get } from '/seer?path=/sys/js/api'
 
     async function makeTiles() {
-        const res = await get('~zod/app-data')
+        const res = await get('/app-data')
         const data = await res.json()
 
         const appContainer = document.getElementById('app-container')

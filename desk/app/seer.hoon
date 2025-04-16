@@ -185,7 +185,11 @@
         ?~  pax
           ~&  >>>  "No data received"
           [(send [400 ~ [%plain "No data received"]]) state]
-        =/  =path  (cut-path value.u.pax '/')
+        =/  =path
+          ::  handle relative paths from root
+          ?.  =('/' (head (trip value.u.pax)))
+            (cut-path value.u.pax '/')
+          (welp /[(scot %p our.bowl)] (cut-path value.u.pax '/'))
         ::  ~&  >>  sky.bowl
         =/  =ship  `@p`(slav %p (head path))
         ?:  =(ship our.bowl)

@@ -271,7 +271,7 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
             <div className="hf wf p2">
               <iframe
                 className="hf wf"
-                src={`${ourDomain()}/seer?path=~zod/sys/tmp/${endpoint}`}
+                src={`${ourDomain()}/seer?path=/sys/tmp/${endpoint}`}
                 style={{ border: 'none', borderRadius: '2.5px' }}
                 sandbox="allow-scripts allow-same-origin"
               ></iframe>
