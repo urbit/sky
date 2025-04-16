@@ -19,8 +19,11 @@ async function get(path: string): Promise<Response | void> {
       }
 
       return res
-    } catch(err) {
-      console.error(`GET request to ${path} failed at ${ourDomain()}/seer?path=${path}`, err)
+    } catch (err) {
+      console.error(
+        `GET request to ${path} failed at ${ourDomain()}/seer?path=${path}`,
+        err
+      )
     }
   }
 
