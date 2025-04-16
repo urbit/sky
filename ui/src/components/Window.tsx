@@ -158,13 +158,6 @@ export default function Window({
           const objectURL = URL.createObjectURL(blob)
           return <Image url={objectURL} />
         }
-        case 'image/gif': {
-          return (
-            <>
-              <p>GIF image content is not currently displayed.</p>
-            </>
-          )
-        }
         case 'video/mp4': {
           return (
             <>
