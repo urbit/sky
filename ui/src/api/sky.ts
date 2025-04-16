@@ -1,6 +1,6 @@
 const ourDomain = (): string => {
   return import.meta.env.MODE !== 'production'
-    ? import.meta.env.VITE_SHIP_URL || 'http://localhost:8080'
+    ? import.meta.env.VITE_SHIP_URL || 'http://localhost:80'
     : window.location.origin
 }
 
