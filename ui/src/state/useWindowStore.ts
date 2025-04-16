@@ -108,8 +108,6 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
       { type: 'application/json' }
     )
 
-    // TODO remove hard-coded @p; API should accept relative paths
-    // can't use window.ship in this file
     put('~zod/sys/state/workspaces', stateFile)
   } catch (err) {
     console.error('Failed to save workspaces state to namespace: ', err)
