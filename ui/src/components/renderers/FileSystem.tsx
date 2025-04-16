@@ -4,6 +4,8 @@ import { get, put } from '../../api/sky'
 import FileImage from './FileImage'
 import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
+import FileVideo from './FileVideo'
+import FileAudio from './FileAudio'
 
 interface FileSystemProps {
   id: number
@@ -48,6 +50,18 @@ async function renderFile(path: string, res: Response): Promise<JSX.Element> {
       const objectURL = URL.createObjectURL(blob)
       return <FileImage url={objectURL} />
     }
+    case 'video': {
+      // Handle all video types with FileVideo renderer
+      const blob = await res.blob()
+      const objectURL = URL.createObjectURL(blob)
+      return <FileVideo url={objectURL} />
+    }
+    case 'audio': {
+      // Handle all audio types with FileAudio renderer
+      const blob = await res.blob()
+      const objectURL = URL.createObjectURL(blob)
+      return <FileAudio url={objectURL} />
+    }
     case 'application': {
       if (subType === 'pdf') {
         const arrayBuffer = await res.arrayBuffer()
@@ -57,7 +71,6 @@ async function renderFile(path: string, res: Response): Promise<JSX.Element> {
       // Fall through to default for unhandled application types
       break
     }
-    // Add cases for video and audio if needed in the future
   }
 
   // Default case for unhandled types
