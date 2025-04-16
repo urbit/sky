@@ -4,13 +4,13 @@ Urbit namespace browser, spiritual successor to the [urbit/shrub](https://github
 
 ## Developer Environment Setup
 
-The developer environment requires a fake \~zod (yes, it has to be \~zod) and expects that \~zod to be running on localhost:8080, but you can configure that URL in an .env.local file in the `/ui` folder.
+The developer environment requires a fakeship and expects that fakeship to be running on localhost:80, but you can configure that URL in an .env.local file in the `/ui` folder.
 
 ```
 VITE_SHIP_URL=http://localhost:80
 ```
 
-Boot up your fake \~zod and copy the contents of `/desk` to its %sky desk.
+Boot up your fakeship and copy the contents of `/desk` to its %sky desk.
 
 ```
 $ ./urbit -F zod
@@ -40,5 +40,5 @@ $ pnpm install
 $ pnpm dev
 ```
 
-Go to the Vite URL in the terminal ending `/apps/sky` to use Sky.
+Go to `http://127.0.0.1:5173/apps/sky/` to use Sky.
 
