@@ -8,7 +8,7 @@
 +$  card  $+(card card:agent:gall)
 --
 ::
-%+  verb  &
+%+  verb  %.n
 %-  agent:dbug
 =|  state-0
 =*  state  -
@@ -67,20 +67,17 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ~&  >  "Got poke"
   |^
     ?+    mark
       (on-poke:def mark vase)
     ::
         %handle-http-request
-      ~&  >>  src.bowl
       ?>  =(src.bowl our.bowl)
       =^  cards  state
         (handle-http !<([@ta =inbound-request:eyre] vase))
       [cards this]
     ::
         %foo-poke
-      ~&  >  "Got %foo-poke"
       =/  act  !<(foo-poke vase)
       =/  ver  (~(get by sky.bowl) (tail path.act))
       ?~  ver
@@ -100,8 +97,6 @@
         !!
       ?>  ?=(page p.q.val.u.neu)
       =/  =mime  (mime q.p.q.val.u.neu)
-      ~&  >  "Returning a response for {<eyre-id.act>}"
-      ~&  >>  mime
       ::  XX return FQSP
       :_  this
       :~  :*  %pass
@@ -114,8 +109,6 @@
       ==  ==
     ::
         %baz-response
-      ~&  >  "Got %baz-response"
-      ~&  >>  vase
       =/  act  !<(baz-response vase)
       =/  mim-cord
         (crip (tape (join '/' (turn (head mime.act) |=(=term (cord term))))))
@@ -140,7 +133,6 @@
           [(send [405 ~ [%stock ~]]) state]
         ::
           %'PUT'
-        ~&  >  "Got PUT"
         =/  line  (parse-request-line:server url.request.inbound-request)
         =/  pax   (~(get by (malt args.line)) 'path')
         ?~  pax
@@ -187,8 +179,6 @@
         ==
       ::
           %'GET'
-        ~&  >  "Got GET"
-        ~&  >  "eyre-id {<eyre-id>}"
         ::  ~&  >>  inbound-request
         =/  line  (parse-request-line:server url.request.inbound-request)
         =/  pax   (~(get by (malt args.line)) 'path')
@@ -196,38 +186,31 @@
           ~&  >>>  "No data received"
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  =path  (cut-path value.u.pax '/')
-        ~&  >  path
         ::  ~&  >>  sky.bowl
         =/  =ship  `@p`(slav %p (head path))
         ?:  =(ship our.bowl)
           ::
           ::  our path
-          ~&  >  "Local request"
           =/  ver  (~(get by sky.bowl) (tail path))
           ?~  ver
-            ~&  >>>  "No versions of this file"
+            ~&  >>>  "No versions of {<path>}"
             [(send [404 ~ [%plain "Not found"]]) state]
-          ~&  >  "There is/was a version of this file"
           =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
           ::  XX i think +ram is getting latest date
           ::     but check this works as expected
           =/  neu  (ram:on-path (need ver))
           ?~  neu
-            ~&  >>>  "Not found"
+            ~&  >>>  "Can't find {<path>}"
             ::  nothing here
             [(send [404 ~ [%plain "Not found"]]) state]
-          ~&  >  "Found something"
           ?.  -.q.val.u.neu
             ::  tombstoned
-            ~&  >>>  "Tombstoned"
+            ~&  >>>  "Found tombstoned {<path>}"
             [(send [410 ~ [%plain "Gone"]]) state]
-          ~&  >  "Not tombstoned"
           ?>  ?=(page p.q.val.u.neu)
-          ~&  >  "It's a page"
           =/  =mime  (mime q.p.q.val.u.neu)
           =/  mim-cord
             (crip (tape (join '/' (turn (head mime) |=(=term (cord term))))))
-          ~&  >  "Returning response"
           :_  state
           ^-  (list card)
           %+  give-simple-payload:app:server
@@ -241,9 +224,6 @@
           (some +.mime)
         ::
         ::  foreign path
-        ~&  >   "Sending request to {<ship>} for {<(tail path)>}"
-        ~&  >>  eyre-id
-        ~&  >>  /foo/poke/[eyre-id]
         :_  state
         :~  :*  %pass
                 /foo/poke/[eyre-id]
@@ -284,15 +264,13 @@
   ::
       [%foo %poke @ ~]
     =/  eyre-id=@ta  i.t.t.wire
-    ~&  >>  eyre-id
     ?+  -.sign
       (on-agent:def wire sign)
     ::
         %poke-ack
       ?~  p.sign
-        ~&  >  "Got ack from {<src.bowl>}"
         `this
-      ~&  >>>  "Got nack"
+      ~&  >>>  "Got nack from {<src.bowl>}"
       :_  this
       %+  give-simple-payload:app:server
           eyre-id
