@@ -64,9 +64,9 @@ export default function Window({
     setActiveWindowPath(path)
   }
 
-  const notRecognizedContent = (
+  const notRecognizedContent = (mimeType?: string) => (
     <div className="hf wf p2 fc ac jc">
-      <p>Unrecognized MIME type</p>
+      <p>Unrecognized MIME type{mimeType ? `: ${mimeType}` : ''}</p>
     </div>
   )
 
@@ -106,7 +106,7 @@ export default function Window({
       const contentType = res.headers.get('Content-Type')
 
       if (!contentType) {
-        return notRecognizedContent
+        return notRecognizedContent()
       }
 
       switch (contentType.split(';')[0]) {
@@ -176,7 +176,7 @@ export default function Window({
           return <Audio url={objectURL} />
         }
         default: {
-          return notRecognizedContent
+          return notRecognizedContent(contentType.split(';')[0])
         }
       }
     }
