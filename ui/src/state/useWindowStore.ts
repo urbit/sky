@@ -117,7 +117,7 @@ function sendWorkspacesStateToNamespace(store: WorkspaceStore): void {
 }
 
 // default state values
-const defaultPath: Path = '~zod/home'
+const defaultPath: Path = `~${window.ship}/home`
 const defaultMap: WindowMap = new Map<WindowID, Path>([[1, defaultPath]])
 
 const defaultWindowState: WindowStateObject = {
