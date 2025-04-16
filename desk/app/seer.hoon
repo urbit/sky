@@ -193,19 +193,19 @@
           ::  our path
           =/  ver  (~(get by sky.bowl) (tail path))
           ?~  ver
-            ~&  >>>  "No versions of this file"
+            ~&  >>>  "No versions of {<path>}"
             [(send [404 ~ [%plain "Not found"]]) state]
           =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
           ::  XX i think +ram is getting latest date
           ::     but check this works as expected
           =/  neu  (ram:on-path (need ver))
           ?~  neu
-            ~&  >>>  "Not found"
+            ~&  >>>  "Can't find {<path>}"
             ::  nothing here
             [(send [404 ~ [%plain "Not found"]]) state]
           ?.  -.q.val.u.neu
             ::  tombstoned
-            ~&  >>>  "Tombstoned"
+            ~&  >>>  "Found tombstoned {<path>}"
             [(send [410 ~ [%plain "Gone"]]) state]
           ?>  ?=(page p.q.val.u.neu)
           =/  =mime  (mime q.p.q.val.u.neu)

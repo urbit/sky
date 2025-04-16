@@ -49,9 +49,9 @@ async function get(path: string): Promise<Response | void> {
       credentials: 'include',
     })
 
-    if (!res.ok) {
-      throw new Error(`Response not ok from %seer`)
-    }
+    //if (!res.ok) {
+    //  throw new Error(`Response not ok from %seer`)
+    //}
 
     return res
   } catch (err) {
