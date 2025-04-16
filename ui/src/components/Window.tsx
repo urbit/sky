@@ -109,74 +109,75 @@ export default function Window({
         return notRecognizedContent()
       }
 
-      switch (contentType.split(';')[0]) {
-        case 'text/plain': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'text/html': {
-          if (res.url) {
-            return <TextHTML url={res.url} />
-          }
+      const mimeType = contentType.split(';')[0]
+      const mainType = mimeType.split('/')[0]
+      const subType = mimeType.split('/')[1]
 
-          return <div>{`No URLs found for ${path}`}</div>
+      // Group by main MIME type
+      switch (mainType) {
+        case 'text': {
+          switch (subType) {
+            case 'html': {
+              if (res.url) {
+                return <TextHTML url={res.url} />
+              }
+              return <div>{`No URLs found for ${path}`}</div>
+            }
+            case 'markdown':
+            case 'x-markdown': {
+              const text = await res.text()
+              return <TextMarkdown md={text} />
+            }
+            // Default text handler for plain, css, javascript, etc.
+            default: {
+              const txt = await res.text()
+              return <TextPlain text={txt} />
+            }
+          }
         }
-        case 'text/markdown': {
-          const text = await res.text()
-          return <TextMarkdown md={text} />
+
+        case 'application': {
+          switch (subType) {
+            case 'pdf': {
+              const blob = await res.blob()
+              const pdfURL = URL.createObjectURL(blob)
+              return <ApplicationPDF pdf={pdfURL} />
+            }
+            // Handle json, xml and other application types as text
+            case 'json':
+            case 'xml': {
+              const txt = await res.text()
+              return <TextPlain text={txt} />
+            }
+            default: {
+              return notRecognizedContent(mimeType)
+            }
+          }
         }
-        case 'text/x-markdown': {
-          const text = await res.text()
-          return <TextMarkdown md={text} />
-        }
-        case 'text/css': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'text/javascript': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'application/json': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'application/xml': {
-          const txt = await res.text()
-          return <TextPlain text={txt} />
-        }
-        case 'application/pdf': {
-          const blob = await res.blob()
-          const pdfURL = URL.createObjectURL(blob)
-          return <ApplicationPDF pdf={pdfURL} />
-        }
-        case 'image/jpeg': {
+
+        case 'image': {
+          // All image types can use the Image component
           const blob = await res.blob()
           const objectURL = URL.createObjectURL(blob)
           return <Image url={objectURL} />
         }
-        case 'image/png': {
-          const blob = await res.blob()
-          const objectURL = URL.createObjectURL(blob)
-          return <Image url={objectURL} />
-        }
-        case 'video/mp4': {
+
+        case 'video': {
+          // All video types can use the Video component
           const blob = await res.blob()
           const objectURL = URL.createObjectURL(blob)
           return <Video url={objectURL} />
         }
-        case 'video/quicktime': {
-          const blob = await res.blob()
-          const objectURL = URL.createObjectURL(blob)
-          return <Video url={objectURL} />
-        }
-        case 'audio/mpeg': {
+
+        case 'audio': {
+          // All audio types can use the Audio component
           const blob = await res.blob()
           const objectURL = URL.createObjectURL(blob)
           return <Audio url={objectURL} />
         }
+
         default: {
-          return notRecognizedContent(contentType.split(';')[0])
+          return notRecognizedContent(mimeType)
         }
       }
     }
