@@ -194,7 +194,7 @@
           ::  our path
           =/  ver  (~(get by sky.bowl) (tail path))
           ?~  ver
-            ~&  >>>  "No versions of {<path>}"
+            ::  ~&  >>>  "No versions of {<path>}"
             [(send [404 ~ [%plain "Not found"]]) state]
           =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
           ::  XX i think +ram is getting latest date
