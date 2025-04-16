@@ -4,10 +4,10 @@ Urbit namespace browser, spiritual successor to the [urbit/shrub](https://github
 
 ## Developer Environment Setup
 
-The developer environment requires a fakeship and expects that fakeship to be running on localhost:80, but you can configure that URL in an .env.local file in the `/ui` folder.
+The developer environment requires a fakeship and expects that fakeship to be running on localhost:80, but you can specify another port in an .env.local file in the `/ui` folder.
 
 ```
-VITE_SHIP_URL=http://localhost:80
+VITE_SHIP_URL=http://localhost:8080
 ```
 
 Boot up your fakeship and copy the contents of `/desk` to its %sky desk.
