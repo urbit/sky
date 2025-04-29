@@ -44,9 +44,32 @@
 ::
 ++  on-peek
   ::  XX do this first
-  |=  path=(pole knot)
+  |=  pax=(pole knot)
   ^-  (unit (unit cage))
-  ``[%noun !>(~)]
+  ?+  pax
+    (on-peek:def pax)
+  ::
+      [%x %eyre %paths ~]
+    ::
+    ::  XX handle scries for paths beneath specific path
+    ::  XX handle cares: %x, %y, %z
+    =/  cached-paths
+      ^-  (list path)
+      %+  murn
+        %~  tap  by
+        .^((map @t [@ud (unit cache-entry:eyre)]) %e /(scot %p our.bowl)/cache/(scot %da now.bowl))
+      |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
+      ?~  val
+        ~
+      (some (stab url))
+    =/  bound-paths
+      ^-  (list path)
+      %+  turn
+        .^((list [binding:eyre duct action:eyre]) %e /(scot %p our.bowl)/bindings/(scot %da now.bowl))
+      |=  [=binding:eyre duct action:eyre]
+      path.binding
+    ``[%noun !>(~)]
+  ==
 ++  on-watch
   ::  XX sticky scry
   |=  path=(pole knot)
