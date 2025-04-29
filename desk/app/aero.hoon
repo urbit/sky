@@ -18,7 +18,6 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  "%aero initialized successfully."
   `this
 ++  on-save   !>(state)
 ++  on-load
@@ -35,27 +34,32 @@
   ?+    mark
     (on-poke:def mark vase)
   ::
+  ::  XX %clear-cache
+  ::       [%clear-cache (unit path)]
+  ::       see %sky on-init for clearing Eyre cache
       %foo-poke
     =/  act  !<(* vase)
     `this
   ==
 ::
 ++  on-peek
+  ::  XX do this first
   |=  path=(pole knot)
   ^-  (unit (unit cage))
   ``[%noun !>(~)]
 ++  on-watch
+  ::  XX sticky scry
   |=  path=(pole knot)
   ^-  (quip card _this)
   `this
-++  on-arvo
-  |=  [=wire =sign-arvo]
-  ^-  (quip card _this)
-  `this
-++  on-leave  on-leave:def
 ++  on-agent
+  ::  XX should listen to tasks from %seer upon a
+  ::     successful %grow, but Gall vane doesn't send
+  ::     a gift to confirm that that worked right now
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   `this
+++  on-arvo   on-arvo:def
+++  on-leave  on-leave:def
 ++  on-fail   on-fail:def
 --
