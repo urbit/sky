@@ -51,7 +51,6 @@
       [%x %eyre %paths =care:clay und=*]
     ::
     ::  XX take care into account
-    ::  XX handle scries for paths beneath specific path
     =/  cached-paths
       ^-  (list cord)
       %+  murn
