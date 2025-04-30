@@ -43,13 +43,14 @@
   ==
 ::
 ++  on-peek
-  |=  pax=(pole knot)
+  |=  =(pole knot)
   ^-  (unit (unit cage))
-  ?+  pax
-    (on-peek:def pax)
+  ?+  pole
+    (on-peek:def pole)
   ::
-      [%x %eyre %paths =care:clay *]
+      [%x %eyre %paths =care:clay und=*]
     ::
+    ::  XX take care into account
     ::  XX handle scries for paths beneath specific path
     =/  cached-paths
       ^-  (list cord)
@@ -72,8 +73,19 @@
         ==
       |=  [=binding:eyre duct action:eyre]
       (spat path.binding)
+    =/  filtered
+      ^-  (list cord)
+      %+  murn
+        (welp bound-paths cached-paths)
+      |=  =cord
+      ^-  (unit @t)
+      ?.  =(0 (lent (fand "@" (trip cord))))
+        ~
+      ?.  =(((list knot) und.pole) (scag (lent und.pole) (stab cord)))
+        ~
+      (some cord)
     ::
-    ``[%sky-urls !>((welp bound-paths cached-paths))]
+    ``[%sky-urls !>(filtered)]
   ==
 ++  on-watch
   ::  XX sticky scry
