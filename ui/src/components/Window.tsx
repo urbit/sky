@@ -274,8 +274,6 @@ export default function Window({
   const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
 
   return (
-    <Allotment>
-      <Allotment.Pane visible key={id} className="wf hf fr">
         <div
           className="wf hf fc ac jc relative"
           style={{
@@ -408,7 +406,5 @@ export default function Window({
               : fileSystemContent}
           </div>
         </div>
-      </Allotment.Pane>
-    </Allotment>
   )
 }
