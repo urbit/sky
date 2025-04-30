@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
+    "@urbit/http-api": "^2.3.0",
     "@urbit/sigil-js": "^2.2.0",
     "allotment": "^1.20.2",
     "emmet-monaco-es": "^5.5.0",
@@ -28,14 +29,14 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
-    "@urbit/vite-plugin-urbit": "github:urbit/vite-plugin-urbit",
     "@eslint/js": "^9.11.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@types/lodash": "^4.17.13",
+    "@types/mime-types": "^2.1.4",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
-    "@types/mime-types": "^2.1.4",
+    "@urbit/vite-plugin-urbit": "github:urbit/vite-plugin-urbit",
     "@vitejs/plugin-react": "^4.0.0",
     "eslint": "^9.11.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
