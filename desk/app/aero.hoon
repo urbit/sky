@@ -54,21 +54,24 @@
     ::  XX handle scries for paths beneath specific path
     ::  XX handle cares: %x, %y, %z
     =/  cached-paths
-      ^-  (list path)
+      ^-  (list cord)
       %+  murn
         %~  tap  by
+        ::  XX tall-form
         .^((map @t [@ud (unit cache-entry:eyre)]) %e /(scot %p our.bowl)/cache/(scot %da now.bowl))
       |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
       ?~  val
         ~
-      (some (stab url))
+      (some url)
     =/  bound-paths
-      ^-  (list path)
+      ^-  (list cord)
       %+  turn
+        ::  XX tall-form
         .^((list [binding:eyre duct action:eyre]) %e /(scot %p our.bowl)/bindings/(scot %da now.bowl))
       |=  [=binding:eyre duct action:eyre]
-      path.binding
-    ``[%noun !>(~)]
+      (spat path.binding)
+    ::
+    ``[%sky-urls !>((welp bound-paths cached-paths))]
   ==
 ++  on-watch
   ::  XX sticky scry
