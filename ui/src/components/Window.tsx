@@ -1,4 +1,3 @@
-import { Allotment } from 'allotment'
 import { get } from '../api/sky'
 import Image from './renderers/Image'
 import TextMarkdown from './renderers/TextMarkdown'
@@ -11,6 +10,7 @@ import ApplicationPDF from './renderers/ApplicationPDF'
 import TextPlain from './renderers/TextPlain'
 import Video from './renderers/Video'
 import Audio from './renderers/Audio'
+import HomeScreen from './HomeScreen'
 
 export interface WindowProps {
   id: number
@@ -27,18 +27,16 @@ export default function Window({
   handleDragStart,
   dragWindow,
 }: WindowProps) {
-  const defaultContent = (
-    <div className="hf wf p2 fc ac jc">
-      <PathBar id={id} path={path} />
-    </div>
+  const homeScreen = (
+    <HomeScreen id={id} />
   )
 
   const fileSystemContent = (
     // TODO not sure about this default behaviour
-    <FileSystem id={id} path={path || `${window.ship}/home`} />
+    <FileSystem id={id} path={path || `~${window.ship}/home`} />
   )
 
-  const [windowContent, setWindowContent] = useState(defaultContent)
+  const [windowContent, setWindowContent] = useState(homeScreen)
   const [windowBarOpen, setWindowBarOpen] = useState(false)
   const [openOptionsMenu, setOpenOptionsMenu] = useState(false)
   const [openVisibilityMenu, setOpenVisibilityMenu] = useState(false)
@@ -76,12 +74,6 @@ export default function Window({
     </div>
   )
 
-  //const corsErrorContent = (
-  //  <div className="fc ac jc hf wf p2">
-  //    <p>Blocked by CORS</p>
-  //  </div>
-  //);
-
   const errorFetchingContent = (err: string) => {
     return (
       <div className="hf wf p2">
@@ -97,11 +89,6 @@ export default function Window({
   }
 
   async function renderResponse(res: Response): Promise<JSX.Element> {
-    // TODO remove?
-    //if (res.type === 'cors') {
-    //  return corsErrorContent;
-    //}
-
     if (res.status >= 200 && res.status <= 300) {
       const contentType = res.headers.get('Content-Type')
 
@@ -249,7 +236,7 @@ export default function Window({
   useEffect(() => {
     const fetchContent = async () => {
       if (path === '') {
-        setWindowContent(defaultContent)
+        setWindowContent(homeScreen)
       }
       if (path) {
         const content = await renderContent(path)
@@ -401,9 +388,12 @@ export default function Window({
             </div>
           )}
         </div>
-        {fileView && !fileView.includes(id)
-          ? windowContent
-          : fileSystemContent}
+        {path === `~${window.ship}/home`
+          ? homeScreen
+          : fileView && !fileView.includes(id)
+            ? windowContent
+            : fileSystemContent
+        }
       </div>
     </div>
   )
