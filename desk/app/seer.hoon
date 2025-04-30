@@ -189,51 +189,51 @@
           (welp /[(scot %p our.bowl)] (cut-path value.u.pax '/'))
         ::  ~&  >>  sky.bowl
         =/  =ship  `@p`(slav %p (head path))
-        ?:  =(ship our.bowl)
+        ?.  =(ship our.bowl)
           ::
-          ::  our path
-          =/  ver  (~(get by sky.bowl) (tail path))
-          ?~  ver
-            ::  ~&  >>>  "No versions of {<path>}"
-            [(send [404 ~ [%plain "Not found"]]) state]
-          =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
-          ::  XX i think +ram is getting latest date
-          ::     but check this works as expected
-          =/  neu  (ram:on-path (need ver))
-          ?~  neu
-            ~&  >>>  "Can't find {<path>}"
-            ::  nothing here
-            [(send [404 ~ [%plain "Not found"]]) state]
-          ?.  -.q.val.u.neu
-            ::  tombstoned
-            ~&  >>>  "Found tombstoned {<path>}"
-            [(send [410 ~ [%plain "Gone"]]) state]
-          ?>  ?=(page p.q.val.u.neu)
-          =/  =mime  (mime q.p.q.val.u.neu)
-          =/  mim-cord
-            (crip (tape (join '/' (turn (head mime) |=(=term (cord term))))))
+          ::  foreign path
           :_  state
-          ^-  (list card)
-          %+  give-simple-payload:app:server
-            eyre-id
-          ^-  simple-payload:http
-          :-  :-  200
-              ::  XX form real FQSP
-              :~  ['Content-Type' mim-cord]
-                  ['X-FQSP' '~zod/foo']
-              ==
-          (some +.mime)
+          :~  :*  %pass
+                  /foo/poke/[eyre-id]
+                  %agent
+                  [ship %seer]
+                  %poke
+                  %foo-poke
+                  !>([eyre-id path])
+          ==  ==
         ::
-        ::  foreign path
+        ::  our path
+        =/  ver  (~(get by sky.bowl) (tail path))
+        ?~  ver
+          ::  ~&  >>>  "No versions of {<path>}"
+          [(send [404 ~ [%plain "Not found"]]) state]
+        =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
+        ::  XX i think +ram is getting latest date
+        ::     but check this works as expected
+        =/  neu  (ram:on-path (need ver))
+        ?~  neu
+          ~&  >>>  "Can't find {<path>}"
+          ::  nothing here
+          [(send [404 ~ [%plain "Not found"]]) state]
+        ?.  -.q.val.u.neu
+          ::  tombstoned
+          ~&  >>>  "Found tombstoned {<path>}"
+          [(send [410 ~ [%plain "Gone"]]) state]
+        ?>  ?=(page p.q.val.u.neu)
+        =/  =mime  (mime q.p.q.val.u.neu)
+        =/  mim-cord
+          (crip (tape (join '/' (turn (head mime) |=(=term (cord term))))))
         :_  state
-        :~  :*  %pass
-                /foo/poke/[eyre-id]
-                %agent
-                [ship %seer]
-                %poke
-                %foo-poke
-                !>([eyre-id path])
-        ==  ==
+        ^-  (list card)
+        %+  give-simple-payload:app:server
+          eyre-id
+        ^-  simple-payload:http
+        :-  :-  200
+            ::  XX form real FQSP
+            :~  ['Content-Type' mim-cord]
+                ['X-FQSP' '~zod/foo']
+            ==
+        (some +.mime)
       ==
     --
 ::
