@@ -49,8 +49,6 @@
     (on-peek:def pole)
   ::
       [%x %eyre %paths =care:clay und=*]
-    ::
-    ::  XX take care into account
     %-  some
     %-  some
     :-  %sky-urls
@@ -78,11 +76,26 @@
       (some url)
     |=  =cord
     ^-  (unit @t)
+    ::  filter endpoints with characters that
+    ::  @ta doesn't recognise as URL-safe
     ?.  =(0 (lent (fand "@" (trip cord))))
       ~
+    ::  get matches
     ?.  =(((list knot) und.pole) (scag (lent und.pole) (stab cord)))
       ~
-    (some cord)
+    ::  XX remove duplicate results
+    ::  apply care
+    %-  some
+    %-  spat
+    %+  scag
+      ?+  care.pole
+        ::  XX error msg
+        !!
+        %x  1
+        %y  2
+        %z  (lent (stab cord))
+      ==
+    (stab cord)
   ==
 ++  on-watch
   ::  XX sticky scry
