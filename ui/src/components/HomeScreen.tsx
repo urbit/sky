@@ -46,6 +46,7 @@ export default function HomeScreen({ id }: HomeScreenProps) {
                     style={{
                       height: '100px',
                       width: '100px',
+                      cursor: 'pointer',
                       marginRight: '8px',
                       marginBottom: '8px',
                       textDecoration: 'none'
