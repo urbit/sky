@@ -53,6 +53,7 @@
     %-  some
     :-  %sky-urls
     !>  ^-  (list cord)
+    ::  XX remove duplicate results
     %+  murn
       %+  welp
         ::  eyre bindings
@@ -83,7 +84,6 @@
     ::  get matches
     ?.  =(((list knot) und.pole) (scag (lent und.pole) (stab cord)))
       ~
-    ::  XX remove duplicate results
     ::  apply care
     %-  some
     %-  spat
