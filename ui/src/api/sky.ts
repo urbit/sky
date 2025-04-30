@@ -1,3 +1,13 @@
+import Urbit from '@urbit/http-api'
+
+function scryUrbit(app: string, path: string) {
+  const api = new Urbit('');
+  return api.scry({
+    app: app,
+    path: path
+  });
+}
+
 const ourDomain = (): string => {
   return import.meta.env.MODE !== 'production'
     ? import.meta.env.VITE_SHIP_URL || 'http://localhost:80'
@@ -101,6 +111,12 @@ async function put(path: string, file: File): Promise<Response | void> {
   }
 }
 
+async function kids(path: string, care: 'x' | 'y' | 'z'): Promise<Response | void> {
+  // TODO add scry to %seer, merge with %aero scry results
+  const res = await scryUrbit('aero', `/eyre/paths/${care}/${path}`)
+  return res
+}
+
 // TODO post()
 
 //async function del(path: string): Promise<Response | void> {
@@ -132,4 +148,4 @@ async function put(path: string, file: File): Promise<Response | void> {
 //  }
 //}
 
-export { get, put, ourDomain }
+export { get, kids, put, ourDomain }
