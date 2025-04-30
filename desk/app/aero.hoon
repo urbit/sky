@@ -48,10 +48,9 @@
   ?+  pax
     (on-peek:def pax)
   ::
-      [%x %eyre %paths ~]
+      [%x %eyre %paths =care:clay *]
     ::
     ::  XX handle scries for paths beneath specific path
-    ::  XX handle cares: %x, %y, %z
     =/  cached-paths
       ^-  (list cord)
       %+  murn
