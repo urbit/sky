@@ -51,38 +51,38 @@
       [%x %eyre %paths =care:clay und=*]
     ::
     ::  XX take care into account
-    =/  filtered
-      ^-  (list cord)
-      %+  murn
-        %+  welp
-          ::  eyre bindings
-          %+  turn
-            .^  (list [binding:eyre duct action:eyre])
-                %e
-                /(scot %p our.bowl)/bindings/(scot %da now.bowl)
-            ==
-          |=  [=binding:eyre duct action:eyre]
-          (spat path.binding)
-        ::  eyre cache
-        %+  murn
-          %~  tap  by
-          .^  (map @t [@ud (unit cache-entry:eyre)])
+    %-  some
+    %-  some
+    :-  %sky-urls
+    !>  ^-  (list cord)
+    %+  murn
+      %+  welp
+        ::  eyre bindings
+        %+  turn
+          .^  (list [binding:eyre duct action:eyre])
               %e
-              /(scot %p our.bowl)/cache/(scot %da now.bowl)
+              /(scot %p our.bowl)/bindings/(scot %da now.bowl)
           ==
-        |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
-        ?~  val
-          ~
-        (some url)
-      |=  =cord
-      ^-  (unit @t)
-      ?.  =(0 (lent (fand "@" (trip cord))))
+        |=  [=binding:eyre duct action:eyre]
+        (spat path.binding)
+      ::  eyre cache
+      %+  murn
+        %~  tap  by
+        .^  (map @t [@ud (unit cache-entry:eyre)])
+            %e
+            /(scot %p our.bowl)/cache/(scot %da now.bowl)
+        ==
+      |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
+      ?~  val
         ~
-      ?.  =(((list knot) und.pole) (scag (lent und.pole) (stab cord)))
-        ~
-      (some cord)
-    ::
-    ``[%sky-urls !>(filtered)]
+      (some url)
+    |=  =cord
+    ^-  (unit @t)
+    ?.  =(0 (lent (fand "@" (trip cord))))
+      ~
+    ?.  =(((list knot) und.pole) (scag (lent und.pole) (stab cord)))
+      ~
+    (some cord)
   ==
 ++  on-watch
   ::  XX sticky scry
