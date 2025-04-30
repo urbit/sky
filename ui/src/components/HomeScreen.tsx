@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import PathBar from './PathBar'
 import { kids } from '../api/sky'
-//import useWindowStore from '../state/useWindowStore.ts'
+import useWindowStore from '../state/useWindowStore.ts'
 
 interface HomeScreenProps {
   id: number
@@ -9,6 +9,7 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ id }: HomeScreenProps) {
   const [landscapeApps, setLandscapeApps] = useState<Array<string>>([])
+  const { updateWindowPath } = useWindowStore()
 
   useEffect(() => {
     async function fetchApps() {
@@ -34,13 +35,13 @@ export default function HomeScreen({ id }: HomeScreenProps) {
             className="wf fr as js frw"
             style={{ width: '500px', flexWrap: 'wrap', marginTop: '8px' }}
           >
-            {landscapeApps.map((app: string, index: number) => {
-              const appName = app.split('/')[2]
+            {landscapeApps.map((appPath: string, index: number) => {
+              const appName = appPath.split('/')[2]
               if (appName) {
                 return (
-                  <a
+                  <div
                     key={index}
-                    href={app}
+                    onClick={() => updateWindowPath(id, `~${window.ship}${appPath}`)}
                     className="b2 br1 p2 fc as je"
                     style={{
                       height: '100px',
@@ -51,7 +52,7 @@ export default function HomeScreen({ id }: HomeScreenProps) {
                     }}
                   >
                     {appName}
-                  </a>
+                  </div>
                 )
               }
             })}
