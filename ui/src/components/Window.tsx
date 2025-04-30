@@ -274,137 +274,137 @@ export default function Window({
   const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
 
   return (
+    <div
+      className="wf hf fc ac jc relative"
+      style={{
+        padding: '5px',
+        boxSizing: 'border-box',
+      }}
+      onMouseEnter={handleWindowMouseEnter}
+    >
+      {pathBarView && pathBarView.includes(id) && (
         <div
-          className="wf hf fc ac jc relative"
+          className="absolute b1 br1 bd1"
           style={{
-            padding: '5px',
-            boxSizing: 'border-box',
+            zIndex: 90,
+            opacity: '90%',
+            width: 'calc(100% - 10px)',
+            height: 'calc(100% - 10px)',
           }}
-          onMouseEnter={handleWindowMouseEnter}
         >
-          {pathBarView && pathBarView.includes(id) && (
-            <div
-              className="absolute b1 br1 bd1"
-              style={{
-                zIndex: 90,
-                opacity: '90%',
-                width: 'calc(100% - 10px)',
-                height: 'calc(100% - 10px)',
-              }}
-            >
-              <div className="hf wf p2 fc ac jc">
-                <PathBar id={id} path={path} />
-              </div>
-            </div>
-          )}
-          <div
-            id={id.toString()}
-            draggable={dragWindow === id ? true : false}
-            className="wf hf container fc as js b1 br1 bd1"
-            onDragStart={e => handleDragStart(e, id)}
-            onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
-            onDragEnd={handleDragEnd}
-            onDragOver={e => {
-              e.dataTransfer.dropEffect = 'move'
-              e.preventDefault()
-            }}
-            style={{
-              overflow: 'hidden',
-              position: 'relative',
-            }}
-          >
-            <div
-              className="absolute fc ac"
-              style={{
-                height: '55px',
-                maxWidth: 'calc(100% - 20px)',
-                width: '200px',
-                zIndex: '1',
-                top: 0,
-                right: 0,
-                pointerEvents: 'auto',
-              }}
-              onMouseEnter={() => setWindowBarOpen(true)}
-              onMouseLeave={() => {
-                setWindowBarOpen(false)
-                setOpenOptionsMenu(false)
-                setOpenVisibilityMenu(false)
-              }}
-            >
-              {windowBarOpen && (
-                <div className="fr hf wf as je p2 g2">
-                  {openVisibilityMenu && (
-                    <div
-                      className="fc ac wf ja p1 b2 br2"
-                      onMouseLeave={() => {
-                        setOpenVisibilityMenu(false)
-                      }}
+          <div className="hf wf p2 fc ac jc">
+            <PathBar id={id} path={path} />
+          </div>
+        </div>
+      )}
+      <div
+        id={id.toString()}
+        draggable={dragWindow === id ? true : false}
+        className="wf hf container fc as js b1 br1 bd1"
+        onDragStart={e => handleDragStart(e, id)}
+        onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
+        onDragEnd={handleDragEnd}
+        onDragOver={e => {
+          e.dataTransfer.dropEffect = 'move'
+          e.preventDefault()
+        }}
+        style={{
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
+        <div
+          className="absolute fc ac"
+          style={{
+            height: '55px',
+            maxWidth: 'calc(100% - 20px)',
+            width: '200px',
+            zIndex: '1',
+            top: 0,
+            right: 0,
+            pointerEvents: 'auto',
+          }}
+          onMouseEnter={() => setWindowBarOpen(true)}
+          onMouseLeave={() => {
+            setWindowBarOpen(false)
+            setOpenOptionsMenu(false)
+            setOpenVisibilityMenu(false)
+          }}
+        >
+          {windowBarOpen && (
+            <div className="fr hf wf as je p2 g2">
+              {openVisibilityMenu && (
+                <div
+                  className="fc ac wf ja p1 b2 br2"
+                  onMouseLeave={() => {
+                    setOpenVisibilityMenu(false)
+                  }}
+                >
+                  <p className="wf m0 tc" style={{ padding: '4px 10px' }}>
+                    {published}
+                  </p>
+                  {visibilityOptions.map((option, index) => (
+                    <button
+                      id={index.toString()}
+                      className="wf"
+                      onClick={() => setPublished(option)}
                     >
-                      <p className="wf m0 tc" style={{ padding: '4px 10px' }}>
-                        {published}
-                      </p>
-                      {visibilityOptions.map((option, index) => (
-                        <button
-                          id={index.toString()}
-                          className="wf"
-                          onClick={() => setPublished(option)}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {openOptionsMenu && (
-                    <div className="fc ac ja p1 b2 br2">
-                      <button
-                        className="wf"
-                        onMouseEnter={() => setOpenVisibilityMenu(true)}
-                        disabled={path?.split('/')[0].slice(1) !== window.ship}
-                      >
-                        Visibility
-                      </button>
-                      <button
-                        className="wf"
-                        onClick={() => {
-                          handleFileView()
-                        }}
-                      >
-                        {fileView && fileView.includes(id) ? 'View' : 'Edit'}
-                      </button>
-                    </div>
-                  )}
-                  {!(
-                    path === '' || path?.split('/')[0].slice(1) !== window.ship
-                  ) && (
-                      <button
-                        className="fr ac jc"
-                        style={{ pointerEvents: 'visible' }}
-                        onMouseEnter={() => {
-                          setOpenOptionsMenu(true)
-                          setOpenVisibilityMenu(false)
-                        }}
-                      >
-                        ...
-                      </button>
-                    )}
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {openOptionsMenu && (
+                <div className="fc ac ja p1 b2 br2">
                   <button
-                    className="fr ac jc"
-                    style={{ pointerEvents: 'visible' }}
-                    onClick={() => handleXButtonClick(id)}
-                    onMouseEnter={() => {
-                      setOpenOptionsMenu(false)
-                      setOpenVisibilityMenu(false)
+                    className="wf"
+                    onMouseEnter={() => setOpenVisibilityMenu(true)}
+                    disabled={path?.split('/')[0].slice(1) !== window.ship}
+                  >
+                    Visibility
+                  </button>
+                  <button
+                    className="wf"
+                    onClick={() => {
+                      handleFileView()
                     }}
                   >
-                    x
+                    {fileView && fileView.includes(id) ? 'View' : 'Edit'}
                   </button>
                 </div>
               )}
+              {!(
+                path === '' || path?.split('/')[0].slice(1) !== window.ship
+              ) && (
+                  <button
+                    className="fr ac jc"
+                    style={{ pointerEvents: 'visible' }}
+                    onMouseEnter={() => {
+                      setOpenOptionsMenu(true)
+                      setOpenVisibilityMenu(false)
+                    }}
+                  >
+                    ...
+                  </button>
+                )}
+              <button
+                className="fr ac jc"
+                style={{ pointerEvents: 'visible' }}
+                onClick={() => handleXButtonClick(id)}
+                onMouseEnter={() => {
+                  setOpenOptionsMenu(false)
+                  setOpenVisibilityMenu(false)
+                }}
+              >
+                x
+              </button>
             </div>
-            {fileView && !fileView.includes(id)
-              ? windowContent
-              : fileSystemContent}
-          </div>
+          )}
         </div>
+        {fileView && !fileView.includes(id)
+          ? windowContent
+          : fileSystemContent}
+      </div>
+    </div>
   )
 }
