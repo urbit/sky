@@ -96,8 +96,8 @@
     %-  spat
     %+  scag
       ?+  care.pole
-        ::  XX error msg
-        !!
+        %-  (slog [[%leaf "aero: forbidden care {<care.pole>}"] ~])
+        (on-peek:def pole)
         %x  1
         %y  2
         %z  (lent (stab cord))
