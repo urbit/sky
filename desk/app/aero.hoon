@@ -43,7 +43,6 @@
   ==
 ::
 ++  on-peek
-  ::  XX do this first
   |=  pax=(pole knot)
   ^-  (unit (unit cage))
   ?+  pax
@@ -57,8 +56,10 @@
       ^-  (list cord)
       %+  murn
         %~  tap  by
-        ::  XX tall-form
-        .^((map @t [@ud (unit cache-entry:eyre)]) %e /(scot %p our.bowl)/cache/(scot %da now.bowl))
+        .^  (map @t [@ud (unit cache-entry:eyre)])
+            %e
+            /(scot %p our.bowl)/cache/(scot %da now.bowl)
+        ==
       |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
       ?~  val
         ~
@@ -66,8 +67,10 @@
     =/  bound-paths
       ^-  (list cord)
       %+  turn
-        ::  XX tall-form
-        .^((list [binding:eyre duct action:eyre]) %e /(scot %p our.bowl)/bindings/(scot %da now.bowl))
+        .^  (list [binding:eyre duct action:eyre])
+            %e
+            /(scot %p our.bowl)/bindings/(scot %da now.bowl)
+        ==
       |=  [=binding:eyre duct action:eyre]
       (spat path.binding)
     ::
