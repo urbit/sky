@@ -7,14 +7,15 @@
 ++  grow
   |%
   ++  noun  paz
+  ++  mime  [/application/json (as-octs:mimes:html (en:json:html json))]
   ++  json
-  %-  frond:enjs
-  :-  'paths'
-  :-  %a
-  %+  turn
-    paz
-  |=  =cord
-  [%s cord]
+    %-  frond:enjs
+    :-  'urls'
+    :-  %a
+    %+  turn
+      paz
+    |=  =cord
+    [%s cord]
   --
 ++  grad  %noun
 --
