@@ -11,7 +11,7 @@ export default function HomeScreen({ id }: HomeScreenProps) {
   const [landscapeApps, setLandscapeApps] = useState<Array<string>>([])
 
   useEffect(() => {
-    async function foo() {
+    async function fetchApps() {
       const apps = await kids('/apps', 'y')
 
       if (apps) {
@@ -20,7 +20,7 @@ export default function HomeScreen({ id }: HomeScreenProps) {
       }
     }
 
-    foo()
+    fetchApps()
   }, [])
 
   return (
@@ -34,10 +34,26 @@ export default function HomeScreen({ id }: HomeScreenProps) {
             className="wf fr as js frw"
             style={{ width: '500px', flexWrap: 'wrap', marginTop: '8px' }}
           >
-            {landscapeApps.map((app: string) => {
-              return (
-                <p>{app.split('/')[2]}</p>
-              )
+            {landscapeApps.map((app: string, index: number) => {
+              const appName = app.split('/')[2]
+              if (appName) {
+                return (
+                  <a
+                    key={index}
+                    href={app}
+                    className="b2 br1 p2 fc as je"
+                    style={{
+                      height: '100px',
+                      width: '100px',
+                      marginRight: '8px',
+                      marginBottom: '8px',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    {appName}
+                  </a>
+                )
+              }
             })}
           </div>
         </div>
