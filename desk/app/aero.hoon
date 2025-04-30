@@ -53,7 +53,14 @@
     %-  some
     :-  %sky-urls
     !>  ^-  (list cord)
-    ::  XX remove duplicate results
+    ::  remove duplicate search results
+    %-  roll
+    :_  |=  [=cord res=(list @t)]
+        ^+  res
+        ?:  =(0 (lent (fand [cord]~ res)))
+          :-(cord res)
+        res
+    ::  search results
     %+  murn
       %+  welp
         ::  eyre bindings
