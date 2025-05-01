@@ -8,7 +8,7 @@ interface HomescreenStore {
   fetchLandscapeApps: () => void
 }
 
-const useHomescreenStore = create<HomescreenStore>((set) => ({
+const useHomescreenStore = create<HomescreenStore>(set => ({
   landscapeApps: [],
   fetchLandscapeApps: async () => {
     console.log('Running fetchLandscapeApps')
@@ -18,7 +18,7 @@ const useHomescreenStore = create<HomescreenStore>((set) => ({
       const data = await appsRes.json()
       set({ landscapeApps: data.urls })
     }
-  }
+  },
 }))
 
 export default useHomescreenStore

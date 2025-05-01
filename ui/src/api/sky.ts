@@ -40,26 +40,20 @@ async function get(path: string): Promise<Response | void> {
       })
 
       const redirectedToGrid =
-        eyreRes.redirected &&
-        endpoint !== 'apps/landscape'
+        eyreRes.redirected && endpoint !== 'apps/landscape'
       // TODO i think dev env messing this up, should fix
       //eyreRes.url === `${ourDomain()}/apps/landscape/`
 
-      // NOTE handle Landscape redirect
-      // TODO change this behaviour in Landscape?
       if (redirectedToGrid) {
-        return new Response(`File not found for ${path}`, {
-          status: 404,
-          headers: {
-            'Content-Type': 'text/plain',
-            'X-Response-URL': url,
-          },
-        })
+        throw new Error(`URL not found for ${path}`)
       }
 
       return eyreRes
     } catch (err) {
-      console.log(`GET request to ${ourDomain()}/${endpoint} failed at ${url}`, err)
+      console.log(
+        `GET request to ${ourDomain()}/${endpoint} failed at ${url}`,
+        err
+      )
 
       try {
         const seerRes = await fetch(`${ourDomain()}/seer?path=${path}`, {
@@ -68,13 +62,10 @@ async function get(path: string): Promise<Response | void> {
         })
 
         const redirectedToGrid =
-          seerRes.redirected &&
-          endpoint !== 'apps/landscape'
+          seerRes.redirected && endpoint !== 'apps/landscape'
         // TODO i think dev env messing this up, should fix
         //seerRes.url === `${ourDomain()}/apps/landscape/`
 
-        // NOTE handle Landscape redirect
-        // TODO change this behaviour in Landscape?
         if (redirectedToGrid) {
           return new Response(`File not found for ${path}`, {
             status: 404,
@@ -128,13 +119,19 @@ async function put(path: string, file: File): Promise<Response | void> {
   }
 }
 
-async function kids(path: string, care: 'x' | 'y' | 'z'): Promise<Response | void> {
+async function kids(
+  path: string,
+  care: 'x' | 'y' | 'z'
+): Promise<Response | void> {
   // TODO add scry to %seer, merge with %aero scry results
   //console.log('Running kids()')
-  const res = await fetch(`${ourDomain()}/~/scry/aero/eyre/paths/${care}${path}.mime`, {
-    method: 'GET',
-    credentials: 'include'
-  })
+  const res = await fetch(
+    `${ourDomain()}/~/scry/aero/eyre/paths/${care}${path}.mime`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    }
+  )
   //const data = await res.json()
   //console.log(data)
   return res

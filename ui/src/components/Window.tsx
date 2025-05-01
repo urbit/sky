@@ -27,9 +27,7 @@ export default function Window({
   handleDragStart,
   dragWindow,
 }: WindowProps) {
-  const homeScreen = (
-    <HomeScreen id={id} />
-  )
+  const homeScreen = <HomeScreen id={id} />
 
   const fileSystemContent = (
     // TODO not sure about this default behaviour
@@ -363,17 +361,17 @@ export default function Window({
               {!(
                 path === '' || path?.split('/')[0].slice(1) !== window.ship
               ) && (
-                  <button
-                    className="fr ac jc"
-                    style={{ pointerEvents: 'visible' }}
-                    onMouseEnter={() => {
-                      setOpenOptionsMenu(true)
-                      setOpenVisibilityMenu(false)
-                    }}
-                  >
-                    ...
-                  </button>
-                )}
+                <button
+                  className="fr ac jc"
+                  style={{ pointerEvents: 'visible' }}
+                  onMouseEnter={() => {
+                    setOpenOptionsMenu(true)
+                    setOpenVisibilityMenu(false)
+                  }}
+                >
+                  ...
+                </button>
+              )}
               <button
                 className="fr ac jc"
                 style={{ pointerEvents: 'visible' }}
@@ -392,8 +390,7 @@ export default function Window({
           ? homeScreen
           : fileView && !fileView.includes(id)
             ? windowContent
-            : fileSystemContent
-        }
+            : fileSystemContent}
       </div>
     </div>
   )

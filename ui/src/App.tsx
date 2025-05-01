@@ -11,6 +11,7 @@ function App() {
   const {
     workspaces,
     activeWorkspaceID,
+    isInitialized,
     addWindow,
     delWindow,
     setMaxWindow,
@@ -19,10 +20,7 @@ function App() {
     setWorkspacesState,
     setActiveWindowID,
   } = useWindowStore()
-  const {
-    landscapeApps,
-    fetchLandscapeApps
-  } = useHomescreenStore()
+  const { fetchLandscapeApps } = useHomescreenStore()
 
   const activeWorkspace = workspaces.get(activeWorkspaceID)
   // TODO handle undefined cases better
@@ -76,7 +74,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function() {
+        event.target.addEventListener('dragend', function () {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -220,6 +218,7 @@ function App() {
 
       if (!res?.ok) {
         console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
+        setWorkspacesState(null)
       }
 
       if (res && res.ok) {
@@ -248,6 +247,23 @@ function App() {
     )
   }, [workspaces, activeWorkspaceID])
 
+  // Show a loading state if the app hasn't been initialized yet
+  if (!isInitialized) {
+    return (
+      <div
+        style={{
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div>Loading...</div>
+      </div>
+    )
+  }
+
   return (
     <div
       style={{
@@ -271,6 +287,7 @@ function App() {
           >
             <Window
               id={maxWindow}
+              // TODO change default to ~our/home
               path={windowMap.get(maxWindow) ?? ''}
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}

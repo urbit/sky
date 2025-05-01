@@ -3,11 +3,5 @@ interface VideoProps {
 }
 
 export default function Video({ url }: VideoProps): JSX.Element {
-  return (
-    <video
-      src={url}
-      controls
-      className="hf wf"
-    />
-  )
+  return <video src={url} controls className="hf wf" />
 }
