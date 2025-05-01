@@ -1,6 +1,7 @@
 import 'allotment/dist/style.css'
 import WindowContainer from './components/WindowContainer.tsx'
 import useWindowStore from './state/useWindowStore.ts'
+import useHomescreenStore from './state/useHomescreenStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
@@ -18,6 +19,10 @@ function App() {
     setWorkspacesState,
     setActiveWindowID,
   } = useWindowStore()
+  const {
+    landscapeApps,
+    fetchLandscapeApps
+  } = useHomescreenStore()
 
   const activeWorkspace = workspaces.get(activeWorkspaceID)
   // TODO handle undefined cases better
@@ -71,7 +76,7 @@ function App() {
 
         event.dataTransfer.setDragImage(dragImage, 0, 0)
 
-        event.target.addEventListener('dragend', function () {
+        event.target.addEventListener('dragend', function() {
           const eventIframe = (event.target as Element).querySelector(
             'iframe'
           ) as HTMLIFrameElement
@@ -224,6 +229,7 @@ function App() {
     }
 
     init()
+    fetchLandscapeApps()
   }, [])
 
   useEffect(() => {

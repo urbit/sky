@@ -1,31 +1,14 @@
-import { useState, useEffect } from 'react'
 import PathBar from './PathBar'
-import { kids } from '../api/sky'
 import useWindowStore from '../state/useWindowStore.ts'
+import useHomescreenStore from '../state/useHomescreenStore.ts'
 
 interface HomeScreenProps {
   id: number
 }
 
 export default function HomeScreen({ id }: HomeScreenProps) {
-  const [landscapeApps, setLandscapeApps] = useState<Array<string>>([])
   const { updateWindowPath } = useWindowStore()
-
-  // TODO remove this network call from the component
-  //      this does a scry every time user creates a new window
-  //      should go in a useHomeScreenStore hook
-  useEffect(() => {
-    async function fetchApps() {
-      const apps = await kids('/apps', 'y')
-
-      if (apps) {
-        const data = await apps.json()
-        setLandscapeApps(data.urls)
-      }
-    }
-
-    fetchApps()
-  }, [])
+  const { landscapeApps } = useHomescreenStore()
 
   return (
     <div className="p4 b1">

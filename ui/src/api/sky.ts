@@ -34,7 +34,7 @@ async function get(path: string): Promise<Response | void> {
 
   if (pathShip === `~${window.ship}`) {
     try {
-      const eyreRes = await fetch(`${ourDomain()}${endpoint}`, {
+      const eyreRes = await fetch(`${ourDomain()}/${endpoint}`, {
         method: 'GET',
         credentials: 'include',
       })
