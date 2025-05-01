@@ -10,7 +10,7 @@ import ApplicationPDF from './renderers/ApplicationPDF'
 import TextPlain from './renderers/TextPlain'
 import Video from './renderers/Video'
 import Audio from './renderers/Audio'
-import HomeScreen from './HomeScreen'
+import Homescreen from './Homescreen'
 
 export interface WindowProps {
   id: number
@@ -27,14 +27,14 @@ export default function Window({
   handleDragStart,
   dragWindow,
 }: WindowProps) {
-  const homeScreen = <HomeScreen id={id} />
+  const homescreen = <Homescreen id={id} />
 
   const fileSystemContent = (
     // TODO not sure about this default behaviour
     <FileSystem id={id} path={path || `~${window.ship}/home`} />
   )
 
-  const [windowContent, setWindowContent] = useState(homeScreen)
+  const [windowContent, setWindowContent] = useState(homescreen)
   const [windowBarOpen, setWindowBarOpen] = useState(false)
   const [openOptionsMenu, setOpenOptionsMenu] = useState(false)
   const [openVisibilityMenu, setOpenVisibilityMenu] = useState(false)
@@ -234,7 +234,7 @@ export default function Window({
   useEffect(() => {
     const fetchContent = async () => {
       if (path === '') {
-        setWindowContent(homeScreen)
+        setWindowContent(homescreen)
       }
       if (path) {
         const content = await renderContent(path)
@@ -387,7 +387,7 @@ export default function Window({
           )}
         </div>
         {path === `~${window.ship}/home`
-          ? homeScreen
+          ? homescreen
           : fileView && !fileView.includes(id)
             ? windowContent
             : fileSystemContent}

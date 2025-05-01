@@ -3,19 +3,15 @@ import useWindowStore from '../state/useWindowStore.ts'
 //import ob from 'urbit-ob'
 
 interface PathBarProps {
-  id: number,
-  path: string | null,
+  id: number
+  path: string | null
   focus: boolean
 }
 
 export default function PathBar({ id, path, focus }: PathBarProps) {
   const [inputValue, setInputValue] = useState('')
-  const {
-    workspaces,
-    activeWorkspaceID,
-    updateWindowPath,
-    togglePathBarView
-  } = useWindowStore()
+  const { workspaces, activeWorkspaceID, updateWindowPath, togglePathBarView } =
+    useWindowStore()
   const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
 
   useEffect(() => {
@@ -64,7 +60,7 @@ export default function PathBar({ id, path, focus }: PathBarProps) {
     const newValue = e.target.value
 
     //if (isValidPath(newValue)) {
-      setInputValue(newValue)
+    setInputValue(newValue)
     //} else {
     //  const audioContext = new (window.AudioContext || window.AudioContext)()
     //  const oscillator = audioContext.createOscillator()

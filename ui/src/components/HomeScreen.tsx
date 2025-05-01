@@ -2,11 +2,11 @@ import PathBar from './PathBar'
 import useWindowStore from '../state/useWindowStore.ts'
 import useHomescreenStore from '../state/useHomescreenStore.ts'
 
-interface HomeScreenProps {
+interface HomescreenProps {
   id: number
 }
 
-export default function HomeScreen({ id }: HomeScreenProps) {
+export default function Homescreen({ id }: HomescreenProps) {
   const { updateWindowPath } = useWindowStore()
   const { landscapeApps } = useHomescreenStore()
 
