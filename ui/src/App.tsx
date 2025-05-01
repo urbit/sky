@@ -218,7 +218,7 @@ function App() {
     async function init() {
       const res = await get(`~${window.ship}/sys/state/workspaces`)
 
-      if (res && !res.ok) {
+      if (!res?.ok) {
         console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
       }
 
