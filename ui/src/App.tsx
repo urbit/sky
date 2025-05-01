@@ -271,7 +271,9 @@ function App() {
         height: '100vh',
         boxSizing: 'border-box',
         padding: '5px 5px 0px 5px',
-        backgroundImage: `url('${ourDomain()}/seer?path=~${window.ship}/sys/assets/wallpaper')`
+        backgroundImage: `url('${ourDomain()}/seer?path=~${window.ship}/sys/assets/wallpaper')`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
       }}
     >
       <StatusBar />
