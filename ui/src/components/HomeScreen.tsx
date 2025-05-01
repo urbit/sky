@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react'
 import PathBar from './PathBar'
+import { get } from '../api/sky.ts'
 import useWindowStore from '../state/useWindowStore.ts'
 import useHomescreenStore from '../state/useHomescreenStore.ts'
 
@@ -11,8 +13,8 @@ export default function Homescreen({ id }: HomescreenProps) {
   const { landscapeApps } = useHomescreenStore()
 
   return (
-    <div className="p4 b1">
-      <div className="hf wf fr ac jc b1">
+    <div className="p4">
+      <div className="hf wf fr ac jc">
         <div className="hf fc ac js">
           <div className="wf fr ac jc">
             <PathBar id={id} focus={false} path={''} />

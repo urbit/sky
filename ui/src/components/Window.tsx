@@ -44,6 +44,7 @@ export default function Window({
     'Urbit',
     'Public',
   ])
+  const [hasWallpaper, setHasWallpaper] = useState<boolean>(false)
 
   const {
     workspaces,
@@ -54,6 +55,20 @@ export default function Window({
     setActiveWindowPath,
     delWindow,
   } = useWindowStore()
+
+
+  // on mount, check if wallpaper exists and set bg accordingly
+  useEffect(() => {
+    async function checkWallpaper(): Promise<void> {
+      const res = await get(`~${window.ship}/sys/assets/wallpaper`)
+
+      if (res && res.ok) {
+        setHasWallpaper(true)
+      }
+    }
+
+    checkWallpaper()
+  }, [])
 
   function handleWindowMouseEnter() {
     setActiveWindowID(id)
@@ -285,7 +300,7 @@ export default function Window({
       <div
         id={id.toString()}
         draggable={dragWindow === id ? true : false}
-        className="wf hf container fc as js b1 br1 bd1"
+        className={`wf hf container fc as js br1 ${hasWallpaper && path === `~${window.ship}/home` ? '' : 'b1 bd1' }`}
         onDragStart={e => handleDragStart(e, id)}
         onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
         onDragEnd={handleDragEnd}
