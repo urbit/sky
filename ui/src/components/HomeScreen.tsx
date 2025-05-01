@@ -11,6 +11,9 @@ export default function HomeScreen({ id }: HomeScreenProps) {
   const [landscapeApps, setLandscapeApps] = useState<Array<string>>([])
   const { updateWindowPath } = useWindowStore()
 
+  // TODO remove this network call from the component
+  //      this does a scry every time user creates a new window
+  //      should go in a useHomeScreenStore hook
   useEffect(() => {
     async function fetchApps() {
       const apps = await kids('/apps', 'y')
@@ -37,6 +40,7 @@ export default function HomeScreen({ id }: HomeScreenProps) {
           >
             {landscapeApps.map((appPath: string, index: number) => {
               const appName = appPath.split('/')[2]
+
               if (appName) {
                 return (
                   <div
