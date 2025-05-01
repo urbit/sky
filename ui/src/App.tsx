@@ -5,7 +5,7 @@ import useHomescreenStore from './state/useHomescreenStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { get } from './api/sky.ts'
+import { get, ourDomain } from './api/sky.ts'
 
 function App() {
   const {
@@ -271,6 +271,7 @@ function App() {
         height: '100vh',
         boxSizing: 'border-box',
         padding: '5px 5px 0px 5px',
+        backgroundImage: `url('${ourDomain()}/seer?path=~${window.ship}/sys/assets/wallpaper')`
       }}
     >
       <StatusBar />
