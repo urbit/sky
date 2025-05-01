@@ -40,8 +40,10 @@ async function get(path: string): Promise<Response | void> {
       })
 
       const redirectedToGrid =
-        endpoint !== '/apps/landscape' &&
-        eyreRes.url === `${ourDomain()}/apps/landscape/`
+        eyreRes.redirected &&
+        endpoint !== 'apps/landscape'
+      // TODO i think dev env messing this up, should fix
+      //eyreRes.url === `${ourDomain()}/apps/landscape/`
 
       // NOTE handle Landscape redirect
       // TODO change this behaviour in Landscape?
@@ -55,10 +57,9 @@ async function get(path: string): Promise<Response | void> {
         })
       }
 
-      console.log('Should return eyreRes')
       return eyreRes
     } catch (err) {
-       console.log(`GET request to ${ourDomain()}/${endpoint} failed at ${url}`, err)
+      console.log(`GET request to ${ourDomain()}/${endpoint} failed at ${url}`, err)
 
       try {
         const seerRes = await fetch(`${ourDomain()}/seer?path=${path}`, {
@@ -67,8 +68,10 @@ async function get(path: string): Promise<Response | void> {
         })
 
         const redirectedToGrid =
-          endpoint !== '/apps/landscape' &&
-          seerRes.url === `${ourDomain()}/apps/landscape/`
+          seerRes.redirected &&
+          endpoint !== 'apps/landscape'
+        // TODO i think dev env messing this up, should fix
+        //seerRes.url === `${ourDomain()}/apps/landscape/`
 
         // NOTE handle Landscape redirect
         // TODO change this behaviour in Landscape?
