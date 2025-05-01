@@ -5,6 +5,7 @@ import PathBar from './PathBar'
 import FileSystem from './renderers/FileSystem'
 import { useEffect, useState } from 'react'
 import useWindowStore from '../state/useWindowStore'
+import useHomescreenStore from '../state/useHomescreenStore'
 import TextHTML from './renderers/TextHTML'
 import ApplicationPDF from './renderers/ApplicationPDF'
 import TextPlain from './renderers/TextPlain'
@@ -44,7 +45,6 @@ export default function Window({
     'Urbit',
     'Public',
   ])
-  const [hasWallpaper, setHasWallpaper] = useState<boolean>(false)
 
   const {
     workspaces,
@@ -55,19 +55,23 @@ export default function Window({
     setActiveWindowPath,
     delWindow,
   } = useWindowStore()
+  const { hasWallpaper, setHasWallpaper } = useHomescreenStore()
 
 
-  // on mount, check if wallpaper exists and set bg accordingly
+  // on mounting homescreen, check if wallpaper
+  // exists and set bg accordingly
   useEffect(() => {
     async function checkWallpaper(): Promise<void> {
       const res = await get(`~${window.ship}/sys/assets/wallpaper`)
 
-      if (res && res.ok) {
-        setHasWallpaper(true)
+      if (!res || !res.ok) {
+        setHasWallpaper(false)
       }
     }
 
-    checkWallpaper()
+    if (path === `~${window.ship}/home`) {
+      checkWallpaper()
+    }
   }, [])
 
   function handleWindowMouseEnter() {
@@ -300,7 +304,7 @@ export default function Window({
       <div
         id={id.toString()}
         draggable={dragWindow === id ? true : false}
-        className={`wf hf container fc as js br1 ${hasWallpaper && path === `~${window.ship}/home` ? '' : 'b1 bd1' }`}
+        className={`wf hf container fc as js br1 ${hasWallpaper && path === `~${window.ship}/home` ? '' : 'b1 bd1'}`}
         onDragStart={e => handleDragStart(e, id)}
         onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, id)}
         onDragEnd={handleDragEnd}
@@ -376,17 +380,17 @@ export default function Window({
               {!(
                 path === '' || path?.split('/')[0].slice(1) !== window.ship
               ) && (
-                <button
-                  className="fr ac jc"
-                  style={{ pointerEvents: 'visible' }}
-                  onMouseEnter={() => {
-                    setOpenOptionsMenu(true)
-                    setOpenVisibilityMenu(false)
-                  }}
-                >
-                  ...
-                </button>
-              )}
+                  <button
+                    className="fr ac jc"
+                    style={{ pointerEvents: 'visible' }}
+                    onMouseEnter={() => {
+                      setOpenOptionsMenu(true)
+                      setOpenVisibilityMenu(false)
+                    }}
+                  >
+                    ...
+                  </button>
+                )}
               <button
                 className="fr ac jc"
                 style={{ pointerEvents: 'visible' }}
