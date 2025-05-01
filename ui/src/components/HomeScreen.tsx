@@ -45,7 +45,7 @@ export default function HomeScreen({ id }: HomeScreenProps) {
                 return (
                   <div
                     key={index}
-                    onClick={() => updateWindowPath(id, `~${window.ship}${appPath}`)}
+                    onClick={() => updateWindowPath(id, `~${window.ship}/apps/${appName}`)}
                     className="b2 br1 p2 fc as je"
                     style={{
                       height: '100px',

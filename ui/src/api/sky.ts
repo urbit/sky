@@ -34,14 +34,14 @@ async function get(path: string): Promise<Response | void> {
 
   if (pathShip === `~${window.ship}`) {
     try {
-      const res = await fetch(`${ourDomain()}/seer?path=${path}`, {
+      const eyreRes = await fetch(`${ourDomain()}${endpoint}`, {
         method: 'GET',
         credentials: 'include',
       })
 
       const redirectedToGrid =
         endpoint !== '/apps/landscape' &&
-        res.url === `${ourDomain()}/apps/landscape/`
+        eyreRes.url === `${ourDomain()}/apps/landscape/`
 
       // NOTE handle Landscape redirect
       // TODO change this behaviour in Landscape?
@@ -55,9 +55,37 @@ async function get(path: string): Promise<Response | void> {
         })
       }
 
-      return res
+      console.log('Should return eyreRes')
+      return eyreRes
     } catch (err) {
-      console.error(`GET request to ${pathShip} failed at ${url}`, err)
+       console.log(`GET request to ${ourDomain()}/${endpoint} failed at ${url}`, err)
+
+      try {
+        const seerRes = await fetch(`${ourDomain()}/seer?path=${path}`, {
+          method: 'GET',
+          credentials: 'include',
+        })
+
+        const redirectedToGrid =
+          endpoint !== '/apps/landscape' &&
+          seerRes.url === `${ourDomain()}/apps/landscape/`
+
+        // NOTE handle Landscape redirect
+        // TODO change this behaviour in Landscape?
+        if (redirectedToGrid) {
+          return new Response(`File not found for ${path}`, {
+            status: 404,
+            headers: {
+              'Content-Type': 'text/plain',
+              'X-Response-URL': url,
+            },
+          })
+        }
+
+        return seerRes
+      } catch (err) {
+        console.error(`GET request to ${pathShip} failed at ${url}`, err)
+      }
     }
   }
 
@@ -66,10 +94,6 @@ async function get(path: string): Promise<Response | void> {
       method: 'GET',
       credentials: 'include',
     })
-
-    //if (!res.ok) {
-    //  throw new Error(`Response not ok from %seer`)
-    //}
 
     return res
   } catch (err) {
