@@ -35,7 +35,7 @@ export default function NavBar({ id, path }: NavBarProps) {
       }}
     >
       <div className="hf wf fr ac" onClick={handlePathClick}>
-        {isEditing ? <PathBar id={id} path={path} /> : <p>{path}</p>}
+        {isEditing ? <PathBar id={id} focus={true} path={path} /> : <p>{path}</p>}
       </div>
       {/* TODO add real buttons */}
       <p onClick={handleXClick} style={{ cursor: 'pointer' }}>

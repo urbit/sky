@@ -2,16 +2,20 @@ import { useState, useEffect } from 'react'
 import useWindowStore from '../state/useWindowStore.ts'
 //import ob from 'urbit-ob'
 
-export default function PathBar({
-  id,
-  path,
-}: {
-  id: number
-  path: string | null
-}) {
+interface PathBarProps {
+  id: number,
+  path: string | null,
+  focus: boolean
+}
+
+export default function PathBar({ id, path, focus }: PathBarProps) {
   const [inputValue, setInputValue] = useState('')
-  const { workspaces, activeWorkspaceID, updateWindowPath, togglePathBarView } =
-    useWindowStore()
+  const {
+    workspaces,
+    activeWorkspaceID,
+    updateWindowPath,
+    togglePathBarView
+  } = useWindowStore()
   const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
 
   useEffect(() => {
@@ -87,7 +91,7 @@ export default function PathBar({
     <form className="wf" onSubmit={handleSubmit}>
       <input
         type="text"
-        autoFocus={true}
+        autoFocus={focus}
         className="wf b3 br2 p1"
         value={inputValue}
         onChange={handleInputChange}

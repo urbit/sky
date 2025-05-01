@@ -278,7 +278,7 @@ export default function Window({
           }}
         >
           <div className="hf wf p2 fc ac jc">
-            <PathBar id={id} path={path} />
+            <PathBar id={id} focus={true} path={path} />
           </div>
         </div>
       )}

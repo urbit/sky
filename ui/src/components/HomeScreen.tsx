@@ -15,7 +15,7 @@ export default function HomeScreen({ id }: HomeScreenProps) {
       <div className="hf wf fr ac jc b1">
         <div className="hf fc ac js">
           <div className="wf fr ac jc">
-            <PathBar id={id} path={`~${window.ship}/home`} />
+            <PathBar id={id} focus={false} path={''} />
           </div>
           <div
             className="wf fr as js frw"
