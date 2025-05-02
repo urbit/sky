@@ -254,12 +254,28 @@
         res
     ::  search results
     %+  turn
-      .^  (list path)
-          %gt
-          %+  weld
-            /(scot %p our.bowl)/seer/(scot %da now.bowl)//1
-          ((list knot) und.pole)
-      ==
+      ::  awful, but this is the only way to find out
+      ::  if a path is tombstoned without crashing smdh
+      %+  murn
+        .^  (list path)
+            %gt
+            %+  weld
+              /(scot %p our.bowl)/seer/(scot %da now.bowl)//1
+            ((list knot) und.pole)
+        ==
+      |=  pax=path
+      ^-  (unit path)
+      =/  ver  (~(get by sky.bowl) pax)
+      ?~  ver
+        ~
+      =/  on-fans  ((on @ud (pair @da (each page @uvI))) lte)
+      =/  neu  (ram:on-fans (need ver))
+      ?~  neu
+        ~
+      ?.  -.q.val.u.neu
+        ~
+      ?>  ?=(page q.val.u.neu)
+      (some pax)
     ::  apply care
     |=  pax=path
     ^-  path
