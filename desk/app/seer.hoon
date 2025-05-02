@@ -83,10 +83,8 @@
       ?~  ver
         ~&  >>>  "No versions found for {<(tail path.act)>}"
         !!
-      =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
-      ::  XX i think +ram is getting latest date
-      ::     but check this works as expected
-      =/  neu  (ram:on-path (need ver))
+      =/  on-fans  ((on @ud (pair @da (each page @uvI))) lte)
+      =/  neu  (ram:on-fans (need ver))
       ?~  neu
         ::  nothing here
         ~&  >>>  "Nothing here"
@@ -207,10 +205,9 @@
         ?~  ver
           ::  ~&  >>>  "No versions of {<path>}"
           [(send [404 ~ [%plain "Not found"]]) state]
-        =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
-        ::  XX i think +ram is getting latest date
-        ::     but check this works as expected
-        =/  neu  (ram:on-path (need ver))
+        =/  on-fans  ((on @ud (pair @da (each page @uvI))) lte)
+        ::  get latest version of the resource
+        =/  neu  (ram:on-fans (need ver))
         ?~  neu
           ~&  >>>  "Can't find {<path>}"
           ::  nothing here
