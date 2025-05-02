@@ -13,13 +13,13 @@ export default function Homescreen({ id }: HomescreenProps) {
   return (
     <div className="p4 hf wf ac jc">
       <div className="hf wf fr ac jc">
-        <div className="hf fc ac js">
+        <div className="hf fc ac js" style={{ maxWidth: '650px' }}>
           <div className="wf fr ac jc">
             <PathBar id={id} focus={true} path={`~${window.ship}/home`} />
           </div>
           <div
-            className="wf fr as jc frw"
-            style={{ width: '500px', flexWrap: 'wrap', marginTop: '8px' }}
+            className="wf fr as js frw"
+            style={{ flexWrap: 'wrap', margin: '8px' }}
           >
             {landscapeApps.map((appPath: string, index: number) => {
               const appName = appPath.split('/')[2]
