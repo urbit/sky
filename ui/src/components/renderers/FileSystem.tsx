@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
-import { get, put } from '../../api/sky'
+import { get, put } from '../../api/namespace'
 import FileImage from './FileImage'
 import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'

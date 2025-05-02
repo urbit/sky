@@ -5,7 +5,7 @@ import useHomescreenStore from './state/useHomescreenStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { get, ourDomain } from './api/sky.ts'
+import { get, ourDomain } from './api/namespace.ts'
 
 function App() {
   const {

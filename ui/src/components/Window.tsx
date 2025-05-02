@@ -1,4 +1,4 @@
-import { get } from '../api/sky'
+import { get } from '../api/namespace'
 import Image from './renderers/Image'
 import TextMarkdown from './renderers/TextMarkdown'
 import PathBar from './PathBar'

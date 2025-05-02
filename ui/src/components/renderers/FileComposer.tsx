@@ -2,7 +2,7 @@ import Editor from '@monaco-editor/react'
 import type * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
 import { debounce } from 'lodash'
-import { get, put, ourDomain } from '../../api/sky'
+import { get, put, ourDomain } from '../../api/namespace'
 import { emmetHTML, registerCustomSnippets } from 'emmet-monaco-es'
 import { detectLanguage } from '../../utils/languageDetection'
 

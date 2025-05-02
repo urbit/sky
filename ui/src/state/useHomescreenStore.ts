@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { kids } from '../api/sky'
+import { kids } from '../api/namespace'
 
 type Bookmark = string
 

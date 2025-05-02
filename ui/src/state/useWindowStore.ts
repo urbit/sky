@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { put } from '../api/sky'
+import { put } from '../api/namespace'
 
 type Path = string
 type WindowID = number
