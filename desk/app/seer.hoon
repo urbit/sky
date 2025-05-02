@@ -263,6 +263,7 @@
             /(scot %p our.bowl)/seer/(scot %da now.bowl)//1
           ((list knot) und.pole)
       ==
+    ::  apply care
     |=  pax=path
     ^-  path
     %+  scag
