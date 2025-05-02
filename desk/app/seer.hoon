@@ -248,13 +248,32 @@
     %-  some
     :-  %sky-paths
     !>  ^-  (list path)
-    ::  XX filter by care
-    .^  (list path)
-        %gt
-        %+  weld
-          /(scot %p our.bowl)/seer/(scot %da now.bowl)//1
-        ((list knot) und.pole)
-    ==
+    ::  remove duplicate search results
+    %-  roll
+    :_  |=  [pax=path res=(list path)]
+        ^+  res
+        ?.  (lien res |=(=path =(pax path)))
+          :-(pax res)
+        res
+    ::  search results
+    %+  turn
+      .^  (list path)
+          %gt
+          %+  weld
+            /(scot %p our.bowl)/seer/(scot %da now.bowl)//1
+          ((list knot) und.pole)
+      ==
+    |=  pax=path
+    ^-  path
+    %+  scag
+      ?+  care.pole
+        %-  (slog [[%leaf "seer: forbidden care {<care.pole>}"] ~])
+        (on-peek:def pole)
+        %x  1
+        %y  2
+        %z  (lent pax)
+      ==
+    pax
   ==
 ++  on-watch
   |=  path=(pole knot)
