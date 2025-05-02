@@ -4,18 +4,23 @@ import useWindowStore from '../state/useWindowStore.ts'
 
 interface PathBarProps {
   id: number
-  path: string | null
+  path: string
   focus: boolean
 }
 
 export default function PathBar({ id, path, focus }: PathBarProps) {
-  const [inputValue, setInputValue] = useState('')
-  const { workspaces, activeWorkspaceID, updateWindowPath, togglePathBarView } =
-    useWindowStore()
-  const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
+  const [inputValue, setInputValue] = useState<string>(`${path}`)
+  const {
+    workspaces,
+    activeWorkspaceID,
+    updateWindowPath,
+    togglePathBarView
+  } = useWindowStore()
+  const pathBarView =
+    workspaces.get(activeWorkspaceID)?.windowState.pathBarView
 
   useEffect(() => {
-    setInputValue(path || '')
+    setInputValue(path || `~${window.ship}/home`)
   }, [path])
 
   //const isValidPath = (path: string): boolean => {
@@ -91,7 +96,7 @@ export default function PathBar({ id, path, focus }: PathBarProps) {
         className="wf b3 br2 p1"
         value={inputValue}
         onChange={handleInputChange}
-        placeholder={`~${window.ship}/home`}
+        placeholder={path}
       />
     </form>
   )
