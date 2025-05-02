@@ -34,7 +34,7 @@ async function get(path: string): Promise<Response | void> {
 
   if (pathShip === `~${window.ship}`) {
     try {
-      const eyreRes = await fetch(`${ourDomain()}/${endpoint}`, {
+      const eyreRes = await fetch(url, {
         method: 'GET',
         credentials: 'include',
       })
@@ -46,6 +46,10 @@ async function get(path: string): Promise<Response | void> {
 
       if (redirectedToGrid) {
         throw new Error(`URL not found for ${path}`)
+      }
+
+      if (eyreRes.status === 404) {
+        throw new Error(`404 not found for ${url}`)
       }
 
       return eyreRes
