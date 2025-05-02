@@ -238,9 +238,24 @@
     --
 ::
 ++  on-peek
-  |=  path=(pole knot)
+  |=  =(pole knot)
   ^-  (unit (unit cage))
-  ``[%noun !>(~)]
+  ?+  pole
+    (on-peek:def pole)
+  ::
+      [%x %seer %paths =care:clay und=*]
+    %-  some
+    %-  some
+    :-  %sky-paths
+    !>  ^-  (list path)
+    ::  XX filter by care
+    .^  (list path)
+        %gt
+        %+  weld
+          /(scot %p our.bowl)/seer/(scot %da now.bowl)//1
+        ((list knot) und.pole)
+    ==
+  ==
 ++  on-watch
   |=  path=(pole knot)
   ^-  (quip card _this)
