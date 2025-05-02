@@ -18,11 +18,10 @@ const useHomescreenStore = create<HomescreenStore>(set => ({
   },
   fetchLandscapeApps: async () => {
     console.log('Running fetchLandscapeApps')
-    const appsRes = await kids('/apps', 'y')
+    const appsArray = await kids('/apps', 'y')
 
-    if (appsRes) {
-      const data = await appsRes.json()
-      set({ landscapeApps: data.urls })
+    if (appsArray) {
+      set({ landscapeApps: appsArray })
     }
   },
 }))

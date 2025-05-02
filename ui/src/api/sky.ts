@@ -122,19 +122,25 @@ async function put(path: string, file: File): Promise<Response | void> {
 async function kids(
   path: string,
   care: 'x' | 'y' | 'z'
-): Promise<Response | void> {
-  // TODO add scry to %seer, merge with %aero scry results
-  //console.log('Running kids()')
-  const res = await fetch(
+): Promise<Array<string>> {
+  const aeroRes = await fetch(
     `${ourDomain()}/~/scry/aero/eyre/paths/${care}${path}.mime`,
     {
       method: 'GET',
       credentials: 'include',
     }
   )
-  //const data = await res.json()
-  //console.log(data)
-  return res
+
+  const seerRes = await fetch(
+    `${ourDomain()}/~/scry/seer/seer/paths/${care}${path}.mime`, {
+    method: 'GET',
+    credentials: 'include',
+  })
+
+  const aeroData = await aeroRes.json()
+  const seerData = await seerRes.json()
+
+  return [...aeroData.urls, ...seerData.paths]
 }
 
 // TODO post()
