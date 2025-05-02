@@ -8,6 +8,8 @@ interface PathBarProps {
   focus: boolean
 }
 
+const defaultPath = `~${window.ship}/home`
+
 export default function PathBar({ id, path, focus }: PathBarProps) {
   const [inputValue, setInputValue] = useState<string>(`${path}`)
   const {
@@ -20,7 +22,7 @@ export default function PathBar({ id, path, focus }: PathBarProps) {
     workspaces.get(activeWorkspaceID)?.windowState.pathBarView
 
   useEffect(() => {
-    setInputValue(path || `~${window.ship}/home`)
+    setInputValue(path || defaultPath)
   }, [path])
 
   //const isValidPath = (path: string): boolean => {
