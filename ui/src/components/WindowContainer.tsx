@@ -86,7 +86,7 @@ export default function WindowContainer({
           <Allotment.Pane visible key={id} className="wf hf fr">
             <Window
               id={id}
-              path={map.get(id) ?? `${window.ship}/home`}
+              path={map.get(id) || `~${window.ship}/home`}
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}
               dragWindow={dragWindow}
