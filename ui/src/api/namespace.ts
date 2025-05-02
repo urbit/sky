@@ -5,7 +5,6 @@ const ourDomain = (): string => {
 }
 
 // TODO handle relative get('foo')
-// TODO remove hard-coded URLs
 async function get(path: string): Promise<Response | void> {
   if (path.startsWith('/')) {
     try {
