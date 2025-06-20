@@ -37,9 +37,23 @@
   ::  XX %clear-cache
   ::       [%clear-cache (unit path)]
   ::       see %sky on-init for clearing Eyre cache
-      %foo-poke
-    =/  act  !<(* vase)
-    `this
+      %cache
+    ::  XX should be an actual type like $aero-cache
+    =/  act  !<([url=@t =mime-data:iris] vase)
+    ~&  >  "Cacheing {<url.act>}"
+    :_  this
+    :~  :*  %pass  ~  %arvo  %e
+            %set-response  url.act
+            %-  some
+            ^-  cache-entry:eyre
+            :*  %.n
+                :-  %payload
+                ^-  simple-payload:http
+                ~&  >>  -.mime-data.act
+                [[200 ['Content-Type' -.mime-data.act]~] (some +.mime-data.act)]
+            ==
+        ==
+    ==
   ==
 ::
 ++  on-peek

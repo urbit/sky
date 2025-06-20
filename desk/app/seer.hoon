@@ -40,6 +40,20 @@
         %grow  (tail (snip path))
         [%mime mim]
     ==
+  =/  aero-cards
+    %+  turn
+      init-paths
+    |=  =path
+    ^-  card
+    =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
+    =/  mym  ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
+    =/  mim-cord
+      (crip (tape (join '/' (turn (head mym) |=(=term (cord term))))))
+    :*  %pass  ~  %agent
+        [our.bowl %aero]
+        %poke  %cache
+        !>([(spat (tail (snip path))) [mim-cord +.mym]])
+    ==
   =/  http-test-cards
     ~&  >  "Growing /sys/http-test"
     :~  :*  %pass  ~
@@ -48,6 +62,8 @@
         ==
     ==
   :_  this
+  %+  welp
+    aero-cards
   %+  welp
     http-test-cards
   :_  grow-cards
@@ -157,6 +173,11 @@
         :~  :*  %pass  ~
                 %grow  (tail (cut-path value.u.pax '/'))
                 [%mime mym]
+            ==
+            :*  %pass  ~  %agent
+                [our.bowl %aero]
+                %poke  %noun
+                !>([value.u.pax +.mym])
             ==
         ==
       ::
