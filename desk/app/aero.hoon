@@ -49,8 +49,11 @@
             :*  %.n
                 :-  %payload
                 ^-  simple-payload:http
-                ~&  >>  -.mime-data.act
-                [[200 ['Content-Type' -.mime-data.act]~] (some +.mime-data.act)]
+                :_  (some +.mime-data.act)
+                :-  200
+                :~  ['X-Urbit-Desk' 'Sky']
+                    ['Content-Type' -.mime-data.act]
+                ==
             ==
         ==
     ==
