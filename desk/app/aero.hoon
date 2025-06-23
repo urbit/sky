@@ -151,7 +151,6 @@
 |_  =bowl:gall
 ++  clear-cache-cards
   ^-  (list card)
-  ~&  >>  now.bowl
   %+  murn
     %~  tap  by
     .^  (map url=@t [aeon=@ud val=(unit cache-entry:eyre)])
@@ -173,7 +172,6 @@
 ::  XX unfinished, /gx/=seer=/seer/paths scry fails
 ++  recache-cards
   ^-  (list card)
-  ~&  >>  now.bowl
   %+  murn
     .^  (list path)
         %gx
