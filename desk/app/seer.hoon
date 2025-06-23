@@ -176,7 +176,8 @@
             :*  %pass  ~  %agent
                 [our.bowl %aero]
                 %poke  %cache
-                !>([value.u.pax +.mym])
+                !>  ^-  (pair cord mime-data:iris)
+                [value.u.pax [value.u.mime u.body]]
             ==
         ==
       ::
