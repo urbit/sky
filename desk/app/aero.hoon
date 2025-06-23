@@ -1,4 +1,4 @@
-/+  dbug, verb, server, schooner, default-agent
+/+  sky, dbug, verb, server, schooner, default-agent
 ::
 ::  types
 |%
@@ -8,30 +8,6 @@
 +$  state-0  [%0 ~]
 +$  card  $+(card card:agent:gall)
 --
-=>
-::
-::  helper door
-|_  =bowl:gall
-++  clear-cache-cards
-  ^-  (list card)
-  %+  murn
-    %~  tap  by
-    .^  (map url=@t [aeon=@ud val=(unit cache-entry:eyre)])
-        %e
-        /(scot %p our.bowl)/cache/(scot %da now.bowl)
-    ==
-  |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
-  ^-  (unit card)
-  ?~  val
-    ~
-  ?.  %+  lien
-        headers.response-header.simple-payload.body.u.val
-      |=  [key=@t value=@t]
-      =([key value] ['X-Urbit-Desk' 'Sky'])
-    ~
-  ~&  >  "aero: clearing {<url>}"
-  (some [%pass /eyre/cache %arvo %e %set-response url ~])
---
 ::
 ::  main core
 %+  verb  %.n
@@ -39,16 +15,17 @@
 =|  state-0
 =*  state  -
 ^-  agent:gall
+=<
 |_  =bowl:gall
 +*  this  .
+    hc    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
-  ::  XX (clear-cache-cards ~)
-  ::  XX should scry %seer to re-cache its files
   :_  this
-  clear-cache-cards
+  ::  XX (clear-cache-cards:hc ~)
+  clear-cache-cards:hc
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
@@ -67,7 +44,7 @@
   ::  XX should take (unit url=@t), clear all if ~
       %clear-cache
     :_  this
-    clear-cache-cards
+    clear-cache-cards:hc
   ::
       %cache
     ::  XX should be an actual type like $aero-cache
@@ -169,3 +146,73 @@
 ++  on-leave  on-leave:def
 ++  on-fail   on-fail:def
 --
+::
+::  helper core
+|_  =bowl:gall
+++  clear-cache-cards
+  ^-  (list card)
+  ~&  >>  now.bowl
+  %+  murn
+    %~  tap  by
+    .^  (map url=@t [aeon=@ud val=(unit cache-entry:eyre)])
+        %e
+        /(scot %p our.bowl)/cache/(scot %da now.bowl)
+    ==
+  |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
+  ^-  (unit card)
+  ?~  val
+    ~
+  ?.  %+  lien
+        headers.response-header.simple-payload.body.u.val
+      |=  [key=@t value=@t]
+      =([key value] ['X-Urbit-Desk' 'Sky'])
+    ~
+  ~&  >  "aero: clearing {<url>}"
+  (some [%pass /eyre/cache %arvo %e %set-response url ~])
+::
+::  XX unfinished, /gx/=seer=/seer/paths scry fails
+++  recache-cards
+  ^-  (list card)
+  ~&  >>  now.bowl
+  %+  murn
+    .^  (list path)
+        %gx
+        /(scot %p our.bowl)/seer/(scot %da now.bowl)/seer/paths/z/noun
+    ==
+  |=  =path
+  ^-  (unit card)
+  =/  non
+    .^  noun
+        %gx
+        %+  welp
+          /(scot %p our.bowl)/seer/(scot %da now.bowl)//1
+        path
+    ==
+  ?~  non
+    ~
+  ~&  >>  "aero: recacheing {<path>}"
+  %-  some
+  :*  %pass
+      /eyre/cache
+      %arvo
+      %e
+      %set-response
+      :-  (spat path)
+      %-  some
+      ^-  cache-entry:eyre
+      :*  %.n
+          :-  %payload
+          ^-  simple-payload:http
+          :_  %-  some
+              %-  tail
+              %-  (type-to-mime:sky (rear path))
+              %-  (noun-to-type:sky (rear path))
+              +7.non
+          :-  200
+          :~  ['X-Urbit-Desk' 'Sky']
+              ['Content-Type' (ext-to-mime:sky (rear path))]
+          ==
+      ==
+  ==
+--
+
