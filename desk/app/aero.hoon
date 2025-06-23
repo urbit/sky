@@ -1,4 +1,6 @@
 /+  dbug, verb, server, schooner, default-agent
+::
+::  types
 |%
 +$  versioned-state
   $%  state-0
@@ -6,7 +8,32 @@
 +$  state-0  [%0 ~]
 +$  card  $+(card card:agent:gall)
 --
+=>
 ::
+::  helper door
+|_  =bowl:gall
+++  clear-cache-cards
+  ^-  (list card)
+  %+  murn
+    %~  tap  by
+    .^  (map url=@t [aeon=@ud val=(unit cache-entry:eyre)])
+        %e
+        /(scot %p our.bowl)/cache/(scot %da now.bowl)
+    ==
+  |=  [url=@t [aeon=@ud val=(unit cache-entry:eyre)]]
+  ^-  (unit card)
+  ?~  val
+    ~
+  ?.  %+  lien
+        headers.response-header.simple-payload.body.u.val
+      |=  [key=@t value=@t]
+      =([key value] ['X-Urbit-Desk' 'Sky'])
+    ~
+  ~&  >  "Clearing {<url>}"
+  (some [%pass /eyre/cache %arvo %e %set-response url ~])
+--
+::
+::  main core
 %+  verb  %.n
 %-  agent:dbug
 =|  state-0
@@ -18,7 +45,10 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  `this
+  ::  XX (clear-cache-cards ~)
+  ::  XX should scry %seer to re-cache its files
+  :_  this
+  clear-cache-cards
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
@@ -34,9 +64,11 @@
   ?+    mark
     (on-poke:def mark vase)
   ::
-  ::  XX %clear-cache
-  ::       [%clear-cache (unit path)]
-  ::       see %sky on-init for clearing Eyre cache
+  ::  XX should take (unit url=@t), clear all if ~
+      %clear-cache
+    :_  this
+    clear-cache-cards
+  ::
       %cache
     ::  XX should be an actual type like $aero-cache
     =/  act  !<([url=@t =mime-data:iris] vase)
