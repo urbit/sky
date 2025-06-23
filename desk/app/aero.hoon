@@ -131,7 +131,6 @@
     (stab cord)
   ==
 ++  on-watch
-  ::  XX sticky scry
   |=  path=(pole knot)
   ^-  (quip card _this)
   `this
