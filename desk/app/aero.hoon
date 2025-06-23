@@ -29,7 +29,7 @@
       |=  [key=@t value=@t]
       =([key value] ['X-Urbit-Desk' 'Sky'])
     ~
-  ~&  >  "Clearing {<url>}"
+  ~&  >  "aero: clearing {<url>}"
   (some [%pass /eyre/cache %arvo %e %set-response url ~])
 --
 ::
@@ -72,7 +72,7 @@
       %cache
     ::  XX should be an actual type like $aero-cache
     =/  act  !<([url=@t =mime-data:iris] vase)
-    ~&  >  "Cacheing {<url.act>}"
+    ~&  >  "aero: cacheing {<url.act>}"
     :_  this
     :~  :*  %pass  ~  %arvo  %e
             %set-response  url.act

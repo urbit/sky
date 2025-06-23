@@ -31,7 +31,7 @@
       init-paths
     |=  =path
     ^-  card
-    ~&  >  "Growing {<(tail (snip path))>}"
+    ~&  >  "seer: growing {<(tail (snip path))>}"
     =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
     =/  mim  ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
     ::  XX is there a gift at /call/back/path?
@@ -54,7 +54,7 @@
         !>([(spat (tail (snip path))) [mim-cord +.mym]])
     ==
   =/  http-test-cards
-    ~&  >  "Growing /sys/http-test"
+    ~&  >  "seer: growing /sys/http-test"
     :~  :*  %pass  ~
             %grow  /sys/http-test
             [%mime ((type-to-mime %html) (crip "<!DOCTYPE html><html><head><title>200 Success</title></head><body><h1>200 Success</h1><p>Successful response from {<our.bowl>}</p></body></html>"))]
@@ -96,17 +96,17 @@
       =/  act  !<(foo-poke vase)
       =/  ver  (~(get by sky.bowl) (tail path.act))
       ?~  ver
-        ~&  >>>  "No versions found for {<(tail path.act)>}"
+        ~&  >>>  "seer: no versions found for {<(tail path.act)>}"
         !!
       =/  on-fans  ((on @ud (pair @da (each page @uvI))) lte)
       =/  neu  (ram:on-fans (need ver))
       ?~  neu
         ::  nothing here
-        ~&  >>>  "Nothing here"
+        ~&  >>>  "seer: nothing here"
         !!
       ?.  -.q.val.u.neu
         ::  tombstoned
-        ~&  >>>  "Latest version is tombstoned"
+        ~&  >>>  "seer: latest version is tombstoned"
         !!
       ?>  ?=(page p.q.val.u.neu)
       =/  =mime  (mime q.p.q.val.u.neu)
@@ -198,7 +198,7 @@
         =/  line  (parse-request-line:server url.request.inbound-request)
         =/  pax   (~(get by (malt args.line)) 'path')
         ?~  pax
-          ~&  >>>  "No data received"
+          ~&  >>>  "seer: no data received"
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  =path
           ::  handle relative paths from root
@@ -229,12 +229,12 @@
         ::  get latest version of the resource
         =/  neu  (ram:on-fans (need ver))
         ?~  neu
-          ~&  >>>  "Can't find {<path>}"
+          ~&  >>>  "seer: can't find {<path>}"
           ::  nothing here
           [(send [404 ~ [%plain "Not found"]]) state]
         ?.  -.q.val.u.neu
           ::  tombstoned
-          ~&  >>>  "Found tombstoned {<path>}"
+          ~&  >>>  "seer: found tombstoned {<path>}"
           [(send [410 ~ [%plain "Gone"]]) state]
         ?>  ?=(page p.q.val.u.neu)
         =/  =mime  (mime q.p.q.val.u.neu)
@@ -339,7 +339,7 @@
         %poke-ack
       ?~  p.sign
         `this
-      ~&  >>>  "Got nack from {<src.bowl>}"
+      ~&  >>>  "seer: got nack from {<src.bowl>}"
       :_  this
       %+  give-simple-payload:app:server
           eyre-id
