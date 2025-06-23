@@ -177,7 +177,8 @@
                 [our.bowl %aero]
                 %poke  %cache
                 !>  ^-  (pair cord mime-data:iris)
-                [value.u.pax [value.u.mime u.body]]
+                :-  (spat (tail (cut-path value.u.pax '/')))
+                [value.u.mime u.body]
             ==
         ==
       ::
