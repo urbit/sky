@@ -19,7 +19,6 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  "%seer initialized successfully."
   =/  init-paths
     %+  weld
       ^-  (list path)
