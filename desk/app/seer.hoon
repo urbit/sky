@@ -175,7 +175,7 @@
             ==
             :*  %pass  ~  %agent
                 [our.bowl %aero]
-                %poke  %noun
+                %poke  %cache
                 !>([value.u.pax +.mym])
             ==
         ==
