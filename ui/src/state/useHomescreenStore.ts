@@ -4,7 +4,7 @@ import { kids } from '../api/namespace'
 type Bookmark = string
 
 interface HomescreenStore {
-  hasWallpaper: boolean,
+  hasWallpaper: boolean
   landscapeApps: Array<Bookmark>
   setHasWallpaper: (hasWallpaper: boolean) => void
   fetchLandscapeApps: () => void

@@ -11,7 +11,7 @@ import ApplicationPDF from './renderers/ApplicationPDF'
 import TextPlain from './renderers/TextPlain'
 import Video from './renderers/Video'
 import Audio from './renderers/Audio'
-import Homescreen from './Homescreen'
+import Homescreen from './HomeScreen'
 
 export interface WindowProps {
   id: number
@@ -56,7 +56,6 @@ export default function Window({
     delWindow,
   } = useWindowStore()
   const { hasWallpaper, setHasWallpaper } = useHomescreenStore()
-
 
   // on mounting homescreen, check if wallpaper
   // exists and set bg accordingly
@@ -380,17 +379,17 @@ export default function Window({
               {!(
                 path === '' || path?.split('/')[0].slice(1) !== window.ship
               ) && (
-                  <button
-                    className="fr ac jc"
-                    style={{ pointerEvents: 'visible' }}
-                    onMouseEnter={() => {
-                      setOpenOptionsMenu(true)
-                      setOpenVisibilityMenu(false)
-                    }}
-                  >
-                    ...
-                  </button>
-                )}
+                <button
+                  className="fr ac jc"
+                  style={{ pointerEvents: 'visible' }}
+                  onMouseEnter={() => {
+                    setOpenOptionsMenu(true)
+                    setOpenVisibilityMenu(false)
+                  }}
+                >
+                  ...
+                </button>
+              )}
               <button
                 className="fr ac jc"
                 style={{ pointerEvents: 'visible' }}

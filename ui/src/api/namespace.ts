@@ -135,10 +135,12 @@ async function kids(
   )
 
   const seerRes = await fetch(
-    `${ourDomain()}/~/scry/seer/seer/paths/${care}${path}.mime`, {
-    method: 'GET',
-    credentials: 'include',
-  })
+    `${ourDomain()}/~/scry/seer/seer/paths/${care}${path}.mime`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    }
+  )
 
   const aeroData = await aeroRes.json()
   const seerData = await seerRes.json()

@@ -12,14 +12,9 @@ const defaultPath = `~${window.ship}/home`
 
 export default function PathBar({ id, path, focus }: PathBarProps) {
   const [inputValue, setInputValue] = useState<string>(`${path}`)
-  const {
-    workspaces,
-    activeWorkspaceID,
-    updateWindowPath,
-    togglePathBarView
-  } = useWindowStore()
-  const pathBarView =
-    workspaces.get(activeWorkspaceID)?.windowState.pathBarView
+  const { workspaces, activeWorkspaceID, updateWindowPath, togglePathBarView } =
+    useWindowStore()
+  const pathBarView = workspaces.get(activeWorkspaceID)?.windowState.pathBarView
 
   useEffect(() => {
     setInputValue(path || defaultPath)
