@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import useWindowStore from '../../state/useWindowStore'
-import { get, put } from '../../api/sky'
+import { get, put } from '../../api/namespace'
 import FileImage from './FileImage'
 import FileComposer from './FileComposer'
 import FilePDF from './FilePDF'
@@ -148,11 +148,7 @@ export default function FileSystem({ id, path }: FileSystemProps): JSX.Element {
         Write something
       </button>
       <button onClick={handleUploadClick}>Upload a file</button>
-      <input
-        type="file"
-        style={{ display: 'none' }}
-        onChange={uploadFiles}
-      />
+      <input type="file" style={{ display: 'none' }} onChange={uploadFiles} />
     </div>
   )
 

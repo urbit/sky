@@ -2,7 +2,7 @@ import Editor from '@monaco-editor/react'
 import type * as monaco from 'monaco-editor'
 import { useEffect, useState, useCallback } from 'react'
 import { debounce } from 'lodash'
-import { get, put, ourDomain } from '../../api/sky'
+import { get, put, ourDomain } from '../../api/namespace'
 import { emmetHTML, registerCustomSnippets } from 'emmet-monaco-es'
 import { detectLanguage } from '../../utils/languageDetection'
 
@@ -74,7 +74,8 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
         if (tempRes && tempRes.status !== 404) {
           const content = await tempRes.text()
           setEditorContent(content)
-          setLanguage(detectLanguage(content))
+          const detectedLanguage = detectLanguage(content)
+          setLanguage(detectedLanguage)
 
           // If we found content in /tmp, check if it differs from published version
           if (path) {
@@ -98,7 +99,8 @@ export default function FileComposer({ path }: FileComposerProps): JSX.Element {
             const publishedContent = await publishedRes.text()
             setEditorContent(publishedContent)
             setIsEdited(false)
-            setLanguage(detectLanguage(publishedContent))
+            const detectedLanguage = detectLanguage(publishedContent)
+            setLanguage(detectedLanguage)
           }
         }
       } catch (err) {

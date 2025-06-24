@@ -1,177 +1,319 @@
+// Browser-compatible language detection system
+// Based on patterns used by GitHub Linguist but implemented for browser environments
+
+interface LanguagePattern {
+  extensions: string[]
+  patterns: RegExp[]
+  keywords?: string[]
+  priority: number
+}
+
+// Language definitions with patterns
+const languageDefinitions: Record<string, LanguagePattern> = {
+  javascript: {
+    extensions: ['.js', '.jsx', '.mjs', '.cjs'],
+    patterns: [
+      /(?:^|\s)(const|let|var|function|class|import|export)\s/,
+      /=>\s*[{(]/,
+      /\b(console|window|document)\./,
+      /`[^`]*\$\{[^}]*\}`/, // Template literals
+      /(?:^|\s)(?:async|await)\s/,
+      /\.(map|filter|reduce|forEach)\s*\(/,
+      /\bReact\.(Component|createElement)\b/,
+      /\breturn\s*<\w+/,
+    ],
+    keywords: [
+      'function',
+      'const',
+      'let',
+      'var',
+      'class',
+      'import',
+      'export',
+      'async',
+      'await',
+      'React',
+    ],
+    priority: 110,
+  },
+
+  typescript: {
+    extensions: ['.ts', '.tsx'],
+    patterns: [
+      /:\s*(string|number|boolean|any|void|object|Array)/,
+      /interface\s+\w+/,
+      /type\s+\w+\s*=/,
+      /<[A-Z]\w*>/,
+      /as\s+\w+/,
+      /(?:public|private|protected)\s+/,
+    ],
+    keywords: ['interface', 'type', 'public', 'private', 'protected'],
+    priority: 120,
+  },
+
+  html: {
+    extensions: ['.html', '.htm'],
+    patterns: [
+      /<!DOCTYPE\s+html>/i,
+      /^<html\b/i,
+      /<(div|span|p|h[1-6]|body|head|link|meta|script|style|nav|section|article|header|footer)\b/i,
+      /<\/\w+>/,
+    ],
+    priority: 80,
+  },
+
+  css: {
+    extensions: ['.css'],
+    patterns: [
+      /^[\s]*@(font-face|media|keyframes|import|charset)\b/,
+      /[.#][\w-]+\s*\{/,
+      /:\s*[\w-]+[^}]*;/,
+      /\/\*[\s\S]*?\*\//,
+      /-webkit-|-moz-|-ms-|-o-/,
+    ],
+    priority: 85,
+  },
+
+  json: {
+    extensions: ['.json'],
+    patterns: [/^\s*[{[]/, /^\s*\{[\s\S]*\}\s*$/, /^\s*\[[\s\S]*\]\s*$/],
+    priority: 95,
+  },
+
+  xml: {
+    extensions: ['.xml'],
+    patterns: [
+      /^<\?xml\s+version/i,
+      /<[a-zA-Z0-9]+:[a-zA-Z0-9]+/,
+      /<\w+\s+[^>]*xmlns/,
+      /^<([a-zA-Z0-9]+)(\s+[^>]*)?>(.*?)<\/\1>/s,
+    ],
+    priority: 100,
+  },
+
+  markdown: {
+    extensions: ['.md', '.markdown'],
+    patterns: [
+      /^#{1,6}\s+/m,
+      /\*\*[^*]+\*\*/,
+      /__[^_]+__/,
+      /\[([^\]]+)\]\(([^)]+)\)/,
+      /^[-*+]\s+/m,
+      /^>\s+/m,
+      /^```[\w]*$/m,
+      /`[^`\n]+`/,
+    ],
+    priority: 75,
+  },
+
+  python: {
+    extensions: ['.py'],
+    patterns: [
+      /^def\s+\w+\s*\(/m,
+      /^class\s+\w+/m,
+      /^import\s+\w+/m,
+      /^from\s+\w+\s+import/m,
+      /:\s*$\n\s{4,}/m,
+      /__name__\s*==\s*['"]__main__['"]/,
+    ],
+    keywords: [
+      'def',
+      'class',
+      'import',
+      'from',
+      'if',
+      'elif',
+      'else',
+      'for',
+      'while',
+      'try',
+      'except',
+    ],
+    priority: 70,
+  },
+
+  java: {
+    extensions: ['.java'],
+    patterns: [
+      /public\s+class\s+\w+/,
+      /public\s+static\s+void\s+main/,
+      /import\s+java\./,
+      /@Override/,
+      /System\.out\.println/,
+    ],
+    keywords: [
+      'public',
+      'private',
+      'protected',
+      'static',
+      'final',
+      'class',
+      'interface',
+    ],
+    priority: 65,
+  },
+
+  php: {
+    extensions: ['.php'],
+    patterns: [/^<\?php/, /\$\w+/, /echo\s+/, /function\s+\w+\s*\(/, /->/],
+    keywords: ['echo', 'function', 'class', 'public', 'private', 'protected'],
+    priority: 60,
+  },
+
+  ruby: {
+    extensions: ['.rb'],
+    patterns: [
+      /^class\s+\w+/m,
+      /^def\s+\w+/m,
+      /^module\s+\w+/m,
+      /end$/m,
+      /@\w+/,
+      /puts\s+/,
+    ],
+    keywords: ['def', 'class', 'module', 'end', 'puts', 'require'],
+    priority: 55,
+  },
+
+  go: {
+    extensions: ['.go'],
+    patterns: [
+      /^package\s+\w+/m,
+      /^import\s*\(/m,
+      /func\s+\w+\s*\(/,
+      /var\s+\w+\s+\w+/,
+      /:=/,
+    ],
+    keywords: ['package', 'import', 'func', 'var', 'const', 'type'],
+    priority: 50,
+  },
+
+  rust: {
+    extensions: ['.rs'],
+    patterns: [
+      /fn\s+\w+\s*\(/,
+      /let\s+mut\s+/,
+      /struct\s+\w+/,
+      /impl\s+/,
+      /use\s+/,
+      /println!/,
+    ],
+    keywords: ['fn', 'let', 'mut', 'struct', 'impl', 'use', 'pub'],
+    priority: 45,
+  },
+
+  shell: {
+    extensions: ['.sh', '.bash'],
+    patterns: [/^#!/, /\$\w+/, /echo\s+/, /if\s*\[/, /fi$/m],
+    keywords: ['echo', 'if', 'then', 'else', 'fi', 'for', 'while'],
+    priority: 40,
+  },
+
+  yaml: {
+    extensions: ['.yml', '.yaml'],
+    patterns: [/^[\w-]+:\s*$/m, /^[\w-]+:\s+\w+/m, /^-\s+\w+/m, /^\s*-\s*/m],
+    priority: 35,
+  },
+
+  sql: {
+    extensions: ['.sql'],
+    patterns: [
+      /SELECT\s+.*\s+FROM/i,
+      /INSERT\s+INTO/i,
+      /UPDATE\s+.*\s+SET/i,
+      /DELETE\s+FROM/i,
+      /CREATE\s+TABLE/i,
+    ],
+    keywords: [
+      'SELECT',
+      'FROM',
+      'WHERE',
+      'INSERT',
+      'UPDATE',
+      'DELETE',
+      'CREATE',
+      'TABLE',
+    ],
+    priority: 30,
+  },
+}
+
+// Check if content is valid JSON
+const isValidJSON = (content: string): boolean => {
+  try {
+    JSON.parse(content.trim())
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Score a language based on pattern matches
+const scoreLanguage = (content: string, language: LanguagePattern): number => {
+  let score = 0
+
+  // Check patterns
+  for (const pattern of language.patterns) {
+    if (pattern.test(content)) {
+      score += 10
+    }
+  }
+
+  // Check keywords
+  if (language.keywords) {
+    const words = content.toLowerCase().split(/\W+/)
+    for (const keyword of language.keywords) {
+      if (words.includes(keyword.toLowerCase())) {
+        score += 5
+      }
+    }
+  }
+
+  // Boost score based on priority
+  score *= language.priority / 100
+
+  return score
+}
+
 export const detectLanguage = (content: string): string => {
+  if (!content || content.trim().length === 0) {
+    return 'plaintext'
+  }
+
   const trimmedContent = content.trim()
 
-  // Check CSS first with very specific patterns
-  const hasCssAtRule =
-    /^[\s]*@(font-face|media|keyframes|import|charset)\b/.test(trimmedContent)
-  const hasCssSelector =
-    /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) ||
-    /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
-  const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
-  const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
-
+  // Special cases with high confidence
   if (
-    hasCssAtRule ||
-    (hasCssSelector && hasCssProperty) ||
-    (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))
+    isValidJSON(trimmedContent) &&
+    (trimmedContent.startsWith('{') || trimmedContent.startsWith('['))
   ) {
-    return 'css'
+    return 'json'
   }
 
-  // Then check for Markdown since we want it to have high precedence for other cases
-  if (
-    // Headers (at start of line or after newline)
-    /^#+ /.test(trimmedContent) ||
-    /\n#+ /.test(trimmedContent) ||
-    // Links
-    /\[.+\]\(.+\)/.test(trimmedContent) ||
-    // Emphasis/bold
-    /(\*\*|__)[\w\s]+(\*\*|__)/.test(trimmedContent) ||
-    // Lists (at start of line or after newline)
-    /^[-*+] /.test(trimmedContent) ||
-    /\n[-*+] /.test(trimmedContent) ||
-    // Blockquotes (at start of line or after newline)
-    /^>\s/.test(trimmedContent) ||
-    /\n>\s/.test(trimmedContent) ||
-    // Fenced code blocks
-    /^```[\s\S]*?\n[\s\S]*?\n```/.test(trimmedContent) ||
-    /\n```[\s\S]*?\n[\s\S]*?\n```/.test(trimmedContent) ||
-    // Inline code (but not template literals)
-    (/`[^`\n]+`/.test(trimmedContent) && !trimmedContent.includes('${')) ||
-    // Tables
-    /^\|[\s\S]*\|/.test(trimmedContent) ||
-    // Task lists
-    /^- \[ \]/.test(trimmedContent) ||
-    /\n- \[ \]/.test(trimmedContent)
-  ) {
-    return 'markdown'
-  }
-
-  // Check for HTML at the start since it's the most specific
-  if (
-    trimmedContent.startsWith('<!DOCTYPE html>') ||
-    trimmedContent.startsWith('<html') ||
-    /<(div|span|p|h[1-6]|body|head|link|meta|script|style)\b/.test(
-      trimmedContent
-    )
-  ) {
-    return 'html'
-  }
-
-  // Check CSS first with very specific patterns
-  //const hasCssSelector = /^[\s]*[.#][\w-]+\s*{/.test(trimmedContent) || /^[\s]*[.#][\w-]+[\s]*{/.test(trimmedContent)
-  //const hasCssProperty = /:\s*[\w-]+[^}]*;/.test(trimmedContent)
-  //const hasCssComment = /\/\*[\s\S]*?\*\//.test(trimmedContent)
-
-  if (
-    (hasCssSelector && hasCssProperty) ||
-    (hasCssComment && /\.[^\s{]+\s*{/.test(trimmedContent))
-  ) {
-    return 'css'
-  }
-
-  // Then check for JavaScript
-  if (
-    /(^|\s)(const|let|var|function|class|import|export)\s/.test(
-      trimmedContent
-    ) ||
-    /`[^`]*\${[^}]*}`/.test(trimmedContent) || // Template literals
-    /=>\s*{/.test(trimmedContent) || // Arrow functions
-    /class\s+\w+(\s+extends\s+[\w.]+)?\s*{/.test(trimmedContent) // Class definitions
-  ) {
-    return 'javascript'
-  }
-
-  // First check for XML since it's more specific
-  if (
-    trimmedContent.startsWith('<?xml') ||
-    (/<([a-zA-Z0-9]+:)?[a-zA-Z0-9]+(\s+[^>]*)?>(.*?)<\/\1?[a-zA-Z0-9]+>/s.test(
-      trimmedContent
-    ) &&
-      !/<(div|span|p|h[1-6]|body|head|link|meta|script|style)\b/.test(
-        trimmedContent
-      ) &&
-      !trimmedContent.includes('<!DOCTYPE html>'))
-  ) {
+  // XML declaration is very specific
+  if (trimmedContent.startsWith('<?xml')) {
     return 'xml'
   }
 
-  // HTML detection after XML check
-  if (
-    trimmedContent.startsWith('<!DOCTYPE html>') ||
-    trimmedContent.startsWith('<html') ||
-    /<(div|span|p|h[1-6]|body|head|link|meta|script|style)\b/.test(
-      trimmedContent
-    )
-  ) {
+  // HTML DOCTYPE is very specific
+  if (trimmedContent.startsWith('<!DOCTYPE html>')) {
     return 'html'
   }
 
-  // JavaScript detection - check for typical JS patterns
-  if (
-    !trimmedContent.startsWith('```') && // Avoid matching Markdown code blocks
-    // Object method definitions and arrow functions
-    (/\{[\s\w]+\([^)]*\)\s*{/.test(trimmedContent) ||
-      /=>\s*{/.test(trimmedContent) ||
-      // Regex literals
-      /(?:^|\s)\/[^/\n]+\/[gimsuy]*(?:\s|$)/.test(trimmedContent) ||
-      // Control flow statements
-      /(?:^|\s)(if|for|while)\s*\(/.test(trimmedContent))
-  ) {
-    return 'javascript'
+  // Score all languages
+  const scores: Array<{ language: string; score: number }> = []
+
+  for (const [languageName, languagePattern] of Object.entries(
+    languageDefinitions
+  )) {
+    const score = scoreLanguage(content, languagePattern)
+    if (score > 0) {
+      scores.push({ language: languageName, score })
+    }
   }
 
-  // CSS detection - look for typical CSS patterns
-  if (
-    // CSS Comments
-    /\/\*[\s\S]*?\*\//.test(trimmedContent) ||
-    (trimmedContent.includes('{') &&
-      // Basic selectors
-      (/[.#*][\w-]+\s*{/.test(trimmedContent) ||
-        // Complex selectors
-        /[\w-]+(?:\.[^\s{]+|\[.+?\]|:[^\s{]+|\s*>\s*|\s*\+\s*|\s*~\s*)*\s*{/.test(
-          trimmedContent
-        ) ||
-        // At-rules
-        /@[\w-]+\s*{/.test(trimmedContent))) ||
-    /@(media|keyframes|import|charset|font-face)\b/.test(trimmedContent) ||
-    // Vendor prefixes
-    /\{[^}]*-(?:webkit|moz|ms|o)-/.test(trimmedContent)
-  ) {
-    return 'css'
-  }
+  // Sort by score descending
+  scores.sort((a, b) => b.score - a.score)
 
-  // JSON detection
-  try {
-    JSON.parse(trimmedContent)
-    // Additional check to avoid false positives with plain numbers or booleans
-    return trimmedContent.startsWith('{') || trimmedContent.startsWith('[')
-      ? 'json'
-      : 'plaintext'
-  } catch {
-    // Not valid JSON, continue checking other formats
-  }
-
-  // XML detection - check for XML declaration or typical XML structure
-  if (
-    trimmedContent.startsWith('<?xml') ||
-    /<\?xml|<[a-zA-Z0-9]+(\s+[^>]*)?>(.*?)<\/[a-zA-Z0-9]+>/s.test(
-      trimmedContent
-    )
-  ) {
-    return 'xml'
-  }
-
-  // Markdown detection - look for common Markdown syntax
-  if (
-    /^#+ /.test(trimmedContent) || // Headers
-    /\[.+\]\(.+\)/.test(trimmedContent) || // Links
-    /(\*\*|__)[\w\s]+(\*\*|__)/.test(trimmedContent) || // Bold text
-    /^[-*+] /.test(trimmedContent) || // List items
-    /^>\s/.test(trimmedContent)
-  ) {
-    return 'markdown'
-  }
-
-  return 'plaintext'
+  // Return the highest scoring language, or plaintext if no matches
+  return scores.length > 0 ? scores[0].language : 'plaintext'
 }

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { put } from '../api/sky'
+import { put } from '../api/namespace'
 
 type Path = string
 type WindowID = number
@@ -55,6 +55,7 @@ type WorkspaceMap = Map<WorkspaceID, Workspace>
 interface WindowStore {
   workspaces: WorkspaceMap
   activeWorkspaceID: WorkspaceID
+  isInitialized: boolean
   addWindow: (parentID: WindowID, path: Path) => void
   delWindow: (id: WindowID) => void
   updateWindowPath: (id: WindowID, path: Path) => void
@@ -70,7 +71,7 @@ interface WindowStore {
   setActiveWorkspaceID: (id: WorkspaceID) => void
   updateWorkspaceName: (id: WorkspaceID, name: string) => void
   resetHomeWorkspace: () => void
-  setWorkspacesState: (state: BackendWindowStore) => void
+  setWorkspacesState: (state: BackendWindowStore | null) => void
 }
 
 // helper to serialize and send the entire workspaces state to the namespace
@@ -141,6 +142,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   // init state values
   workspaces: defaultWorkspaceMap,
   activeWorkspaceID: 0,
+  isInitialized: false,
 
   // add a new window to the tree
   addWindow: (parentID: WindowID, path: Path) => {
@@ -691,9 +693,14 @@ const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   // set init window state from namespace
-  setWorkspacesState: (state: BackendWindowStore) => {
+  setWorkspacesState: (state: BackendWindowStore | null) => {
     if (!state) {
-      set({ workspaces: defaultWorkspaceMap, activeWorkspaceID: 0 })
+      set({
+        workspaces: defaultWorkspaceMap,
+        activeWorkspaceID: 0,
+        isInitialized: true,
+      })
+      return
     }
 
     const deserializedWorkspaces = new Map<WorkspaceID, Workspace>(
@@ -727,6 +734,7 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     set({
       workspaces: deserializedWorkspaces,
       activeWorkspaceID: state.activeWorkspaceID,
+      isInitialized: true,
     })
   },
 }))

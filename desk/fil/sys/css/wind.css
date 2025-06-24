@@ -2,10 +2,11 @@
   --focus-border: var(--b0);
   --sash-size: 8px;
   --sash-hover-size: 8px;
-  --separator-border: rgba(128, 128, 128);
-  --sash-hover-transition-duration: 0s;
+  --separator-border: rgba(0, 0, 0, 0) !important;
+  --sash-hover-transition-duration: 0s !important;
 }
 
 .sash {
-  background-color: var(--b0);
+  /*background-color: var(--b0);*/
+  opacity: 0;
 }

@@ -1,15 +1,17 @@
 import 'allotment/dist/style.css'
 import WindowContainer from './components/WindowContainer.tsx'
 import useWindowStore from './state/useWindowStore.ts'
+import useHomescreenStore from './state/useHomescreenStore.ts'
 import StatusBar from './components/StatusBar.tsx'
 import Window from './components/Window.tsx'
 import { useEffect, useState, useRef } from 'react'
-import { get } from './api/sky.ts'
+import { get, ourDomain } from './api/namespace.ts'
 
 function App() {
   const {
     workspaces,
     activeWorkspaceID,
+    isInitialized,
     addWindow,
     delWindow,
     setMaxWindow,
@@ -18,6 +20,7 @@ function App() {
     setWorkspacesState,
     setActiveWindowID,
   } = useWindowStore()
+  const { fetchLandscapeApps } = useHomescreenStore()
 
   const activeWorkspace = workspaces.get(activeWorkspaceID)
   // TODO handle undefined cases better
@@ -213,8 +216,9 @@ function App() {
     async function init() {
       const res = await get(`~${window.ship}/sys/state/workspaces`)
 
-      if (res && !res.ok) {
+      if (!res?.ok) {
         console.error(`Failed to get ~${window.ship}/sys/state/workspaces`)
+        setWorkspacesState(null)
       }
 
       if (res && res.ok) {
@@ -224,6 +228,7 @@ function App() {
     }
 
     init()
+    fetchLandscapeApps()
   }, [])
 
   useEffect(() => {
@@ -242,6 +247,23 @@ function App() {
     )
   }, [workspaces, activeWorkspaceID])
 
+  // Show a loading state if the app hasn't been initialized yet
+  if (!isInitialized) {
+    return (
+      <div
+        style={{
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div>Loading...</div>
+      </div>
+    )
+  }
+
   return (
     <div
       style={{
@@ -249,6 +271,9 @@ function App() {
         height: '100vh',
         boxSizing: 'border-box',
         padding: '5px 5px 0px 5px',
+        backgroundImage: `url('${ourDomain()}/seer?path=~${window.ship}/sys/assets/wallpaper')`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <StatusBar />
@@ -265,6 +290,7 @@ function App() {
           >
             <Window
               id={maxWindow}
+              // TODO change default to ~our/home
               path={windowMap.get(maxWindow) ?? ''}
               handleDrop={handleDrop}
               handleDragStart={handleDragStart}

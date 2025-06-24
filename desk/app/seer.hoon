@@ -19,7 +19,6 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  "%seer initialized successfully."
   =/  init-paths
     %+  weld
       ^-  (list path)
@@ -32,7 +31,7 @@
       init-paths
     |=  =path
     ^-  card
-    ~&  >  "Growing {<(tail (snip path))>}"
+    ~&  >  "seer: growing {<(tail (snip path))>}"
     =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
     =/  mim  ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
     ::  XX is there a gift at /call/back/path?
@@ -40,14 +39,30 @@
         %grow  (tail (snip path))
         [%mime mim]
     ==
+  =/  aero-cards
+    %+  turn
+      init-paths
+    |=  =path
+    ^-  card
+    =/  non  .^(noun %cx (weld /(scot %p our.bowl)/sky/(scot %da now.bowl) path))
+    =/  mym  ((type-to-mime (rear path)) ((noun-to-type (rear path)) non))
+    =/  mim-cord
+      (crip (tape (join '/' (turn (head mym) |=(=term (cord term))))))
+    :*  %pass  ~  %agent
+        [our.bowl %aero]
+        %poke  %cache
+        !>([(spat (tail (snip path))) [mim-cord +.mym]])
+    ==
   =/  http-test-cards
-    ~&  >  "Growing /sys/http-test"
+    ~&  >  "seer: growing /sys/http-test"
     :~  :*  %pass  ~
             %grow  /sys/http-test
             [%mime ((type-to-mime %html) (crip "<!DOCTYPE html><html><head><title>200 Success</title></head><body><h1>200 Success</h1><p>Successful response from {<our.bowl>}</p></body></html>"))]
         ==
     ==
   :_  this
+  %+  welp
+    aero-cards
   %+  welp
     http-test-cards
   :_  grow-cards
@@ -81,19 +96,17 @@
       =/  act  !<(foo-poke vase)
       =/  ver  (~(get by sky.bowl) (tail path.act))
       ?~  ver
-        ~&  >>>  "No versions found for {<(tail path.act)>}"
+        ~&  >>>  "seer: no versions found for {<(tail path.act)>}"
         !!
-      =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
-      ::  XX i think +ram is getting latest date
-      ::     but check this works as expected
-      =/  neu  (ram:on-path (need ver))
+      =/  on-fans  ((on @ud (pair @da (each page @uvI))) lte)
+      =/  neu  (ram:on-fans (need ver))
       ?~  neu
         ::  nothing here
-        ~&  >>>  "Nothing here"
+        ~&  >>>  "seer: nothing here"
         !!
       ?.  -.q.val.u.neu
         ::  tombstoned
-        ~&  >>>  "Latest version is tombstoned"
+        ~&  >>>  "seer: latest version is tombstoned"
         !!
       ?>  ?=(page p.q.val.u.neu)
       =/  =mime  (mime q.p.q.val.u.neu)
@@ -160,6 +173,13 @@
                 %grow  (tail (cut-path value.u.pax '/'))
                 [%mime mym]
             ==
+            :*  %pass  ~  %agent
+                [our.bowl %aero]
+                %poke  %cache
+                !>  ^-  (pair cord mime-data:iris)
+                :-  (spat (tail (cut-path value.u.pax '/')))
+                [value.u.mime u.body]
+            ==
         ==
       ::
           %'DELETE'
@@ -180,7 +200,7 @@
         =/  line  (parse-request-line:server url.request.inbound-request)
         =/  pax   (~(get by (malt args.line)) 'path')
         ?~  pax
-          ~&  >>>  "No data received"
+          ~&  >>>  "seer: no data received"
           [(send [400 ~ [%plain "No data received"]]) state]
         =/  =path
           ::  handle relative paths from root
@@ -189,58 +209,108 @@
           (welp /[(scot %p our.bowl)] (cut-path value.u.pax '/'))
         ::  ~&  >>  sky.bowl
         =/  =ship  `@p`(slav %p (head path))
-        ?:  =(ship our.bowl)
+        ?.  =(ship our.bowl)
           ::
-          ::  our path
-          =/  ver  (~(get by sky.bowl) (tail path))
-          ?~  ver
-            ::  ~&  >>>  "No versions of {<path>}"
-            [(send [404 ~ [%plain "Not found"]]) state]
-          =/  on-path  ((on @ud (pair @da (each page @uvI))) lte)
-          ::  XX i think +ram is getting latest date
-          ::     but check this works as expected
-          =/  neu  (ram:on-path (need ver))
-          ?~  neu
-            ~&  >>>  "Can't find {<path>}"
-            ::  nothing here
-            [(send [404 ~ [%plain "Not found"]]) state]
-          ?.  -.q.val.u.neu
-            ::  tombstoned
-            ~&  >>>  "Found tombstoned {<path>}"
-            [(send [410 ~ [%plain "Gone"]]) state]
-          ?>  ?=(page p.q.val.u.neu)
-          =/  =mime  (mime q.p.q.val.u.neu)
-          =/  mim-cord
-            (crip (tape (join '/' (turn (head mime) |=(=term (cord term))))))
+          ::  foreign path
           :_  state
-          ^-  (list card)
-          %+  give-simple-payload:app:server
-            eyre-id
-          ^-  simple-payload:http
-          :-  :-  200
-              ::  XX form real FQSP
-              :~  ['Content-Type' mim-cord]
-                  ['X-FQSP' '~zod/foo']
-              ==
-          (some +.mime)
+          :~  :*  %pass
+                  /foo/poke/[eyre-id]
+                  %agent
+                  [ship %seer]
+                  %poke
+                  %foo-poke
+                  !>([eyre-id path])
+          ==  ==
         ::
-        ::  foreign path
+        ::  our path
+        =/  ver  (~(get by sky.bowl) (tail path))
+        ?~  ver
+          ::  ~&  >>>  "No versions of {<path>}"
+          [(send [404 ~ [%plain "Not found"]]) state]
+        =/  on-fans  ((on @ud (pair @da (each page @uvI))) lte)
+        ::  get latest version of the resource
+        =/  neu  (ram:on-fans (need ver))
+        ?~  neu
+          ~&  >>>  "seer: can't find {<path>}"
+          ::  nothing here
+          [(send [404 ~ [%plain "Not found"]]) state]
+        ?.  -.q.val.u.neu
+          ::  tombstoned
+          ~&  >>>  "seer: found tombstoned {<path>}"
+          [(send [410 ~ [%plain "Gone"]]) state]
+        ?>  ?=(page p.q.val.u.neu)
+        =/  =mime  (mime q.p.q.val.u.neu)
+        =/  mim-cord
+          (crip (tape (join '/' (turn (head mime) |=(=term (cord term))))))
         :_  state
-        :~  :*  %pass
-                /foo/poke/[eyre-id]
-                %agent
-                [ship %seer]
-                %poke
-                %foo-poke
-                !>([eyre-id path])
-        ==  ==
+        ^-  (list card)
+        %+  give-simple-payload:app:server
+          eyre-id
+        ^-  simple-payload:http
+        :-  :-  200
+            ::  XX form real FQSP
+            :~  ['Content-Type' mim-cord]
+                ['X-FQSP' '~zod/foo']
+            ==
+        (some +.mime)
       ==
     --
 ::
 ++  on-peek
-  |=  path=(pole knot)
+  |=  =(pole knot)
   ^-  (unit (unit cage))
-  ``[%noun !>(~)]
+  ?+  pole
+    (on-peek:def pole)
+  ::
+      [%x %seer %paths =care:clay und=*]
+    %-  some
+    %-  some
+    :-  %sky-paths
+    !>  ^-  (list path)
+    ::  remove duplicate search results
+    %-  roll
+    :_  |=  [pax=path res=(list path)]
+        ^+  res
+        ?.  (lien res |=(=path =(pax path)))
+          :-(pax res)
+        res
+    ::  search results
+    %+  turn
+      ::  awful, but this is the only way to find out
+      ::  if a path is tombstoned without crashing smdh
+      %+  murn
+        .^  (list path)
+            %gt
+            %+  weld
+              /(scot %p our.bowl)/seer/(scot %da now.bowl)//1
+            ((list knot) und.pole)
+        ==
+      |=  pax=path
+      ^-  (unit path)
+      =/  ver  (~(get by sky.bowl) pax)
+      ?~  ver
+        ~
+      =/  on-fans  ((on @ud (pair @da (each page @uvI))) lte)
+      =/  neu  (ram:on-fans (need ver))
+      ?~  neu
+        ~
+      ?.  -.q.val.u.neu
+        ~
+      ?>  ?=(page q.val.u.neu)
+      (some pax)
+    ::  apply care
+    |=  pax=path
+    ^-  path
+    %+  scag
+      ?+  care.pole
+        %-  (slog [[%leaf "seer: forbidden care {<care.pole>}"] ~])
+        (on-peek:def pole)
+        %x  1
+        %y  2
+        %z  (lent pax)
+      ==
+    pax
+  ==
 ++  on-watch
   |=  path=(pole knot)
   ^-  (quip card _this)
@@ -271,7 +341,7 @@
         %poke-ack
       ?~  p.sign
         `this
-      ~&  >>>  "Got nack from {<src.bowl>}"
+      ~&  >>>  "seer: got nack from {<src.bowl>}"
       :_  this
       %+  give-simple-payload:app:server
           eyre-id

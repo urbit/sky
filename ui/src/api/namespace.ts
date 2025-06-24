@@ -5,7 +5,6 @@ const ourDomain = (): string => {
 }
 
 // TODO handle relative get('foo')
-// TODO remove hard-coded URLs
 async function get(path: string): Promise<Response | void> {
   if (path.startsWith('/')) {
     try {
@@ -34,30 +33,56 @@ async function get(path: string): Promise<Response | void> {
 
   if (pathShip === `~${window.ship}`) {
     try {
-      const res = await fetch(`${ourDomain()}/seer?path=${path}`, {
+      const eyreRes = await fetch(url, {
         method: 'GET',
         credentials: 'include',
       })
 
       const redirectedToGrid =
-        endpoint !== '/apps/landscape' &&
-        res.url === `${ourDomain()}/apps/landscape/`
+        eyreRes.redirected && endpoint !== 'apps/landscape'
+      // TODO i think dev env messing this up, should fix
+      //eyreRes.url === `${ourDomain()}/apps/landscape/`
 
-      // NOTE handle Landscape redirect
-      // TODO change this behaviour in Landscape?
       if (redirectedToGrid) {
-        return new Response(`File not found for ${path}`, {
-          status: 404,
-          headers: {
-            'Content-Type': 'text/plain',
-            'X-Response-URL': url,
-          },
-        })
+        throw new Error(`URL not found for ${path}`)
       }
 
-      return res
+      if (eyreRes.status === 404) {
+        throw new Error(`404 not found for ${url}`)
+      }
+
+      return eyreRes
     } catch (err) {
-      console.error(`GET request to ${pathShip} failed at ${url}`, err)
+      console.log(
+        `GET request to ${ourDomain()}/${endpoint} failed at ${url}`,
+        err
+      )
+
+      try {
+        const seerRes = await fetch(`${ourDomain()}/seer?path=${path}`, {
+          method: 'GET',
+          credentials: 'include',
+        })
+
+        const redirectedToGrid =
+          seerRes.redirected && endpoint !== 'apps/landscape'
+        // TODO i think dev env messing this up, should fix
+        //seerRes.url === `${ourDomain()}/apps/landscape/`
+
+        if (redirectedToGrid) {
+          return new Response(`File not found for ${path}`, {
+            status: 404,
+            headers: {
+              'Content-Type': 'text/plain',
+              'X-Response-URL': url,
+            },
+          })
+        }
+
+        return seerRes
+      } catch (err) {
+        console.error(`GET request to ${pathShip} failed at ${url}`, err)
+      }
     }
   }
 
@@ -66,10 +91,6 @@ async function get(path: string): Promise<Response | void> {
       method: 'GET',
       credentials: 'include',
     })
-
-    //if (!res.ok) {
-    //  throw new Error(`Response not ok from %seer`)
-    //}
 
     return res
   } catch (err) {
@@ -99,6 +120,32 @@ async function put(path: string, file: File): Promise<Response | void> {
   } catch (err) {
     console.error(`PUT request failed at ${url}`, err)
   }
+}
+
+async function kids(
+  path: string,
+  care: 'x' | 'y' | 'z'
+): Promise<Array<string>> {
+  const aeroRes = await fetch(
+    `${ourDomain()}/~/scry/aero/eyre/paths/${care}${path}.mime`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    }
+  )
+
+  const seerRes = await fetch(
+    `${ourDomain()}/~/scry/seer/seer/paths/${care}${path}.mime`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    }
+  )
+
+  const aeroData = await aeroRes.json()
+  const seerData = await seerRes.json()
+
+  return [...aeroData.urls, ...seerData.paths]
 }
 
 // TODO post()
@@ -132,4 +179,4 @@ async function put(path: string, file: File): Promise<Response | void> {
 //  }
 //}
 
-export { get, put, ourDomain }
+export { get, kids, put, ourDomain }
